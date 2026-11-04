@@ -1,0 +1,168 @@
+# Pipeline DevSecOps del laboratorio (Fase 3, 4 y 5).
+# La aplicación vulnerable SOLO se ejecuta dentro del job efímero (red del runner, 127.0.0.1).
+# Los hallazgos no rompen el build: Juice Shop es vulnerable a propósito; se recolecta evidencia.
+name: devsecops
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  JUICE_IMAGE: bkimminich/juice-shop:v20.3.0@sha256:cea5a4af4aacee498c491491af0408934ec81d004035c0a02ef3e54395e3bf27
+  SEMGREP_IMAGE: semgrep/semgrep:1.181.1
+  GITLEAKS_IMAGE: zricethezav/gitleaks:v8.30.1
+  TRIVY_IMAGE: aquasec/trivy:0.75.0
+  HADOLINT_IMAGE: hadolint/hadolint:v2.15.1
+  CHECKOV_IMAGE: bridgecrew/checkov:3.4.0
+  SYFT_IMAGE: anchore/syft:v1.55.0
+  GRYPE_IMAGE: anchore/grype:v0.120.1
+  OSV_IMAGE: ghcr.io/google/osv-scanner:v2.7.0
+  TERRAFORM_IMAGE: hashicorp/terraform:1.16.7
+  ZAP_IMAGE: zaproxy/zap-stable:20261016
+
+jobs:
+  secrets:
+    name: Gitleaks (secretos en el repositorio del equipo)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Gitleaks
+        run: |
+          mkdir -p out
+          docker run --rm -v "$PWD:/repo" -w /repo $GITLEAKS_IMAGE git /repo \
+            --report-format sarif --report-path out/gitleaks.sarif --redact --exit-code 1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: gitleaks, path: out/ }
+
+  sast:
+    name: SAST – Semgrep
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+      - name: Semgrep (reglas OWASP + reglas propias)
+        run: |
+          mkdir -p out
+          docker run --rm -v "$PWD:/src" -w /src $SEMGREP_IMAGE semgrep scan \
+            --config p/owasp-top-ten --config p/nodejs --config p/typescript \
+            --config security/semgrep/ \
+            --exclude 'app/frontend/src/assets' --exclude 'app/test' --exclude '**/*.spec.ts' \
+            --sarif --output out/semgrep.sarif --json-output out/semgrep.json --metrics off app/ || true
+          python3 -c "import json;d=json.load(open('out/semgrep.json'));print('Hallazgos Semgrep:',len(d['results']))" | tee -a "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v4
+        with: { name: semgrep, path: out/ }
+
+  codeql:
+    name: SAST – CodeQL
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+      - uses: github/codeql-action/init@v3
+        with:
+          languages: javascript-typescript
+          source-root: app
+          queries: security-extended
+      - uses: github/codeql-action/analyze@v3
+        with:
+          output: out/codeql
+          upload: always
+        continue-on-error: true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: codeql, path: out/ }
+
+  sca:
+    name: SCA – npm audit, OSV-Scanner, SBOM (Syft) y Grype
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+      - uses: actions/setup-node@v4
+        with: { node-version: '24' }
+      - name: npm audit (lockfile generado sin instalar)
+        working-directory: app
+        run: |
+          mkdir -p ../out
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund --omit=dev
+          npm audit --omit=dev --json > ../out/npm-audit.json || true
+          node -e "const a=require('../out/npm-audit.json');console.log('npm audit:',JSON.stringify(a.metadata.vulnerabilities))" | tee -a "$GITHUB_STEP_SUMMARY"
+          cp package-lock.json ../out/package-lock.generated.json
+      - name: OSV-Scanner
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src $OSV_IMAGE scan source \
+            --lockfile app/package-lock.json --format json --output-file out/osv.json || true
+      - name: SBOM (Syft, CycloneDX) de la imagen fijada
+        run: docker run --rm $SYFT_IMAGE "$JUICE_IMAGE" -o cyclonedx-json > out/sbom.cdx.json
+      - name: Grype sobre el SBOM
+        run: |
+          docker run --rm -v "$PWD/out:/out" $GRYPE_IMAGE sbom:/out/sbom.cdx.json -o json > out/grype.json || true
+      - uses: actions/upload-artifact@v4
+        with: { name: sca, path: out/ }
+
+  container:
+    name: Contenedores – Trivy y Hadolint
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true }
+      - name: Trivy (imagen original)
+        run: |
+          mkdir -p out
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v "$PWD/out:/out" $TRIVY_IMAGE image \
+            --scanners vuln,secret,misconfig --format json --output /out/trivy-original.json "$JUICE_IMAGE"
+      - name: Hadolint (Dockerfile original y endurecido)
+        run: |
+          docker run --rm -i $HADOLINT_IMAGE hadolint -f json - < app/Dockerfile > out/hadolint-original.json || true
+          if [ -f app-hardened/Dockerfile ]; then
+            docker run --rm -i $HADOLINT_IMAGE hadolint -f json - < app-hardened/Dockerfile > out/hadolint-hardened.json || true
+          fi
+      - uses: actions/upload-artifact@v4
+        with: { name: container, path: out/ }
+
+  iac:
+    name: IaC – Terraform validate y Checkov
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: terraform fmt/validate
+        run: |
+          mkdir -p out
+          docker run --rm -v "$PWD/infra/terraform:/tf" -w /tf $TERRAFORM_IMAGE init -backend=false -input=false
+          docker run --rm -v "$PWD/infra/terraform:/tf" -w /tf $TERRAFORM_IMAGE fmt -check -recursive
+          docker run --rm -v "$PWD/infra/terraform:/tf" -w /tf $TERRAFORM_IMAGE validate -json | tee out/terraform-validate.json
+      - name: Checkov
+        run: |
+          docker run --rm -v "$PWD:/src" -w /src $CHECKOV_IMAGE -d infra/terraform \
+            -o cli -o json -o sarif --output-file-path out --soft-fail
+      - uses: actions/upload-artifact@v4
+        with: { name: iac, path: out/ }
+
+  dast:
+    name: DAST – ZAP baseline contra contenedor efímero
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Levantar Juice Shop solo en 127.0.0.1 del runner
+        run: |
+          docker run -d --name juice -p 127.0.0.1:3000:3000 "$JUICE_IMAGE"
+          for i in $(seq 1 40); do curl -sf http://127.0.0.1:3000/rest/admin/application-version && break; sleep 3; done
+      - name: ZAP baseline
+        run: |
+          mkdir -p out && chmod 777 out
+          docker run --rm --network host -v "$PWD/out:/zap/wrk" $ZAP_IMAGE zap-baseline.py \
+            -t http://127.0.0.1:3000 -J zap-baseline.json -r zap-baseline.html -I -m 3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: dast, path: out/ }

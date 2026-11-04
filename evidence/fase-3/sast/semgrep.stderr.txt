@@ -1,0 +1,50 @@
+Unable to find image 'semgrep/semgrep:1.181.1' locally
+1.181.1: Pulling from semgrep/semgrep
+5d35e74d7c68: Pulling fs layer
+5e9b4a97f639: Pulling fs layer
+d00fa809875c: Pulling fs layer
+cd5d0e806f47: Pulling fs layer
+e27848103812: Pulling fs layer
+f2fcae456309: Pulling fs layer
+248709850098: Pulling fs layer
+bd9ddc54bea9: Pulling fs layer
+db43e654f745: Pulling fs layer
+df7030e308c5: Pulling fs layer
+e884d1f7bde9: Pulling fs layer
+850766837198: Pulling fs layer
+608b4d261b6e: Pulling fs layer
+c2bad043d386: Pulling fs layer
+5e76960310b5: Pulling fs layer
+bd9ddc54bea9: Download complete
+cd5d0e806f47: Download complete
+5d35e74d7c68: Download complete
+248709850098: Download complete
+e27848103812: Download complete
+5e9b4a97f639: Download complete
+5e9b4a97f639: Pull complete
+e27848103812: Pull complete
+db43e654f745: Download complete
+850766837198: Download complete
+df7030e308c5: Download complete
+f2fcae456309: Download complete
+5e76960310b5: Download complete
+c2bad043d386: Download complete
+608b4d261b6e: Download complete
+4eeb491ca76f: Download complete
+f2fcae456309: Pull complete
+248709850098: Pull complete
+bd9ddc54bea9: Pull complete
+db43e654f745: Pull complete
+e884d1f7bde9: Download complete
+d00fa809875c: Download complete
+e884d1f7bde9: Pull complete
+d00fa809875c: Pull complete
+5e76960310b5: Pull complete
+c2bad043d386: Pull complete
+cd5d0e806f47: Pull complete
+850766837198: Pull complete
+df7030e308c5: Pull complete
+5d35e74d7c68: Pull complete
+608b4d261b6e: Pull complete
+Digest: sha256:3db5c7af55eb1f512eac0abf0ab69a97b52c74b5e9a27314c221aee1a78d7ab2
+Status: Downloaded newer image for semgrep/semgrep:1.181.1

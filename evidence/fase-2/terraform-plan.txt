@@ -1,0 +1,1358 @@
+data.aws_iam_policy_document.flow_assume: Reading...
+data.aws_iam_policy_document.ecs_assume: Reading...
+data.aws_iam_policy_document.flow_assume: Read complete after 0s [id=2717921857]
+data.aws_iam_policy_document.ecs_assume: Read complete after 0s [id=1077804475]
+
+Terraform used the selected providers to generate the following execution
+plan. Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+  # data.aws_iam_policy_document.execution will be read during apply
+  # (config refers to values not yet known)
+ <= data "aws_iam_policy_document" "execution" {
+      + id            = (known after apply)
+      + json          = (known after apply)
+      + minified_json = (known after apply)
+
+      + statement {
+          + actions   = [
+              + "ecr:GetAuthorizationToken",
+            ]
+          + resources = [
+              + "*",
+            ]
+          + sid       = "EcrAuth"
+        }
+      + statement {
+          + actions   = [
+              + "ecr:BatchCheckLayerAvailability",
+              + "ecr:BatchGetImage",
+              + "ecr:GetDownloadUrlForLayer",
+            ]
+          + resources = [
+              + (known after apply),
+            ]
+          + sid       = "EcrPull"
+        }
+      + statement {
+          + actions   = [
+              + "logs:CreateLogStream",
+              + "logs:PutLogEvents",
+            ]
+          + resources = [
+              + (known after apply),
+            ]
+          + sid       = "Logs"
+        }
+    }
+
+  # aws_cloudwatch_log_group.app will be created
+  + resource "aws_cloudwatch_log_group" "app" {
+      + arn                         = (known after apply)
+      + deletion_protection_enabled = (known after apply)
+      + id                          = (known after apply)
+      + kms_key_id                  = (known after apply)
+      + log_group_class             = (known after apply)
+      + name                        = "/juice-hardened/app"
+      + name_prefix                 = (known after apply)
+      + region                      = "us-east-1"
+      + retention_in_days           = 365
+      + skip_destroy                = false
+      + tags_all                    = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+    }
+
+  # aws_cloudwatch_log_group.flow will be created
+  + resource "aws_cloudwatch_log_group" "flow" {
+      + arn                         = (known after apply)
+      + deletion_protection_enabled = (known after apply)
+      + id                          = (known after apply)
+      + kms_key_id                  = (known after apply)
+      + log_group_class             = (known after apply)
+      + name                        = "/juice-hardened/vpc-flow"
+      + name_prefix                 = (known after apply)
+      + region                      = "us-east-1"
+      + retention_in_days           = 365
+      + skip_destroy                = false
+      + tags_all                    = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+    }
+
+  # aws_cloudwatch_log_group.waf will be created
+  + resource "aws_cloudwatch_log_group" "waf" {
+      + arn                         = (known after apply)
+      + deletion_protection_enabled = (known after apply)
+      + id                          = (known after apply)
+      + kms_key_id                  = (known after apply)
+      + log_group_class             = (known after apply)
+      + name                        = "aws-waf-logs-juice-hardened"
+      + name_prefix                 = (known after apply)
+      + region                      = "us-east-1"
+      + retention_in_days           = 365
+      + skip_destroy                = false
+      + tags_all                    = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+    }
+
+  # aws_default_security_group.default will be created
+  + resource "aws_default_security_group" "default" {
+      + arn                    = (known after apply)
+      + description            = (known after apply)
+      + egress                 = (known after apply)
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = (known after apply)
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + region                 = "us-east-1"
+      + revoke_rules_on_delete = false
+      + tags_all               = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_ecr_repository.app will be created
+  + resource "aws_ecr_repository" "app" {
+      + arn                  = (known after apply)
+      + id                   = (known after apply)
+      + image_tag_mutability = "IMMUTABLE"
+      + name                 = "juice-hardened"
+      + region               = "us-east-1"
+      + registry_id          = (known after apply)
+      + repository_url       = (known after apply)
+      + tags_all             = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+
+      + encryption_configuration {
+          + encryption_type = "KMS"
+          + kms_key         = (known after apply)
+        }
+
+      + image_scanning_configuration {
+          + scan_on_push = true
+        }
+    }
+
+  # aws_ecs_cluster.this will be created
+  + resource "aws_ecs_cluster" "this" {
+      + arn      = (known after apply)
+      + id       = (known after apply)
+      + name     = "juice-hardened"
+      + region   = "us-east-1"
+      + tags_all = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+
+      + setting {
+          + name  = "containerInsights"
+          + value = "enabled"
+        }
+    }
+
+  # aws_ecs_service.app will be created
+  + resource "aws_ecs_service" "app" {
+      + arn                                = (known after apply)
+      + availability_zone_rebalancing      = (known after apply)
+      + cluster                            = (known after apply)
+      + deployment_maximum_percent         = 200
+      + deployment_minimum_healthy_percent = 100
+      + desired_count                      = 2
+      + enable_ecs_managed_tags            = false
+      + enable_execute_command             = false
+      + iam_role                           = (known after apply)
+      + id                                 = (known after apply)
+      + launch_type                        = "FARGATE"
+      + name                               = "juice-hardened"
+      + platform_version                   = (known after apply)
+      + region                             = "us-east-1"
+      + scheduling_strategy                = "REPLICA"
+      + tags_all                           = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + task_definition                    = (known after apply)
+      + triggers                           = (known after apply)
+      + wait_for_steady_state              = false
+
+      + deployment_configuration (known after apply)
+
+      + load_balancer {
+          + container_name   = "juice-shop"
+          + container_port   = 3000
+          + target_group_arn = (known after apply)
+            # (1 unchanged attribute hidden)
+        }
+
+      + network_configuration {
+          + assign_public_ip = false
+          + security_groups  = (known after apply)
+          + subnets          = (known after apply)
+        }
+    }
+
+  # aws_ecs_task_definition.app will be created
+  + resource "aws_ecs_task_definition" "app" {
+      + arn                      = (known after apply)
+      + arn_without_revision     = (known after apply)
+      + container_definitions    = jsonencode(
+            [
+              + {
+                  + environment            = [
+                      + {
+                          + name  = "NODE_ENV"
+                          + value = "production"
+                        },
+                    ]
+                  + essential              = true
+                  + image                  = "111111111111.dkr.ecr.us-east-1.amazonaws.com/juice-hardened@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+                  + linuxParameters        = {
+                      + capabilities       = {
+                          + drop = [
+                              + "ALL",
+                            ]
+                        }
+                      + initProcessEnabled = true
+                    }
+                  + logConfiguration       = {
+                      + logDriver = "awslogs"
+                      + options   = {
+                          + awslogs-group         = "/juice-hardened/app"
+                          + awslogs-region        = "us-east-1"
+                          + awslogs-stream-prefix = "app"
+                        }
+                    }
+                  + name                   = "juice-shop"
+                  + portMappings           = [
+                      + {
+                          + containerPort = 3000
+                          + protocol      = "tcp"
+                        },
+                    ]
+                  + privileged             = false
+                  + readonlyRootFilesystem = false
+                  + user                   = "65532"
+                },
+            ]
+        )
+      + cpu                      = "512"
+      + enable_fault_injection   = (known after apply)
+      + execution_role_arn       = (known after apply)
+      + family                   = "juice-hardened"
+      + id                       = (known after apply)
+      + memory                   = "1024"
+      + network_mode             = "awsvpc"
+      + region                   = "us-east-1"
+      + requires_compatibilities = [
+          + "FARGATE",
+        ]
+      + revision                 = (known after apply)
+      + skip_destroy             = false
+      + tags_all                 = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + task_role_arn            = (known after apply)
+      + track_latest             = false
+    }
+
+  # aws_eip.nat will be created
+  + resource "aws_eip" "nat" {
+      + allocation_id        = (known after apply)
+      + arn                  = (known after apply)
+      + association_id       = (known after apply)
+      + carrier_ip           = (known after apply)
+      + customer_owned_ip    = (known after apply)
+      + domain               = "vpc"
+      + id                   = (known after apply)
+      + instance             = (known after apply)
+      + ipam_pool_id         = (known after apply)
+      + network_border_group = (known after apply)
+      + network_interface    = (known after apply)
+      + private_dns          = (known after apply)
+      + private_ip           = (known after apply)
+      + ptr_record           = (known after apply)
+      + public_dns           = (known after apply)
+      + public_ip            = (known after apply)
+      + public_ipv4_pool     = (known after apply)
+      + region               = "us-east-1"
+      + tags_all             = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+    }
+
+  # aws_flow_log.this will be created
+  + resource "aws_flow_log" "this" {
+      + arn                      = (known after apply)
+      + iam_role_arn             = (known after apply)
+      + id                       = (known after apply)
+      + log_destination          = (known after apply)
+      + log_destination_type     = "cloud-watch-logs"
+      + log_format               = (known after apply)
+      + max_aggregation_interval = 600
+      + region                   = "us-east-1"
+      + tags_all                 = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + traffic_type             = "ALL"
+      + vpc_id                   = (known after apply)
+    }
+
+  # aws_iam_role.execution will be created
+  + resource "aws_iam_role" "execution" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "juice-hardened-exec"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.flow will be created
+  + resource "aws_iam_role" "flow" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "vpc-flow-logs.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "juice-hardened-flowlogs"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role.task will be created
+  + resource "aws_iam_role" "task" {
+      + arn                   = (known after apply)
+      + assume_role_policy    = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "sts:AssumeRole"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "ecs-tasks.amazonaws.com"
+                        }
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + create_date           = (known after apply)
+      + force_detach_policies = false
+      + id                    = (known after apply)
+      + managed_policy_arns   = (known after apply)
+      + max_session_duration  = 3600
+      + name                  = "juice-hardened-task"
+      + name_prefix           = (known after apply)
+      + path                  = "/"
+      + tags_all              = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + unique_id             = (known after apply)
+
+      + inline_policy (known after apply)
+    }
+
+  # aws_iam_role_policy.execution will be created
+  + resource "aws_iam_role_policy" "execution" {
+      + id          = (known after apply)
+      + name        = "least-privilege"
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # aws_iam_role_policy.flow will be created
+  + resource "aws_iam_role_policy" "flow" {
+      + id          = (known after apply)
+      + name        = "flowlogs-write"
+      + name_prefix = (known after apply)
+      + policy      = (known after apply)
+      + role        = (known after apply)
+    }
+
+  # aws_internet_gateway.this will be created
+  + resource "aws_internet_gateway" "this" {
+      + arn      = (known after apply)
+      + id       = (known after apply)
+      + owner_id = (known after apply)
+      + region   = "us-east-1"
+      + tags_all = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id   = (known after apply)
+    }
+
+  # aws_kms_alias.main will be created
+  + resource "aws_kms_alias" "main" {
+      + arn            = (known after apply)
+      + id             = (known after apply)
+      + name           = "alias/juice-hardened"
+      + name_prefix    = (known after apply)
+      + region         = "us-east-1"
+      + target_key_arn = (known after apply)
+      + target_key_id  = (known after apply)
+    }
+
+  # aws_kms_key.main will be created
+  + resource "aws_kms_key" "main" {
+      + arn                                = (known after apply)
+      + bypass_policy_lockout_safety_check = false
+      + customer_master_key_spec           = "SYMMETRIC_DEFAULT"
+      + deletion_window_in_days            = 30
+      + description                        = "CMK del entorno endurecido (logs, ECR, EFS, S3) - AES-256-GCM"
+      + enable_key_rotation                = true
+      + id                                 = (known after apply)
+      + is_enabled                         = true
+      + key_id                             = (known after apply)
+      + key_usage                          = "ENCRYPT_DECRYPT"
+      + multi_region                       = (known after apply)
+      + policy                             = jsonencode(
+            {
+              + Statement = [
+                  + {
+                      + Action    = "kms:*"
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + AWS = "arn:aws:iam::111111111111:root"
+                        }
+                      + Resource  = "*"
+                      + Sid       = "RootAdmin"
+                    },
+                  + {
+                      + Action    = [
+                          + "kms:Encrypt*",
+                          + "kms:Decrypt*",
+                          + "kms:ReEncrypt*",
+                          + "kms:GenerateDataKey*",
+                          + "kms:Describe*",
+                        ]
+                      + Effect    = "Allow"
+                      + Principal = {
+                          + Service = "logs.us-east-1.amazonaws.com"
+                        }
+                      + Resource  = "*"
+                      + Sid       = "CloudWatchLogs"
+                    },
+                ]
+              + Version   = "2012-10-17"
+            }
+        )
+      + region                             = "us-east-1"
+      + rotation_period_in_days            = (known after apply)
+      + tags_all                           = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+    }
+
+  # aws_lb.this will be created
+  + resource "aws_lb" "this" {
+      + arn                                                          = (known after apply)
+      + arn_suffix                                                   = (known after apply)
+      + client_keep_alive                                            = 3600
+      + desync_mitigation_mode                                       = "defensive"
+      + dns_name                                                     = (known after apply)
+      + drop_invalid_header_fields                                   = true
+      + enable_deletion_protection                                   = true
+      + enable_http2                                                 = true
+      + enable_prefix_for_ipv6_source_nat                            = (known after apply)
+      + enable_tls_version_and_cipher_suite_headers                  = false
+      + enable_waf_fail_open                                         = false
+      + enable_xff_client_port                                       = false
+      + enable_zonal_shift                                           = false
+      + enforce_security_group_inbound_rules_on_private_link_traffic = (known after apply)
+      + id                                                           = (known after apply)
+      + idle_timeout                                                 = 60
+      + internal                                                     = false
+      + ip_address_type                                              = (known after apply)
+      + load_balancer_type                                           = "application"
+      + name                                                         = "juice-hardened"
+      + name_prefix                                                  = (known after apply)
+      + preserve_host_header                                         = false
+      + region                                                       = "us-east-1"
+      + secondary_ips_auto_assigned_per_subnet                       = (known after apply)
+      + security_groups                                              = (known after apply)
+      + subnets                                                      = (known after apply)
+      + tags_all                                                     = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                                                       = (known after apply)
+      + xff_header_processing_mode                                   = "append"
+      + zone_id                                                      = (known after apply)
+
+      + access_logs {
+          + bucket  = (known after apply)
+          + enabled = true
+          + prefix  = "alb"
+        }
+
+      + subnet_mapping (known after apply)
+    }
+
+  # aws_lb_listener.https will be created
+  + resource "aws_lb_listener" "https" {
+      + arn                                                                   = (known after apply)
+      + certificate_arn                                                       = "arn:aws:acm:us-east-1:111111111111:certificate/00000000-0000-0000-0000-000000000000"
+      + id                                                                    = (known after apply)
+      + load_balancer_arn                                                     = (known after apply)
+      + port                                                                  = 443
+      + protocol                                                              = "HTTPS"
+      + region                                                                = "us-east-1"
+      + routing_http_request_x_amzn_mtls_clientcert_header_name               = (known after apply)
+      + routing_http_request_x_amzn_mtls_clientcert_issuer_header_name        = (known after apply)
+      + routing_http_request_x_amzn_mtls_clientcert_leaf_header_name          = (known after apply)
+      + routing_http_request_x_amzn_mtls_clientcert_serial_number_header_name = (known after apply)
+      + routing_http_request_x_amzn_mtls_clientcert_subject_header_name       = (known after apply)
+      + routing_http_request_x_amzn_mtls_clientcert_validity_header_name      = (known after apply)
+      + routing_http_request_x_amzn_tls_cipher_suite_header_name              = (known after apply)
+      + routing_http_request_x_amzn_tls_version_header_name                   = (known after apply)
+      + routing_http_response_access_control_allow_credentials_header_value   = (known after apply)
+      + routing_http_response_access_control_allow_headers_header_value       = (known after apply)
+      + routing_http_response_access_control_allow_methods_header_value       = (known after apply)
+      + routing_http_response_access_control_allow_origin_header_value        = (known after apply)
+      + routing_http_response_access_control_expose_headers_header_value      = (known after apply)
+      + routing_http_response_access_control_max_age_header_value             = (known after apply)
+      + routing_http_response_content_security_policy_header_value            = (known after apply)
+      + routing_http_response_server_enabled                                  = (known after apply)
+      + routing_http_response_strict_transport_security_header_value          = (known after apply)
+      + routing_http_response_x_content_type_options_header_value             = (known after apply)
+      + routing_http_response_x_frame_options_header_value                    = (known after apply)
+      + ssl_policy                                                            = "ELBSecurityPolicy-TLS13-1-3-2021-06"
+      + tags_all                                                              = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + tcp_idle_timeout_seconds                                              = (known after apply)
+
+      + default_action {
+          + order            = (known after apply)
+          + target_group_arn = (known after apply)
+          + type             = "forward"
+        }
+
+      + mutual_authentication (known after apply)
+    }
+
+  # aws_lb_target_group.app will be created
+  + resource "aws_lb_target_group" "app" {
+      + arn                                = (known after apply)
+      + arn_suffix                         = (known after apply)
+      + connection_termination             = (known after apply)
+      + deregistration_delay               = "300"
+      + id                                 = (known after apply)
+      + ip_address_type                    = (known after apply)
+      + lambda_multi_value_headers_enabled = false
+      + load_balancer_arns                 = (known after apply)
+      + load_balancing_algorithm_type      = (known after apply)
+      + load_balancing_anomaly_mitigation  = (known after apply)
+      + load_balancing_cross_zone_enabled  = (known after apply)
+      + name                               = "juice-hardened"
+      + name_prefix                        = (known after apply)
+      + port                               = 3000
+      + preserve_client_ip                 = (known after apply)
+      + protocol                           = "HTTP"
+      + protocol_version                   = (known after apply)
+      + proxy_protocol_v2                  = false
+      + region                             = "us-east-1"
+      + slow_start                         = 0
+      + tags_all                           = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + target_type                        = "ip"
+      + vpc_id                             = (known after apply)
+
+      + health_check {
+          + enabled             = true
+          + healthy_threshold   = 3
+          + interval            = 30
+          + matcher             = "200"
+          + path                = "/rest/admin/application-version"
+          + port                = "traffic-port"
+          + protocol            = "HTTP"
+          + timeout             = (known after apply)
+          + unhealthy_threshold = 3
+        }
+
+      + stickiness (known after apply)
+
+      + target_failover (known after apply)
+
+      + target_group_health (known after apply)
+
+      + target_health_state (known after apply)
+    }
+
+  # aws_nat_gateway.this will be created
+  + resource "aws_nat_gateway" "this" {
+      + allocation_id                      = (known after apply)
+      + association_id                     = (known after apply)
+      + auto_provision_zones               = (known after apply)
+      + auto_scaling_ips                   = (known after apply)
+      + availability_mode                  = (known after apply)
+      + connectivity_type                  = "public"
+      + id                                 = (known after apply)
+      + network_interface_id               = (known after apply)
+      + private_ip                         = (known after apply)
+      + public_ip                          = (known after apply)
+      + region                             = "us-east-1"
+      + regional_nat_gateway_address       = (known after apply)
+      + regional_nat_gateway_auto_mode     = (known after apply)
+      + route_table_id                     = (known after apply)
+      + secondary_allocation_ids           = (known after apply)
+      + secondary_private_ip_address_count = (known after apply)
+      + secondary_private_ip_addresses     = (known after apply)
+      + subnet_id                          = (known after apply)
+      + tags_all                           = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                             = (known after apply)
+    }
+
+  # aws_route_table.private will be created
+  + resource "aws_route_table" "private" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + region           = "us-east-1"
+      + route            = [
+          + {
+              + cidr_block                 = "0.0.0.0/0"
+              + nat_gateway_id             = (known after apply)
+                # (12 unchanged attributes hidden)
+            },
+        ]
+      + tags_all         = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table.public will be created
+  + resource "aws_route_table" "public" {
+      + arn              = (known after apply)
+      + id               = (known after apply)
+      + owner_id         = (known after apply)
+      + propagating_vgws = (known after apply)
+      + region           = "us-east-1"
+      + route            = [
+          + {
+              + cidr_block                 = "0.0.0.0/0"
+              + gateway_id                 = (known after apply)
+                # (12 unchanged attributes hidden)
+            },
+        ]
+      + tags_all         = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id           = (known after apply)
+    }
+
+  # aws_route_table_association.private[0] will be created
+  + resource "aws_route_table_association" "private" {
+      + id             = (known after apply)
+      + region         = "us-east-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.private[1] will be created
+  + resource "aws_route_table_association" "private" {
+      + id             = (known after apply)
+      + region         = "us-east-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.public[0] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + region         = "us-east-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_route_table_association.public[1] will be created
+  + resource "aws_route_table_association" "public" {
+      + id             = (known after apply)
+      + region         = "us-east-1"
+      + route_table_id = (known after apply)
+      + subnet_id      = (known after apply)
+    }
+
+  # aws_s3_bucket.logs will be created
+  + resource "aws_s3_bucket" "logs" {
+      + acceleration_status         = (known after apply)
+      + acl                         = (known after apply)
+      + arn                         = (known after apply)
+      + bucket                      = "juice-hardened-alb-logs-111111111111"
+      + bucket_domain_name          = (known after apply)
+      + bucket_namespace            = (known after apply)
+      + bucket_prefix               = (known after apply)
+      + bucket_region               = (known after apply)
+      + bucket_regional_domain_name = (known after apply)
+      + force_destroy               = false
+      + hosted_zone_id              = (known after apply)
+      + id                          = (known after apply)
+      + object_lock_enabled         = (known after apply)
+      + policy                      = (known after apply)
+      + region                      = "us-east-1"
+      + request_payer               = (known after apply)
+      + tags_all                    = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + website_domain              = (known after apply)
+      + website_endpoint            = (known after apply)
+
+      + cors_rule (known after apply)
+
+      + grant (known after apply)
+
+      + lifecycle_rule (known after apply)
+
+      + logging (known after apply)
+
+      + object_lock_configuration (known after apply)
+
+      + replication_configuration (known after apply)
+
+      + server_side_encryption_configuration (known after apply)
+
+      + versioning (known after apply)
+
+      + website (known after apply)
+    }
+
+  # aws_s3_bucket_lifecycle_configuration.logs will be created
+  + resource "aws_s3_bucket_lifecycle_configuration" "logs" {
+      + bucket                                 = (known after apply)
+      + expected_bucket_owner                  = (known after apply)
+      + id                                     = (known after apply)
+      + region                                 = "us-east-1"
+      + transition_default_minimum_object_size = "all_storage_classes_128K"
+
+      + rule {
+          + id     = "retencion"
+          + status = "Enabled"
+            # (1 unchanged attribute hidden)
+
+          + abort_incomplete_multipart_upload {
+              + days_after_initiation = 7
+            }
+
+          + expiration {
+              + days                         = 365
+              + expired_object_delete_marker = false
+            }
+
+          + filter {
+                # (1 unchanged attribute hidden)
+            }
+        }
+    }
+
+  # aws_s3_bucket_policy.logs will be created
+  + resource "aws_s3_bucket_policy" "logs" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + policy = (known after apply)
+      + region = "us-east-1"
+    }
+
+  # aws_s3_bucket_public_access_block.logs will be created
+  + resource "aws_s3_bucket_public_access_block" "logs" {
+      + block_public_acls       = true
+      + block_public_policy     = true
+      + bucket                  = (known after apply)
+      + id                      = (known after apply)
+      + ignore_public_acls      = true
+      + region                  = "us-east-1"
+      + restrict_public_buckets = true
+    }
+
+  # aws_s3_bucket_server_side_encryption_configuration.logs will be created
+  + resource "aws_s3_bucket_server_side_encryption_configuration" "logs" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "us-east-1"
+
+      + rule {
+          + blocked_encryption_types = (known after apply)
+          + bucket_key_enabled       = (known after apply)
+
+          + apply_server_side_encryption_by_default {
+              + kms_master_key_id = (known after apply)
+              + sse_algorithm     = "AES256"
+            }
+        }
+    }
+
+  # aws_s3_bucket_versioning.logs will be created
+  + resource "aws_s3_bucket_versioning" "logs" {
+      + bucket = (known after apply)
+      + id     = (known after apply)
+      + region = "us-east-1"
+
+      + versioning_configuration {
+          + mfa_delete = (known after apply)
+          + status     = "Enabled"
+        }
+    }
+
+  # aws_security_group.alb will be created
+  + resource "aws_security_group" "alb" {
+      + arn                    = (known after apply)
+      + description            = "HTTPS desde rangos autorizados"
+      + egress                 = [
+          + {
+              + cidr_blocks      = []
+              + description      = "Hacia las tareas de la app"
+              + from_port        = 3000
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = (known after apply)
+              + self             = false
+              + to_port          = 3000
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = [
+          + {
+              + cidr_blocks      = [
+                  + "203.0.113.0/24",
+                ]
+              + description      = "HTTPS restringido"
+              + from_port        = 443
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 443
+            },
+        ]
+      + name                   = "juice-hardened-alb"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + region                 = "us-east-1"
+      + revoke_rules_on_delete = false
+      + tags_all               = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group.app will be created
+  + resource "aws_security_group" "app" {
+      + arn                    = (known after apply)
+      + description            = "Tareas ECS de Juice Shop endurecido"
+      + egress                 = [
+          + {
+              + cidr_blocks      = [
+                  + "0.0.0.0/0",
+                ]
+              + description      = "HTTPS saliente (ECR, CloudWatch) via NAT"
+              + from_port        = 443
+              + ipv6_cidr_blocks = []
+              + prefix_list_ids  = []
+              + protocol         = "tcp"
+              + security_groups  = []
+              + self             = false
+              + to_port          = 443
+            },
+        ]
+      + id                     = (known after apply)
+      + ingress                = (known after apply)
+      + name                   = "juice-hardened-app"
+      + name_prefix            = (known after apply)
+      + owner_id               = (known after apply)
+      + region                 = "us-east-1"
+      + revoke_rules_on_delete = false
+      + tags_all               = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                 = (known after apply)
+    }
+
+  # aws_security_group_rule.app_from_alb will be created
+  + resource "aws_security_group_rule" "app_from_alb" {
+      + description              = "Solo desde el ALB"
+      + from_port                = 3000
+      + id                       = (known after apply)
+      + protocol                 = "tcp"
+      + region                   = "us-east-1"
+      + security_group_id        = (known after apply)
+      + security_group_rule_id   = (known after apply)
+      + self                     = false
+      + source_security_group_id = (known after apply)
+      + to_port                  = 3000
+      + type                     = "ingress"
+    }
+
+  # aws_subnet.private[0] will be created
+  + resource "aws_subnet" "private" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "us-east-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.40.10.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "us-east-1"
+      + tags                                           = {
+          + "Name" = "juice-hardened-private-0"
+        }
+      + tags_all                                       = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Name"        = "juice-hardened-private-0"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.private[1] will be created
+  + resource "aws_subnet" "private" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "us-east-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.40.11.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "us-east-1"
+      + tags                                           = {
+          + "Name" = "juice-hardened-private-1"
+        }
+      + tags_all                                       = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Name"        = "juice-hardened-private-1"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.public[0] will be created
+  + resource "aws_subnet" "public" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "us-east-1a"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.40.0.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "us-east-1"
+      + tags                                           = {
+          + "Name" = "juice-hardened-public-0"
+        }
+      + tags_all                                       = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Name"        = "juice-hardened-public-0"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_subnet.public[1] will be created
+  + resource "aws_subnet" "public" {
+      + arn                                            = (known after apply)
+      + assign_ipv6_address_on_creation                = false
+      + availability_zone                              = "us-east-1b"
+      + availability_zone_id                           = (known after apply)
+      + cidr_block                                     = "10.40.1.0/24"
+      + enable_dns64                                   = false
+      + enable_resource_name_dns_a_record_on_launch    = false
+      + enable_resource_name_dns_aaaa_record_on_launch = false
+      + id                                             = (known after apply)
+      + ipv6_cidr_block                                = (known after apply)
+      + ipv6_cidr_block_association_id                 = (known after apply)
+      + ipv6_native                                    = false
+      + map_public_ip_on_launch                        = false
+      + owner_id                                       = (known after apply)
+      + private_dns_hostname_type_on_launch            = (known after apply)
+      + region                                         = "us-east-1"
+      + tags                                           = {
+          + "Name" = "juice-hardened-public-1"
+        }
+      + tags_all                                       = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Name"        = "juice-hardened-public-1"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+      + vpc_id                                         = (known after apply)
+    }
+
+  # aws_vpc.this will be created
+  + resource "aws_vpc" "this" {
+      + arn                                  = (known after apply)
+      + cidr_block                           = "10.40.0.0/16"
+      + default_network_acl_id               = (known after apply)
+      + default_route_table_id               = (known after apply)
+      + default_security_group_id            = (known after apply)
+      + dhcp_options_id                      = (known after apply)
+      + enable_dns_hostnames                 = true
+      + enable_dns_support                   = true
+      + enable_network_address_usage_metrics = (known after apply)
+      + id                                   = (known after apply)
+      + instance_tenancy                     = "default"
+      + ipv6_association_id                  = (known after apply)
+      + ipv6_cidr_block                      = (known after apply)
+      + ipv6_cidr_block_network_border_group = (known after apply)
+      + main_route_table_id                  = (known after apply)
+      + owner_id                             = (known after apply)
+      + region                               = "us-east-1"
+      + tags                                 = {
+          + "Name" = "juice-hardened-vpc"
+        }
+      + tags_all                             = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Name"        = "juice-hardened-vpc"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+    }
+
+  # aws_wafv2_web_acl.this will be created
+  + resource "aws_wafv2_web_acl" "this" {
+      + application_integration_url = (known after apply)
+      + arn                         = (known after apply)
+      + capacity                    = (known after apply)
+      + id                          = (known after apply)
+      + lock_token                  = (known after apply)
+      + name                        = "juice-hardened-waf"
+      + name_prefix                 = (known after apply)
+      + region                      = "us-east-1"
+      + scope                       = "REGIONAL"
+      + tags_all                    = {
+          + "Environment" = "hardened"
+          + "ManagedBy"   = "terraform"
+          + "Owner"       = "MASI-UMG-2026"
+          + "Project"     = "juice-shop-lab"
+        }
+
+      + default_action {
+          + allow {
+            }
+        }
+
+      + rule {
+          + name     = "RateLimitPorIP"
+          + priority = 50
+
+          + action {
+              + block {
+                }
+            }
+
+          + statement {
+              + rate_based_statement {
+                  + aggregate_key_type    = "IP"
+                  + evaluation_window_sec = 300
+                  + limit                 = 500
+                }
+            }
+
+          + visibility_config {
+              + cloudwatch_metrics_enabled = true
+              + metric_name                = "RateLimitPorIP"
+              + sampled_requests_enabled   = true
+            }
+        }
+      + rule {
+          + name     = "AWSManagedRulesAmazonIpReputationList"
+          + priority = 40
+
+          + override_action {
+              + none {}
+            }
+
+          + statement {
+              + managed_rule_group_statement {
+                  + name        = "AWSManagedRulesAmazonIpReputationList"
+                  + vendor_name = "AWS"
+                    # (1 unchanged attribute hidden)
+                }
+            }
+
+          + visibility_config {
+              + cloudwatch_metrics_enabled = true
+              + metric_name                = "AWSManagedRulesAmazonIpReputationList"
+              + sampled_requests_enabled   = true
+            }
+        }
+      + rule {
+          + name     = "AWSManagedRulesAnonymousIpList"
+          + priority = 45
+
+          + override_action {
+              + none {}
+            }
+
+          + statement {
+              + managed_rule_group_statement {
+                  + name        = "AWSManagedRulesAnonymousIpList"
+                  + vendor_name = "AWS"
+                    # (1 unchanged attribute hidden)
+                }
+            }
+
+          + visibility_config {
+              + cloudwatch_metrics_enabled = true
+              + metric_name                = "AWSManagedRulesAnonymousIpList"
+              + sampled_requests_enabled   = true
+            }
+        }
+      + rule {
+          + name     = "AWSManagedRulesCommonRuleSet"
+          + priority = 10
+
+          + override_action {
+              + none {}
+            }
+
+          + statement {
+              + managed_rule_group_statement {
+                  + name        = "AWSManagedRulesCommonRuleSet"
+                  + vendor_name = "AWS"
+                    # (1 unchanged attribute hidden)
+                }
+            }
+
+          + visibility_config {
+              + cloudwatch_metrics_enabled = true
+              + metric_name                = "AWSManagedRulesCommonRuleSet"
+              + sampled_requests_enabled   = true
+            }
+        }
+      + rule {
+          + name     = "AWSManagedRulesKnownBadInputsRuleSet"
+          + priority = 30
+
+          + override_action {
+              + none {}
+            }
+
+          + statement {
+              + managed_rule_group_statement {
+                  + name        = "AWSManagedRulesKnownBadInputsRuleSet"
+                  + vendor_name = "AWS"
+                    # (1 unchanged attribute hidden)
+                }
+            }
+
+          + visibility_config {
+              + cloudwatch_metrics_enabled = true
+              + metric_name                = "AWSManagedRulesKnownBadInputsRuleSet"
+              + sampled_requests_enabled   = true
+            }
+        }
+      + rule {
+          + name     = "AWSManagedRulesSQLiRuleSet"
+          + priority = 20
+
+          + override_action {
+              + none {}
+            }
+
+          + statement {
+              + managed_rule_group_statement {
+                  + name        = "AWSManagedRulesSQLiRuleSet"
+                  + vendor_name = "AWS"
+                    # (1 unchanged attribute hidden)
+                }
+            }
+
+          + visibility_config {
+              + cloudwatch_metrics_enabled = true
+              + metric_name                = "AWSManagedRulesSQLiRuleSet"
+              + sampled_requests_enabled   = true
+            }
+        }
+
+      + visibility_config {
+          + cloudwatch_metrics_enabled = true
+          + metric_name                = "juice-hardened-waf"
+          + sampled_requests_enabled   = true
+        }
+    }
+
+  # aws_wafv2_web_acl_association.alb will be created
+  + resource "aws_wafv2_web_acl_association" "alb" {
+      + id           = (known after apply)
+      + region       = "us-east-1"
+      + resource_arn = (known after apply)
+      + web_acl_arn  = (known after apply)
+    }
+
+  # aws_wafv2_web_acl_logging_configuration.this will be created
+  + resource "aws_wafv2_web_acl_logging_configuration" "this" {
+      + id                      = (known after apply)
+      + log_destination_configs = (known after apply)
+      + region                  = "us-east-1"
+      + resource_arn            = (known after apply)
+    }
+
+Plan: 45 to add, 0 to change, 0 to destroy.
+
+Changes to Outputs:
+  + alb_dns_name       = (known after apply)
+  + ecr_repository_url = (known after apply)
+  + waf_acl_arn        = (known after apply)
+
+─────────────────────────────────────────────────────────────────────────────
+
+Note: You didn't use the -out option to save this plan, so Terraform can't
+guarantee to take exactly these actions if you run "terraform apply" now.
