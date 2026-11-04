@@ -1,7 +1,7 @@
 # Progreso del proyecto
 
 ## Etapa actual
-Etapa 5 – Fase 5 completada (contenedores y hardening). Preparando Fase 6 (WAF, logs, riesgo residual).
+Etapa 6 – Fase 6 completada (WAF, mitigaciones, riesgo residual). Proyecto en revisión final.
 
 ## Completado
 - 2026-11-03 Etapa 0: diagnóstico (`evidence/fase-0/diagnostico.txt`): Win11, i3-10100F, 31.9 GB RAM,
@@ -18,10 +18,11 @@ Etapa 5 – Fase 5 completada (contenedores y hardening). Preparando Fase 6 (WAF
 - 2026-11-03 Fase 5 (antes): Trivy imagen original 11 CRITICAL/32 HIGH, 5 secretos; Hadolint 11 avisos.
 - 2026-11-03 Fase 4: 11/11 casos VULNERABLE (security/attacks/run.sh); ZAP baseline PASS 61/WARN 7; docs/fase-4/.
 - 2026-11-03 Fase 5: Hadolint 11→0; runtime endurecido (read-only, cap_drop ALL, no-new-privileges, límites) verificado con docker inspect; Trivy CVE sin cambio (se difieren a Fase 6); Checkov 47/0. docs/fase-5/.
+- 2026-11-03 Fase 6: entorno endurecido (app read-only + WAF CRS); ataques 11/11 MITIGADO (residual); logs de bloqueo del WAF; 7 parches de código; matriz inherente vs residual e ISO 27005. docs/fase-6/.
 
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 
 ## Siguiente tarea
-2. Fase 6: correcciones de código (app-hardened), WAF ModSecurity+CRS, logs/SIEM.
-3. Fase 6: reejecutar run.sh/ZAP contra el endurecido y matriz inherente vs. residual.
+1. Equipo: DFD en Threat Dragon, IDs ASVS 5.0.0, capturas Burp, ensamblar documentos Word con plantilla T3.
+2. [P] Recompilar app-hardened, actualizar dependencias con CVE, desplegar SIEM, arquitectura cloud (aprobación de costos).

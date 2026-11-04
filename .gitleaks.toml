@@ -1,0 +1,23 @@
+# Configuración de Gitleaks del laboratorio. Extiende las reglas por defecto.
+# Allowlist documentada: la evidencia de la Fase 4 captura datos de PRUEBA sembrados por OWASP Juice Shop
+# (cuenta por defecto admin@juice-sh.op, su hash MD5 público y un JWT emitido por la propia app en el ataque).
+# No son credenciales reales del equipo ni de ningún servicio externo; son el resultado probatorio del ataque.
+# Las versiones vigentes de esos archivos ya están enmascaradas; esta allowlist cubre además el historial.
+title = "juice-shop-lab gitleaks"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Evidencia de ataque de la Fase 4 con datos de prueba sembrados por Juice Shop"
+paths = [
+  '''evidence/fase-4/antes/a1-sqli-login\.json''',
+  '''evidence/fase-4/antes/a1-req-resp\.txt''',
+]
+
+[[allowlists]]
+description = "Clave privada de prueba embebida en el propio código de Juice Shop (hallazgo documentado, no secreto del equipo)"
+regexTarget = "match"
+regexes = [
+  '''0192023a7bbd73250516f069df18b500''',
+]

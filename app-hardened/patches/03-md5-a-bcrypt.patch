@@ -1,0 +1,12 @@
+--- a/lib/insecurity.ts	2026-11-03 23:54:13.417359500 -0600
++++ b/lib/insecurity.ts	2026-11-03 23:54:13.516327400 -0600
+@@ -38,7 +38,8 @@
+   updateFrom: (req: Request, user: ResponseWithUser) => any
+ }
+ 
+-export const hash = (data: string) => crypto.createHash('md5').update(data).digest('hex')
++export const hash = (data: string) => bcrypt.hashSync(data, 12) // ASVS V11.4.2: KDF resistente (bcrypt, factor de trabajo 12)
++export const compareHash = (data: string, stored: string) => bcrypt.compareSync(data, stored)
+ export const hmac = (data: string) => crypto.createHmac('sha256', 'pa4qacea4VK9t9nGv7yZtwmj').update(data).digest('hex')
+ 
+ export const cutOffPoisonNullByte = (str: string) => {

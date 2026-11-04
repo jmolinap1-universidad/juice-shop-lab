@@ -1,0 +1,11 @@
+--- a/server.ts	2026-11-03 23:54:51.836140100 -0600
++++ b/server.ts	2026-11-03 23:54:51.927598100 -0600
+@@ -181,7 +181,7 @@
+ 
+   /* Bludgeon solution for possible CORS problems: Allow everything! */
+   app.options('*', cors())
+-  app.use(cors())
++  app.use(cors({ origin: config.get('server.baseUrl') || false, credentials: true })) // ASVS V3.4.2: origen explicito, no comodin
+ 
+   /* Security middleware */
+   app.use(helmet.noSniff())

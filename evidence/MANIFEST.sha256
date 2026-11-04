@@ -1,4 +1,4 @@
-19e41f533f2015c380e3f50bbff35551f838631fc8d41ffe1dc560aa3b3a33c8 *./bitacora.md
+52f79ca91986dbebf1ca05121f49ae82c7d0daa759a5e989256b57370cf7a075 *./bitacora.md
 35eaf43e97dfcb28185d5b47f4572e454b6d217c6dce3736e8244e89dd416ccf *./fase-0/diagnostico.txt
 420c0172448a7195ebd21fcf1a20bf006d19d17fdc86496df5facada2f6c55f7 *./fase-1/lab-puertos.txt
 5abe7d18800d45ba08251f5d3726d8acbd63046cc52dc52574d046d19bcc1eae *./fase-2/checkov-final/results_cli.txt
@@ -23,8 +23,8 @@ c00eb939a2d31492db8a05de57a6dcdd5c698c8ae59a5ff476221f3c635a5863 *./fase-3/sast/
 996a5ed3e2216a9455fe64761a8caf753f05031019c9f71812de5ac21dadbadb *./fase-3/sca/sbom-juice-shop-v20.3.0.cdx.json
 37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570 *./fase-3/secrets/gitleaks.json
 09b3b6aa5e84beb6f439569f58eff041be0da4e732f9a06ce022dce3314f577e *./fase-3/secrets/gitleaks.log.txt
-bef292f96c25a41fe5e5eef95634fd7611486e00f37f91cc38b6765f0daefd6a *./fase-4/antes/a1-req-resp.txt
-d78227ba3f5b4e9e56ff4a9c5d4960e8d038e52b02d83d6737c1d60b18b8b90e *./fase-4/antes/a1-sqli-login.json
+b81dcaeda7eef8db32f9fbec530f4fcccdbf8f78e84c9eacee328cc9a048eb89 *./fase-4/antes/a1-req-resp.txt
+be82163c13e8007fb497c12a4ae1c0555127b6caca8b4316eebb8e27ba67bf89 *./fase-4/antes/a1-sqli-login.json
 e414041ef042e8cd1369303fd7f521f2a97bd1134adbe080036682d52376ea65 *./fase-4/antes/a10-bruteforce-login.txt
 89fdb7cbbc50749d7a72fbf3452e5ba537d01e176b8e686b3f8536627c11f338 *./fase-4/antes/a11-jwt-key.txt
 5aa20fbf043b3d7232e504c003581d857de23fc3721f87e64269a61062371919 *./fase-4/antes/a2-sqli-union-search.json
@@ -36,6 +36,18 @@ ace365549d9a8c51c42ea421f68a602e6189a7ced70ebe06c551a67523b42dd1 *./fase-4/antes
 d3a86fca66c1329f7f41b412d95367cfaf5a7ea8da4326c73b2de27acd33ce56 *./fase-4/antes/a8-cors-headers.txt
 74392a4ac185ee1946808311da4192312b749bcc31c2de4fbe7b560c5f0c49a7 *./fase-4/antes/a9-security-headers.txt
 f7b7c2590e562f237eb8bbace406d6a1700b99e4e39530d21485ddbd0b50803f *./fase-4/antes/resumen-ataques.md
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a1-sqli-login.json
+e38857a6b47114d67e030dfe40fc0df6a5f58d49001d2229d9091bc8615776fe *./fase-4/despues/a10-bruteforce-login.txt
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a11-jwt-key.txt
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a2-sqli-union-search.json
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a3-sqli-schema.json
+c5bcadc3d788fd4646ba87bb4f6c2057ead6266828cae7a05e8611f4d84a2401 *./fase-4/despues/a4-directory-listing.txt
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a5-acquisitions.md
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a6-metrics.txt
+3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a7-mass-assignment.json
+a247dea5510b55d6fd5c8c935f626b3ce7fc37fb2b041373c103640c543887d7 *./fase-4/despues/a8-cors-headers.txt
+abf51d54d94c46ad3ec71898827e4cef7efc4fd75c029863d279f1744d3374d4 *./fase-4/despues/a9-security-headers.txt
+d524840ece6850dbfc6bb757f1e0d15e8ad32631867c5317f4736e8ebcd8ddb5 *./fase-4/despues/resumen-ataques.md
 8dbb4882a07b8f2af1ac266ad4b6ffdde5d09eb334cb366999a94b265050713f *./fase-4/zap/resumen-zap.md
 e087bfc3e55e53c12e7995e44e2e80f987b8fa1b721398f0cf5a8eb005959370 *./fase-4/zap/zap-baseline.html
 5c23912476b2f22496ed6670be8e8fcbeba61eef1bd25ae77ccc0a595c21b449 *./fase-4/zap/zap-baseline.json
@@ -51,3 +63,5 @@ d36ae2c21fb524d4464e1dc07e78d123d4e09f97b3f21d03130f5d1f6c3ff238 *./fase-5/despu
 3496e9c380067559ddca1e4a31d88564dd31c3bab4a3825548a7bd05204e837f *./fase-5/despues/trivy-juice-hardened.json
 bf4dff6832729badc02f61994585bb3539e0e0042e3fc6178b5675d5c0af8eef *./fase-5/iac/results_cli.txt
 5015fb691d35fe634839fa0d14739a761ffef4a52b9384a355dffd31d0adbc8c *./fase-5/iac/results_json.json
+d62780de813bb1a324362c678cbd0916bf6c0e748a74ad5798de84aaacef2c81 *./fase-6/waf-logs/modsec-audit.log
+878693409d38b91f357ea99a26348ec29f0a7361cd04e92738e14b4d7e78345c *./fase-6/waf-logs/resumen-bloqueos.md

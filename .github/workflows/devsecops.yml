@@ -37,6 +37,7 @@ jobs:
         run: |
           mkdir -p out
           docker run --rm -v "$PWD:/repo" -w /repo $GITLEAKS_IMAGE git /repo \
+            --config /repo/.gitleaks.toml \
             --report-format sarif --report-path out/gitleaks.sarif --redact --exit-code 1
       - uses: actions/upload-artifact@v4
         if: always()

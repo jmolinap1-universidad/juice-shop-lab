@@ -1,0 +1,11 @@
+--- a/server.ts	2026-11-03 23:54:51.542418200 -0600
++++ b/server.ts	2026-11-03 23:54:51.634397500 -0600
+@@ -434,6 +434,8 @@
+   app.post('/api/Feedbacks', verify.captchaBypassChallenge())
+   /* User registration challenge verifications before finale takes over */
+   app.post('/api/Users', (req: Request, res: Response, next: NextFunction) => {
++    // ASVS V8.2.2: impedir asignacion masiva de campos privilegiados en el registro
++    for (const campo of ['role', 'isActive', 'deluxeToken', 'id']) { delete req.body[campo] }
+     if (req.body.email !== undefined && req.body.password !== undefined && req.body.passwordRepeat !== undefined) {
+       if (req.body.email.length !== 0 && req.body.password.length !== 0) {
+         req.body.email = req.body.email.trim()

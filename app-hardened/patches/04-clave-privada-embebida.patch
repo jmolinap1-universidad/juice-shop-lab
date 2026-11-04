@@ -1,0 +1,11 @@
+--- a/lib/insecurity.ts	2026-11-03 23:54:13.702880300 -0600
++++ b/lib/insecurity.ts	2026-11-03 23:54:13.779679900 -0600
+@@ -18,7 +18,7 @@
+ import * as z85 from 'z85'
+ 
+ export const publicKey = fs ? fs.readFileSync('encryptionkeys/jwt.pub', 'utf8') : 'placeholder-public-key'
+-const privateKey = '[REDACTADO: clave de prueba de Juice Shop]'
++const privateKey = process.env.JWT_PRIVATE_KEY ?? fs.readFileSync('encryptionkeys/jwt.key', 'utf8') // ASVS V13.3.1: clave privada fuera del codigo fuente
+ 
+ interface ResponseWithUser {
+   status?: string

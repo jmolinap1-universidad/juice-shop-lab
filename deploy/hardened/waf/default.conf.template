@@ -1,0 +1,56 @@
+# Plantilla nginx del WAF endurecido (Fase 6). Reemplaza la plantilla por defecto del contenedor
+# owasp/modsecurity-crs. ModSecurity + OWASP CRS se activan en conf.d/modsecurity.conf (contexto http).
+# Este server añade: cabeceras de seguridad, bloqueo de rutas sensibles, ocultación de CORS del backend
+# y limitación de tasa en el login. Solo HTTP en el puerto del laboratorio.
+
+server_tokens ${SERVER_TOKENS};
+more_set_headers 'Server: waf';
+
+# Limitación de tasa para fuerza bruta de credenciales (T16 / A10). 5 req/min por IP.
+limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
+limit_req_status 429;
+
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+server {
+    listen ${PORT} default_server;
+    server_name ${SERVER_NAME};
+    client_max_body_size 1m;
+
+    # --- Cabeceras de seguridad (A9): se fijan para todas las respuestas ---
+    more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+    more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+    more_set_headers "X-Content-Type-Options: nosniff";
+    more_set_headers "X-Frame-Options: DENY";
+    more_set_headers "Referrer-Policy: no-referrer";
+    more_set_headers "Cross-Origin-Opener-Policy: same-origin";
+    more_set_headers "Cross-Origin-Embedder-Policy: require-corp";
+    more_set_headers "Permissions-Policy: geolocation=(), microphone=(), camera=()";
+
+    # --- Ocultar el CORS permisivo que emite la aplicación (A8 / CWE-942) ---
+    proxy_hide_header Access-Control-Allow-Origin;
+    proxy_hide_header Access-Control-Allow-Credentials;
+    proxy_hide_header Feature-Policy;
+
+    # --- Bloqueo de rutas sensibles expuestas por la app (A4, A5, A6, A11) ---
+    location ~* ^/(ftp|encryptionkeys|support/logs|\.well-known/csaf) { deny all; return 403; }
+    location = /metrics { deny all; return 403; }
+
+    # --- Login con limitación de tasa (A10); CRS inspecciona el cuerpo para SQLi (A1) ---
+    location = /rest/user/login {
+        limit_req zone=login burst=3 nodelay;
+        include includes/proxy_backend.conf;
+    }
+
+    # --- Resto del tráfico: CRS activo, proxy al backend interno ---
+    location / {
+        include includes/proxy_backend.conf;
+        index index.html;
+        root /usr/share/nginx/html;
+    }
+
+    include includes/location_common.conf;
+}
