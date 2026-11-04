@@ -1,0 +1,16 @@
+# Endurecimiento de runtime verificado (docker inspect del contenedor endurecido)
+
+Fecha: 2026-11-03T23:40:23-06:00
+
+ReadonlyRootfs = true
+CapDrop        = [ALL]
+CapAdd         = []
+SecurityOpt    = [no-new-privileges:true]
+PidsLimit      = 200
+Memory (bytes) = 1073741824
+User           = 65532:0
+NODE_ENV       = NODE_ENV=production
+
+Healthcheck app: HTTP 200
+Prueba de escritura en / de solo lectura: BLOQUEADA (EROFS) — correcto
+Healthcheck en la imagen: [CMD /nodejs/bin/node -e fetch('http://127.0.0.1:3000/rest/admin/application-version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))]

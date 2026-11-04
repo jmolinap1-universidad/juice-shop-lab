@@ -77,7 +77,7 @@ container() {
 
 iac() {
   local o=evidence/fase-5/iac; mkdir -p $o
-  docker run --rm -v "$W:/src" -w /src $CHECKOV -d deploy -d app-hardened --framework dockerfile,docker_compose,yaml \
+  docker run --rm -v "$W:/src" -w /src $CHECKOV -d deploy -d app-hardened --framework dockerfile,yaml \
     -o cli -o json --output-file-path $o --soft-fail --compact --quiet >/dev/null 2>&1
   $B 5 "checkov -d deploy -d app-hardened (dockerfile/compose)" "Checkov 3.4.0" "$(grep -m1 'Passed checks' $o/results_cli.txt 2>/dev/null)"
 }

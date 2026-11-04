@@ -1,4 +1,4 @@
-e763fd8b42f7d8a68ede73bb91b838150d50f6681c567a3fbe5fbdb21e3cc9dc *./bitacora.md
+19e41f533f2015c380e3f50bbff35551f838631fc8d41ffe1dc560aa3b3a33c8 *./bitacora.md
 35eaf43e97dfcb28185d5b47f4572e454b6d217c6dce3736e8244e89dd416ccf *./fase-0/diagnostico.txt
 420c0172448a7195ebd21fcf1a20bf006d19d17fdc86496df5facada2f6c55f7 *./fase-1/lab-puertos.txt
 5abe7d18800d45ba08251f5d3726d8acbd63046cc52dc52574d046d19bcc1eae *./fase-2/checkov-final/results_cli.txt
@@ -44,3 +44,9 @@ e087bfc3e55e53c12e7995e44e2e80f987b8fa1b721398f0cf5a8eb005959370 *./fase-4/zap/z
 1a214b79912388d207e7c1414802c6bba726e332484be42c9cf850455135e1a6 *./fase-5/antes/resumen-hadolint.md
 248b879623bae909377c9c94b81fff0cc93dfefa69d55918a6799dda4eba4d9f *./fase-5/antes/resumen-trivy.md
 e592988c8d6e09c892923bdfed28496fcf629448ffbb5059e22a9236cd520092 *./fase-5/antes/trivy-juice-shop-v20.3.0.json
+4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 *./fase-5/despues/hadolint-Dockerfile.json
+9ee2e5849e2153df982e56100b6a10e1291b2531b07b4ae605c317753addb7cf *./fase-5/despues/resumen-trivy.md
+6f28672b9b39a1bbd65c82dd91e45e9011a20813d19df9112b3697de6e1aa387 *./fase-5/despues/runtime-hardening-inspect.txt
+3496e9c380067559ddca1e4a31d88564dd31c3bab4a3825548a7bd05204e837f *./fase-5/despues/trivy-juice-hardened.json
+bf4dff6832729badc02f61994585bb3539e0e0042e3fc6178b5675d5c0af8eef *./fase-5/iac/results_cli.txt
+5015fb691d35fe634839fa0d14739a761ffef4a52b9384a355dffd31d0adbc8c *./fase-5/iac/results_json.json
