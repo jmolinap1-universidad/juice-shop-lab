@@ -16,12 +16,12 @@ con evidencia verificable, midiendo el **riesgo inherente** (aplicación vulnera
 | 1 | Modelado de amenazas | 16 activos (CIA), DFD, 20 amenazas STRIDE con referencias a código, DREAD, 7 capas, trazabilidad ASVS. `docs/fase-1/` |
 | 2 | Arquitectura cloud segura | Terraform AWS (VPC, ALB TLS 1.3, WAFv2, ECS privado, KMS, IAM mínimo): `validate` OK, `plan` 45 recursos, Checkov **144/0** (5 omisiones justificadas). `infra/terraform/` |
 | 3 | DevSecOps (SAST/SCA) | Semgrep 90 hallazgos; npm audit 40 (7 críticas); OSV 62; SBOM 2 745 comp.; Grype 12 críticas; Gitleaks limpio. Pipeline GitHub Actions **7/7**. `evidence/fase-3/` |
-| 4 | Pruebas de seguridad | **11/11** vectores explotables (SQLi, IDOR de lógica, listados, CORS, etc.); ZAP baseline. `docs/fase-4/` |
+| 4 | Pruebas de seguridad | 11 observaciones: **4 explotación demostrada** (SQLi ×3 + asignación masiva) + 7 debilidades (listados, exposición, CORS, cabeceras, rate limit); BOLA/IDOR confirmado; SQLi corroborada por prueba activa de caja negra (sqlmap); ZAP baseline pasivo. `docs/fase-4/` |
 | 5 | Contenedores y hardening | Hadolint **11→0**; runtime read-only + cap_drop ALL + no-new-privileges + límites (verificado con `docker inspect`); Checkov **47/0**. `docs/fase-5/` |
 | 6 | Mitigación y riesgo residual | WAF ModSecurity/CRS + hardening + parches; ataques **11/11 MITIGADO**; logs de bloqueo; matriz e ISO 27005. `docs/fase-6/` |
 
 ## Reducción de riesgo (inherente → residual)
-- Casos de ataque explotables: **11/11 → 0/11**.
+- Observaciones de ataque activas: **11 → 0** (4 explotación demostrada + 7 debilidades, todas bloqueadas por el WAF/endurecimiento).
 - Compromiso total como administrador (SQLi y asignación masiva): **posible → bloqueado** por el WAF (reglas
   CRS 942100/949110 y parches virtuales 100001/100002), con evidencia en `evidence/fase-6/waf-logs/`.
 - Riesgo por capas: capas de datos, código y perímetro de aplicación bajan de **Crítico** a **Medio/Bajo**.

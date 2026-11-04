@@ -25,6 +25,14 @@ secretos de reto, porque residen en el código fuente de Juice Shop. Su tratamie
 dependencias y eliminación de claves embebidas en `app-hardened`). Lo que la Fase 5 **sí** mejora de forma
 medible es la higiene del Dockerfile y el endurecimiento del runtime (secciones 2 y 3).
 
+### 1.1 Relación con el SCA de dependencias (Fase 3)
+El análisis de composición de software (**Grype**, **OSV**, **npm audit**) y el **SBOM** (CycloneDX/Syft) que
+enumeran las CVE de las dependencias Node se ejecutaron en la **Fase 3**; su evidencia vive en
+`evidence/fase-3/sca/` (`grype.json` + `resumen-grype.md`, `osv.json`, `npm-audit.json`,
+`sbom-juice-shop-v20.3.0.cdx.json`). La Fase 5 escanea la **imagen** con Trivy. Ambos coinciden: las CVE residen
+en el código/dependencias de Juice Shop, no en el empaquetado de la imagen, y su eliminación corresponde a la
+Fase 6 (actualización de dependencias). Se evita así duplicar o re-contar hallazgos entre fases.
+
 ## 2. Hardening del Dockerfile (Hadolint) — antes vs. después
 `evidence/fase-5/antes/resumen-hadolint.md` → `evidence/fase-5/despues/resumen-hadolint.md`.
 

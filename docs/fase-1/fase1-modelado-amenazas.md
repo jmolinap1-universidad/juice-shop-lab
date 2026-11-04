@@ -12,7 +12,7 @@ Cada referencia `archivo:línea` apunta a `app/` y puede verificarse en el subm�
 | Elemento | Valor (evidencia) |
 |---|---|
 | Aplicación | OWASP Juice Shop 20.3.0, imagen `bkimminich/juice-shop:v20.3.0@sha256:cea5a4af…` |
-| Backend | Node.js 24 (distroless), Express 4, `server.ts` (822 líneas, 102 rutas `app.get/post/put/patch/delete`) |
+| Backend | Node.js 24 (distroless), Express 4, `server.ts` (822 líneas, 109 rutas `app.get/post/put/patch/delete`) |
 | Frontend | Angular (SPA), servido por Express |
 | Datos relacionales | SQLite vía Sequelize: `data/juiceshop.sqlite` (`models/index.ts:34-41`) |
 | Datos documentales | MarsDB en memoria: colecciones `posts` (reseñas) y `orders` (`data/mongodb.ts:9-10`) |

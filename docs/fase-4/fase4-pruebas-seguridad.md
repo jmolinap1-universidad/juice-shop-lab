@@ -16,15 +16,26 @@ usado en caja gris/blanca con la prueba de caja negra.
 | Enfoque | Herramienta (versión) | Conocimiento previo | Evidencia |
 |---|---|---|---|
 | Caja negra (DAST automatizado, **pasivo**) | OWASP ZAP 2.17.0, `zap-baseline.py` | Ninguno del código; solo la URL | `evidence/fase-4/zap/` (JSON, HTML) y GitHub Actions job `dast` |
-| Caja negra (reconocimiento) | Nmap 7.95 | Ninguno | `evidence/fase-4/nmap-127-3000.txt` |
+| Caja negra (DAST automatizado, **activo**) | sqlmap 1.10.4 (Docker, red del laboratorio) | Ninguno del código; endpoint hallado desde el buscador de la UI | `evidence/fase-4/blackbox-2026-11-04/` |
+| Caja negra (reconocimiento) | Nmap 7.98 | Ninguno | `evidence/fase-4/nmap-127-3000.txt` |
 | Caja gris (con conocimiento del código) | `security/attacks/run.sh` (curl + payloads dirigidos) | Rutas y modelos leídos de `app/` | `evidence/fase-4/antes/` (request/response por caso) |
 | Caja blanca (revisión de código) | Semgrep 1.181.1 + revisión manual | Código fuente completo | `evidence/fase-3/sast/`, `docs/fase-1/` |
 | Manual (complemento) | Burp Suite Community | — | **[P]** a cargo del equipo; capturas en `evidence/fase-4/burp/` |
 
 **Importante sobre el alcance de ZAP:** el `zap-baseline.py` es un escaneo **pasivo**. Observa respuestas y
 cabeceras pero **no** ejecuta inyección activa; por tanto confirma de forma independiente cabeceras (A9) y CORS
-(A8), pero **no** demuestra por sí mismo SQLi, IDOR ni asignación masiva. Esos vectores se prueban activamente en
-caja gris (`run.sh`). No se atribuye a ZAP una cobertura que no realiza.
+(A8), pero **no** demuestra por sí mismo SQLi, IDOR ni asignación masiva. La prueba **activa** de caja negra que
+sí confirma SQLi sin conocimiento del código la aporta **sqlmap** (§3.4); los demás vectores se dirigen en caja
+gris (`run.sh`). No se atribuye a ZAP ni al baseline pasivo una cobertura que no realizan.
+
+**Diferenciación explícita de enfoques (plan P3):**
+- **Caja negra** — sin acceso al código ni credenciales previas: reconocimiento (Nmap 7.98), DAST **pasivo**
+  (ZAP baseline) y DAST **activo** (sqlmap sobre el parámetro `q` hallado en la UI, §3.4). Evidencia
+  independiente del código fuente.
+- **Caja gris** — con conocimiento de rutas y modelos leídos de `app/` para dirigir payloads concretos
+  (`run.sh`, casos A1-A12). Acelera la prueba, pero su resultado **no** se presenta como hallazgo de caja negra.
+- **Caja blanca** — revisión del código fuente (Semgrep + manual); p. ej. la clave privada embebida (§3.1), que
+  no es observable desde fuera.
 
 ## 2. Superficie de ataque (enumerada desde `app/server.ts`)
 Conteo **reproducible** (una sola línea, resultado determinista):
@@ -63,19 +74,26 @@ afirmar más de lo demostrado:
 - **Configuración insegura (C):** una cabecera/ajuste es permisivo (debilidad, sin explotación demostrada aquí).
 - **Ausencia de control (N):** falta un control esperado (sin probar que el ataque haya tenido éxito).
 
+> **Edición OWASP usada:** la columna "OWASP 2025" sigue el **OWASP Top 10:2025** (edición vigente,
+> `https://owasp.org/Top10/2025/`). Reordenamientos frente a 2021 que afectan a esta tabla: Inyección
+> **A03→A05**, Configuración incorrecta de seguridad **A05→A02**, Fallas criptográficas **A02→A04**,
+> Componentes vulnerables **A06 → A03 (Fallas en la cadena de suministro de software)**, Diseño inseguro
+> **A04→A06**. **SSRF deja de ser categoría propia** (se integra en A01 Control de acceso roto) y **A10** pasa a
+> **Gestión incorrecta de condiciones excepcionales** (nueva). No se mezcla numeración de 2021 con 2025.
+
 | ID | Caso | Clase | CWE | OWASP 2025 | Qué demuestra la evidencia (y qué NO) | Evidencia |
 |---|---|---|---|---|---|---|
 | A1 | Bypass de login por SQLi → sesión de admin | **E** | CWE-89 | A05 | Se obtiene JWT con `id:1, role:admin` sin credenciales válidas. Explotación completa. | `a1-req-resp.txt`, `a1-sqli-login.json` |
 | A2 | SQLi UNION: volcado de `Users` | **E** | CWE-89 | A05 | Se extraen email + hash MD5 de usuarios (admin `0192023a7bbd7325…`). | `a2-sqli-union-search.json` |
 | A3 | SQLi: enumeración de esquema (`sqlite_master`) | **E** | CWE-89 | A05 | Se obtiene el DDL de las tablas. | `a3-sqli-schema.json` |
-| A4 | Listado de directorios `/ftp`, `/encryptionkeys`, `/support/logs` | **X** | CWE-548 | A05 | El servidor devuelve índices navegables. Exposición de estructura. | `a4-directory-listing.txt` |
+| A4 | Listado de directorios `/ftp`, `/encryptionkeys`, `/support/logs` | **X** | CWE-548 | A02 | El servidor devuelve índices navegables. Exposición de estructura. | `a4-directory-listing.txt` |
 | A5 | Descarga de documento interno `/ftp/acquisitions.md` | **X** | **CWE-538** (exposición de archivo), **no** CWE-22 | A01 | HTTP 200 a un archivo listado. **No** es *path traversal*: es acceso directo a un recurso expuesto por el listado (A4). No se usó `../`. | `a5-acquisitions.md` |
-| A6 | `/metrics` Prometheus sin autenticación | **X** | CWE-200 | A05 | Endpoint de diagnóstico accesible sin auth. | `a6-metrics.txt` |
+| A6 | `/metrics` Prometheus sin autenticación | **X** | CWE-200 | A02 | Endpoint de diagnóstico accesible sin auth. | `a6-metrics.txt` |
 | A7 | Asignación masiva: registro con `role:admin` | **E** | CWE-915 | A01 | Se crea un usuario con rol admin (escalada por parámetro no filtrado). Explotación. | `a7-mass-assignment.json` |
-| A8 | CORS permisivo (`Access-Control-Allow-Origin: *`) | **C** | CWE-942 | A05 | La respuesta de un endpoint **público** trae `ACAO: *`. **No** demuestra lectura de datos autenticados de otro origen: con `ACAO: *` el navegador **no** envía credenciales, y el recurso probado no es sensible. Debilidad de configuración. | `a8-cors-headers.txt` |
-| A9 | Cabeceras de seguridad ausentes (CSP, HSTS) | **C** | CWE-693 | A05 | Faltan `content-security-policy` y `strict-transport-security`. Confirmado también por ZAP. | `a9-security-headers.txt` |
+| A8 | CORS permisivo (`Access-Control-Allow-Origin: *`) | **C** | CWE-942 | A02 | La respuesta de un endpoint **público** trae `ACAO: *`. **No** demuestra lectura de datos autenticados de otro origen: con `ACAO: *` el navegador **no** envía credenciales, y el recurso probado no es sensible. Debilidad de configuración. | `a8-cors-headers.txt` |
+| A9 | Cabeceras de seguridad ausentes (CSP, HSTS) | **C** | CWE-693 | A02 | Faltan `content-security-policy` y `strict-transport-security`. Confirmado también por ZAP. | `a9-security-headers.txt` |
 | A10 | Login sin limitación de intentos | **N** | CWE-307 | A07 | 12 intentos → 12×HTTP 401 sin 429 ni bloqueo. Demuestra **ausencia de rate limiting**. **No** demuestra que se haya adivinado contraseña alguna. | `a10-bruteforce-login.txt` |
-| A11 | Clave pública JWT servida en `/encryptionkeys/jwt.pub` | **X** (bajo) | **CWE-200** | A05 | HTTP 200 devuelve una clave **pública** RSA (servirla es, por diseño, aceptable). **No** es CWE-798 por sí sola. El riesgo real es la **clave privada embebida en código** (§3.1), hallazgo de caja blanca. | `a11-jwt-key.txt` |
+| A11 | Clave pública JWT servida en `/encryptionkeys/jwt.pub` | **X** (bajo) | **CWE-200** | A02 | HTTP 200 devuelve una clave **pública** RSA (servirla es, por diseño, aceptable). **No** es CWE-798 por sí sola. El riesgo real es la **clave privada embebida en código** (§3.1), hallazgo de caja blanca. | `a11-jwt-key.txt` |
 
 Totales por clase: **Explotación demostrada: 4 (A1, A2, A3, A7)** · **Exposición observada: 4 (A4, A5, A6, A11)** ·
 **Configuración insegura: 2 (A8, A9)** · **Ausencia de control: 1 (A10)**. Total: 11 observaciones registradas.
@@ -116,6 +134,28 @@ Ejecución 2026-11-04 contra `127.0.0.1:3000` (caso A12 de `run.sh`). Evidencia:
 BOLA genuino entre dos cuentas, **distinto** de la asignación masiva (A7). *Limitación:* probado sobre la lectura
 de cesta por `id`; no se generaliza a todos los objetos de la API.
 
+### 3.4 Prueba activa de caja negra — sqlmap (sin conocimiento del código)
+Para disponer de una prueba de seguridad **activa** de caja negra (y no solo del baseline pasivo de ZAP), se
+ejecutó **sqlmap 1.10.4** (Docker, imagen fijada por digest
+`parrotsec/sqlmap@sha256:aa7836c1…`) contra el parámetro `q` del buscador público, descubierto **desde la
+interfaz**, sin leer el código. El objetivo se accedió por el nombre del contenedor dentro de la red Docker del
+laboratorio; sin exposición externa. Evidencia: `evidence/fase-4/blackbox-2026-11-04/`
+(`resultado-blackbox.md`, `sqlmap-search-q.txt`).
+
+| Campo | Valor |
+|---|---|
+| Parámetro vulnerable | `q` (GET) en `/rest/products/search` |
+| DBMS (fingerprint automático) | SQLite |
+| Técnicas confirmadas | boolean-based blind · time-based blind (heavy query) |
+| Solicitudes HTTP del sondeo | 169 |
+| CWE / OWASP | CWE-89 / **A05:2025 Injection** |
+| Veredicto | **VULNERABLE** |
+
+**Valor metodológico:** confirma la inyección SQL **de forma independiente del código** —sqlmap la detecta y
+fingerprintea el motor por sí solo—, corroborando los casos de caja gris A1-A3. Es una prueba **activa**, algo que
+el baseline pasivo de ZAP no realiza. *Alcance:* se detuvo al confirmar los puntos de inyección; no se realizó
+volcado masivo de datos.
+
 ## 4. Resultados DAST (caja negra, OWASP ZAP baseline **pasivo**)
 Fuente: `evidence/fase-4/zap/resumen-zap.md`. Totales del baseline: **FAIL 0 · WARN-NEW 7 · PASS 61**
 (un baseline pasivo no marca FAIL; lista alertas de riesgo observadas pasivamente).
@@ -152,18 +192,18 @@ atacante; la columna "demostrado por" indica qué se probó realmente y con qué
 Para no atribuir cobertura completa, cada categoría se marca **Probado (explotación) / Revisado (sin
 explotación) / No probado / No aplica**.
 
-| OWASP 2025 | Estado | Base |
+| OWASP Top 10:2025 | Estado | Base |
 |---|---|---|
-| A01 Broken Access Control | Probado | A5, A7, A12 (IDOR) |
-| A02 Cryptographic Failures | Revisado | MD5 (T05), clave privada embebida (§3.1); sin explotación activa de descifrado |
-| A03 Injection | Probado | A1, A2, A3 (SQLi) |
-| A04 Insecure Design | Revisado | Modelado de amenazas Fase 1 |
-| A05 Security Misconfiguration | Probado/Revisado | A4, A6, A8, A9, A11 |
-| A06 Vulnerable Components | Revisado | SCA Fase 3 (Trivy/Grype/OSV) |
-| A07 Auth Failures | Revisado | A10 (ausencia de rate limit); sin credential stuffing real |
-| A08 Integrity Failures | No probado | — |
-| A09 Logging/Monitoring Failures | No probado | Se aborda en Fase 6 (logs del WAF) |
-| A10 SSRF | No probado | `/profile/image/url` identificado como superficie; no ejecutado |
+| A01 Broken Access Control | Probado | A5 (archivo confidencial), A7 (asignación masiva), A12 (BOLA/IDOR). Incluye SSRF (fusionado en A01): `/profile/image/url` identificado como superficie, **no probado** |
+| A02 Security Misconfiguration | Probado/Revisado | A4 (listados), A6 (`/metrics`), A8 (CORS), A9 (cabeceras), A11 (endpoint de clave pública) |
+| A03 Software Supply Chain Failures | Revisado | SCA Fase 3 (Trivy/Grype/OSV/npm-audit/SBOM); 11 CVE críticas en dependencias Node |
+| A04 Cryptographic Failures | Revisado | MD5 de contraseñas (T05), clave privada RS256 embebida (§3.1); sin explotación activa de descifrado |
+| A05 Injection | Probado | A1, A2, A3 (SQLi caja gris) + prueba activa de caja negra con sqlmap (§3.4) |
+| A06 Insecure Design | Revisado | Modelado de amenazas Fase 1 (STRIDE/DREAD) |
+| A07 Authentication Failures | Revisado | A10 (ausencia de rate limiting); sin credential stuffing real |
+| A08 Software or Data Integrity Failures | No probado | — |
+| A09 Security Logging and Alerting Failures | No probado | Se aborda en Fase 6 (logs del WAF) |
+| A10 Mishandling of Exceptional Conditions | No probado | Categoría nueva en 2025; no evaluada en este laboratorio |
 
 ## 7. Conclusión de la fase
 El laboratorio confirma **riesgo inherente alto**: **4 vulnerabilidades explotadas** (compromiso total de admin

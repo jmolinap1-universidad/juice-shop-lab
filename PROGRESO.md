@@ -16,7 +16,8 @@ Etapa 6 – Fase 6 completada (WAF, mitigaciones, riesgo residual). Proyecto en 
   OSV 62 vulns; SBOM Syft 2745 componentes; Grype 12 críticas/44 altas.
 - 2026-11-03 Etapa 1-3: repo publicado; primer run de Actions 7/7 success (run 41778118097).
 - 2026-11-03 Fase 5 (antes): Trivy imagen original 11 CRITICAL/32 HIGH, 5 secretos; Hadolint 11 avisos.
-- 2026-11-03 Fase 4: 11/11 casos VULNERABLE (security/attacks/run.sh); ZAP baseline PASS 61/WARN 7; docs/fase-4/.
+- 2026-11-03 Fase 4: 11 observaciones (4 explotación demostrada + 7 debilidades) con security/attacks/run.sh;
+  ZAP baseline **pasivo**; docs/fase-4/. (La afirmación previa "11/11 VULNERABLE" se corrige en la auditoría del 2026-11-04.)
 - 2026-11-03 Fase 5: Hadolint 11→0; runtime endurecido (read-only, cap_drop ALL, no-new-privileges, límites) verificado con docker inspect; Trivy CVE sin cambio (se difieren a Fase 6); Checkov 47/0. docs/fase-5/.
 - 2026-11-03 Fase 6: entorno endurecido (app read-only + WAF CRS); ataques 11/11 MITIGADO (residual); logs de bloqueo del WAF; 7 parches de código; matriz inherente vs residual e ISO 27005. docs/fase-6/.
 
@@ -38,6 +39,20 @@ Etapa 6 – Fase 6 completada (WAF, mitigaciones, riesgo residual). Proyecto en 
     runtime); CVE de imagen siguen presentes (mitigadas en ejecución, no eliminadas); 5 skips Checkov justificados.
   - Lab levantado solo en `127.0.0.1:3000`, pruebas ejecutadas y lab detenido. Evidencia histórica `antes/`
     preservada sin cambios. MANIFEST (72 archivos) y bitácora actualizados; Gitleaks limpio en rutas commiteadas.
+
+- 2026-11-04 **Auditoría final técnica Fases 4-5** (`docs/AUDITORIA_FINAL_FASES_4_5.md`; sin tocar Word/PDF):
+  - **OWASP Top 10:2025** aplicado de forma coherente (se eliminó la mezcla 2021/2025): A4/A6/A8/A9/A11 → **A02**
+    (Security Misconfiguration), SQLi → **A05** (Injection), SSRF fusionado en A01, A10 = Mishandling; §6 reescrita.
+  - **Prueba activa de caja negra** añadida: **sqlmap 1.10.4** confirma SQLi en `q` (boolean+time-based, SQLite),
+    sin leer el código. Evidencia `evidence/fase-4/blackbox-2026-11-04/`.
+  - **BOLA/IDOR:** `term/bola.txt` reescrito como transcripción **literal** del run real (timestamp 1793822559,
+    `Products:[]`, JSON idéntico a la evidencia); figura `15-bola-idor.png` re-renderizada; evidencia histórica intacta.
+  - **`run.sh`**: columna **Clase** (E/X/C/N) + leyenda; deja de rotular todo como "VULNERABLE".
+  - Coherencia: Nmap **7.95→7.98**; rutas **102→109** (Fase 1); A5 **CWE-22→CWE-538** y "11/11 explotables"
+    reescrito (Fase 6 / informe ejecutivo). Fase 5 verificada contra evidencia (Trivy/Hadolint/Checkov/runtime);
+    §1.1 enlaza el SCA (Grype/OSV/SBOM) de Fase 3.
+  - **Dictamen:** Fases 4 y 5 técnicamente listas para la redacción académica final. Cloud **no desplegado**
+    (sin costos); Fase 6 ampliada y figuras del `.docx` quedan fuera de esta auditoría.
 
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.

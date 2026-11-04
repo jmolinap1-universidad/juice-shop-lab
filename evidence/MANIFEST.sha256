@@ -1,4 +1,4 @@
-ef851751863d5051809e33d4bf55fa611c2552e3707779b80734fd90ad116d9a *./bitacora.md
+380fb931eafe9e11364630959b6fcbe20957d2f62dff8f11324008d22cf48772 *./bitacora.md
 35eaf43e97dfcb28185d5b47f4572e454b6d217c6dce3736e8244e89dd416ccf *./fase-0/diagnostico.txt
 420c0172448a7195ebd21fcf1a20bf006d19d17fdc86496df5facada2f6c55f7 *./fase-1/lab-puertos.txt
 5abe7d18800d45ba08251f5d3726d8acbd63046cc52dc52574d046d19bcc1eae *./fase-2/checkov-final/results_cli.txt
@@ -36,6 +36,8 @@ ace365549d9a8c51c42ea421f68a602e6189a7ced70ebe06c551a67523b42dd1 *./fase-4/antes
 d3a86fca66c1329f7f41b412d95367cfaf5a7ea8da4326c73b2de27acd33ce56 *./fase-4/antes/a8-cors-headers.txt
 74392a4ac185ee1946808311da4192312b749bcc31c2de4fbe7b560c5f0c49a7 *./fase-4/antes/a9-security-headers.txt
 f7b7c2590e562f237eb8bbace406d6a1700b99e4e39530d21485ddbd0b50803f *./fase-4/antes/resumen-ataques.md
+63f8ae4060696214e6ea2dccac11712a86b0704d3fd967a645160157225e3659 *./fase-4/blackbox-2026-11-04/resultado-blackbox.md
+ffbbc81a7ea81f7618dd0d36639ed26b0b2e09a6536aec6e8a0f41e17cdfab6a *./fase-4/blackbox-2026-11-04/sqlmap-search-q.txt
 9580a9c25f978406f577dbae0a725c81fa387628f4ba9f6aeab7325d47bda959 *./fase-4/bola/cross-read.json
 420fe5429467522aac9848925dd01aa08c984194e698111eee931c372e5ecf25 *./fase-4/bola/own-read.json
 db27de6ed707c55bfd4b04343b21f714c4325d578f91482f893724bea0c1e0e0 *./fase-4/bola/resultado-bola.md

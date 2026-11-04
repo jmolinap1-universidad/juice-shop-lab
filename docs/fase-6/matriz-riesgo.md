@@ -8,7 +8,7 @@ endurecido (`deploy/hardened`: app con FS de solo lectura + WAF ModSecurity/CRS)
 ## 1. Resultado global
 | | Inherente (laboratorio) | Residual (endurecido) |
 |---|---|---|
-| Casos de ataque explotables | **11 / 11** | **0 / 11** |
+| Observaciones de ataque (4 explotación demostrada + 7 debilidades) | **11 detectadas** | **0 activas** (todas bloqueadas) |
 | Evidencia | `evidence/fase-4/antes/resumen-ataques.md` | `evidence/fase-4/despues/resumen-ataques.md` + logs del WAF |
 
 ## 2. Rúbrica DREAD (igual que Fase 1)
@@ -23,13 +23,13 @@ pero la probabilidad de alcanzarlo cae).
 | A2 | SQLi UNION (volcado Users) | CWE-89 | 9.0 | Crítico | WAF CRS 942xxx (403); código: `02-sqli-search.patch` | 2.2 | Bajo | Mitigar |
 | A3 | SQLi enumeración de esquema | CWE-89 | 8.0 | Crítico | WAF CRS (403); código: `02-sqli-search.patch` | 2.0 | Bajo | Mitigar |
 | A4 | Listado de directorios | CWE-548 | 9.0 | Crítico | nginx `deny` /ftp,/encryptionkeys,/support/logs (403) | 2.0 | Bajo | Mitigar |
-| A5 | Documento interno `/ftp` | CWE-22 | 7.0 | Alto | nginx `deny` (403) | 2.0 | Bajo | Mitigar |
+| A5 | Exposición de documento interno `/ftp` | CWE-538 | 7.0 | Alto | nginx `deny` (403) | 2.0 | Bajo | Mitigar |
 | A6 | `/metrics` sin autenticación | CWE-200 | 6.4 | Alto | nginx `deny` + ModSecurity VP 100002 (403) | 1.8 | Bajo | Mitigar |
 | A7 | Asignación masiva `role=admin` | CWE-915 | 7.2 | Alto | ModSecurity VP 100001 (403); código: `06-asignacion-masiva-registro.patch` | 2.4 | Bajo | Mitigar |
 | A8 | CORS permisivo | CWE-942 | 6.6 | Alto | nginx `proxy_hide_header ACAO`; código: `07-cors-restringido.patch` | 2.2 | Bajo | Mitigar |
 | A9 | Cabeceras de seguridad ausentes | CWE-693 | 6.0 | Alto | nginx `more_set_headers` (CSP, HSTS, X-CTO, X-Frame, etc.) | 2.0 | Bajo | Mitigar |
 | A10 | Fuerza bruta en login | CWE-307 | 7.2 | Alto | nginx `limit_req` 5/min (HTTP 429) | 3.0 | Bajo | Mitigar |
-| A11 | Material criptográfico expuesto | CWE-798 | 8.6 | Crítico | nginx `deny` /encryptionkeys (403); código: `04` clave a entorno | 2.6 | Bajo | Mitigar |
+| A11 | Clave privada JWT embebida (y endpoint `/encryptionkeys`) | CWE-798 | 8.6 | Crítico | nginx `deny` /encryptionkeys (403); código: `04` clave a entorno | 2.6 | Bajo | Mitigar |
 
 **Nota sobre riesgo residual bajo, no nulo:** el WAF es un control compensatorio perimetral; la aplicación sigue
 siendo vulnerable detrás de él. El residual se reduce aún más al aplicar los parches de código (`app-hardened`),
