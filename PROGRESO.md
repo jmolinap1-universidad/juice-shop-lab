@@ -1,7 +1,7 @@
 # Progreso del proyecto
 
 ## Etapa actual
-Etapa 3 – Fases 2-3 (completadas en local); preparando Fase 5 (imagen endurecida).
+Etapa 4 – Fase 4 completada (pruebas y riesgo inherente). Preparando Fase 5 (imagen endurecida).
 
 ## Completado
 - 2026-11-03 Etapa 0: diagnóstico (`evidence/fase-0/diagnostico.txt`): Win11, i3-10100F, 31.9 GB RAM,
@@ -16,6 +16,7 @@ Etapa 3 – Fases 2-3 (completadas en local); preparando Fase 5 (imagen endureci
   OSV 62 vulns; SBOM Syft 2745 componentes; Grype 12 críticas/44 altas.
 - 2026-11-03 Etapa 1-3: repo publicado; primer run de Actions 7/7 success (run 41778118097).
 - 2026-11-03 Fase 5 (antes): Trivy imagen original 11 CRITICAL/32 HIGH, 5 secretos; Hadolint 11 avisos.
+- 2026-11-03 Fase 4: 11/11 casos VULNERABLE (security/attacks/run.sh); ZAP baseline PASS 61/WARN 7; docs/fase-4/.
 
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
@@ -23,4 +24,4 @@ Etapa 3 – Fases 2-3 (completadas en local); preparando Fase 5 (imagen endureci
 ## Siguiente tarea
 1. Descargar artefactos del run 41778118097 a evidence/ (ZAP baseline = primera evidencia DAST, Fase 4).
 2. Fase 5: `app-hardened/Dockerfile` + compose endurecido; Trivy/Hadolint después.
-3. Fase 4: ZAP baseline y casos de abuso automatizados contra 127.0.0.1.
+3. Fase 6: correcciones, WAF (ModSecurity+CRS), reejecutar run.sh/ZAP y matriz inherente vs. residual.

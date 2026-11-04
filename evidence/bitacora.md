@@ -20,3 +20,5 @@ Cada línea: fecha, fase, comando, herramienta/versión, resultado. Hashes en `M
 | 2026-11-03T23:09:39-06:00 | 5 | `hadolint app/Dockerfile` | Hadolint 2.15.1 | 11 avisos |
 | 2026-11-03T23:14:33-06:00 | 3 | `sed (redacción de PEM en semgrep.sarif/json)` | GNU sed | Fragmento de clave de prueba de Juice Shop redactado en la evidencia SAST; hallazgo hardcoded-private-key se mantiene |
 | 2026-11-03T23:19:56-06:00 | 3 | `GitHub Actions devsecops (push 6ae81ea)` | ubuntu-24.04; versiones fijas en el workflow | 7/7 jobs success (Gitleaks, Semgrep, CodeQL, SCA, Trivy/Hadolint, Terraform/Checkov, ZAP baseline); 7 artefactos. https://github.com/jmolinap1-universidad/juice-shop-lab/actions/runs/41778118097 |
+| 2026-11-03T23:25:11-06:00 | 4 | `security/attacks/run.sh (http://127.0.0.1:3000, antes)` | curl + código del laboratorio | 11 VULNERABLE / 0 MITIGADO de 11. /c/Users/CHINO/Desktop/Proyecto Seg Aplicacion/evidence/fase-4/antes/resumen-ataques.md |
+| 2026-11-03T23:29:07-06:00 | 4 | `zap-baseline.py -t http://127.0.0.1:3000 (vía host.docker.internal)` | OWASP ZAP 2.17.0 (zap-stable:20261016) | WARN-NEW 7, PASS 61, FAIL 0. evidence/fase-4/zap/ |
