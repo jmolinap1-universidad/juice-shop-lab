@@ -40,6 +40,20 @@ Cambios aplicados en `app-hardened/Dockerfile`:
 - `HEALTHCHECK` para detección de fallos por el orquestador.
 - Usuario no root `65532` y `WORKDIR` dedicado (conservados del original).
 
+### 2.1 Artefacto **auditado** vs. artefacto **desplegado** (aclaración, plan F45-11)
+Para no atribuir una mejora al componente equivocado, se distinguen dos Dockerfiles distintos:
+
+| Artefacto | Qué es | Base | Hadolint | ¿Se despliega en Compose? |
+|---|---|---|---|---|
+| `app-hardened/Dockerfile` | Propuesta de build desde **código fuente** (multi-stage: `node:24-slim` → distroless) | digests fijados | **0 avisos** (vs 11 del original) | **No.** Es artefacto propuesto/académico; no ejecuta el laboratorio. |
+| `deploy/hardened/Dockerfile` → `juice-hardened:local` | Imagen **que realmente corre** en `deploy/hardened/docker-compose.yml` | imagen oficial fijada por digest `sha256:cea5a4af…` + `USER 65532` + `HEALTHCHECK` + labels | — | **Sí.** Es el contenedor endurecido en ejecución. |
+
+**Honesto:** la mejora de Hadolint **11→0** pertenece a `app-hardened/Dockerfile` (propuesto, no desplegado). La
+imagen desplegada (`juice-hardened:local`) **no recompila el código** —reutiliza la imagen oficial— y su
+endurecimiento proviene del **runtime** (§3: FS de solo lectura, `cap_drop ALL`, `no-new-privileges`, no root,
+límites). Por tanto las CVE de la imagen (§1) **siguen presentes** en el contenedor desplegado; se mitigan en
+ejecución, no se eliminan. Su eliminación requiere la recompilación con dependencias actualizadas (Fase 6).
+
 ## 3. Hardening del runtime (verificado con `docker inspect`)
 `deploy/hardened/docker-compose.yml` + `deploy/hardened/Dockerfile`. Evidencia: `evidence/fase-5/despues/runtime-hardening-inspect.txt`.
 

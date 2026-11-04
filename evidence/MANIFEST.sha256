@@ -1,4 +1,4 @@
-574877fca4c39d2b1d63ea47bbe9e89d6b7632869ac2f0298c3f09d07e34a19c *./bitacora.md
+ef851751863d5051809e33d4bf55fa611c2552e3707779b80734fd90ad116d9a *./bitacora.md
 35eaf43e97dfcb28185d5b47f4572e454b6d217c6dce3736e8244e89dd416ccf *./fase-0/diagnostico.txt
 420c0172448a7195ebd21fcf1a20bf006d19d17fdc86496df5facada2f6c55f7 *./fase-1/lab-puertos.txt
 5abe7d18800d45ba08251f5d3726d8acbd63046cc52dc52574d046d19bcc1eae *./fase-2/checkov-final/results_cli.txt
@@ -36,6 +36,9 @@ ace365549d9a8c51c42ea421f68a602e6189a7ced70ebe06c551a67523b42dd1 *./fase-4/antes
 d3a86fca66c1329f7f41b412d95367cfaf5a7ea8da4326c73b2de27acd33ce56 *./fase-4/antes/a8-cors-headers.txt
 74392a4ac185ee1946808311da4192312b749bcc31c2de4fbe7b560c5f0c49a7 *./fase-4/antes/a9-security-headers.txt
 f7b7c2590e562f237eb8bbace406d6a1700b99e4e39530d21485ddbd0b50803f *./fase-4/antes/resumen-ataques.md
+9580a9c25f978406f577dbae0a725c81fa387628f4ba9f6aeab7325d47bda959 *./fase-4/bola/cross-read.json
+420fe5429467522aac9848925dd01aa08c984194e698111eee931c372e5ecf25 *./fase-4/bola/own-read.json
+db27de6ed707c55bfd4b04343b21f714c4325d578f91482f893724bea0c1e0e0 *./fase-4/bola/resultado-bola.md
 3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a1-sqli-login.json
 e38857a6b47114d67e030dfe40fc0df6a5f58d49001d2229d9091bc8615776fe *./fase-4/despues/a10-bruteforce-login.txt
 3169e53e998197ae01930fa828f7f6e678b66f47adc3e46d9ddc6e4041599aa2 *./fase-4/despues/a11-jwt-key.txt
@@ -48,6 +51,7 @@ c5bcadc3d788fd4646ba87bb4f6c2057ead6266828cae7a05e8611f4d84a2401 *./fase-4/despu
 a247dea5510b55d6fd5c8c935f626b3ce7fc37fb2b041373c103640c543887d7 *./fase-4/despues/a8-cors-headers.txt
 abf51d54d94c46ad3ec71898827e4cef7efc4fd75c029863d279f1744d3374d4 *./fase-4/despues/a9-security-headers.txt
 d524840ece6850dbfc6bb757f1e0d15e8ad32631867c5317f4736e8ebcd8ddb5 *./fase-4/despues/resumen-ataques.md
+6b24192196ed4293309cda1f5c069ceba0ec5d3b58660259ae0418b20d5f843f *./fase-4/inherente-2026-11-04/resumen-ataques.md
 ca6b5075c741645af1e3b8884d25f38b03a3cea74ce40878bf867fd444706a8d *./fase-4/nmap-127-3000.txt
 8dbb4882a07b8f2af1ac266ad4b6ffdde5d09eb334cb366999a94b265050713f *./fase-4/zap/resumen-zap.md
 e087bfc3e55e53c12e7995e44e2e80f987b8fa1b721398f0cf5a8eb005959370 *./fase-4/zap/zap-baseline.html

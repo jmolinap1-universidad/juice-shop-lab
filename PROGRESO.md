@@ -20,9 +20,31 @@ Etapa 6 – Fase 6 completada (WAF, mitigaciones, riesgo residual). Proyecto en 
 - 2026-11-03 Fase 5: Hadolint 11→0; runtime endurecido (read-only, cap_drop ALL, no-new-privileges, límites) verificado con docker inspect; Trivy CVE sin cambio (se difieren a Fase 6); Checkov 47/0. docs/fase-5/.
 - 2026-11-03 Fase 6: entorno endurecido (app read-only + WAF CRS); ataques 11/11 MITIGADO (residual); logs de bloqueo del WAF; 7 parches de código; matriz inherente vs residual e ISO 27005. docs/fase-6/.
 
+- 2026-11-04 Cierre académico Fases 4-5 (plan PLAN_PRIORIZACION_FASES_4_Y_5):
+  - **F45-01/02/03/04/05 (P0) reclasificación honesta** en `docs/fase-4/`: taxonomía en 4 clases
+    (explotación demostrada / exposición / configuración insegura / ausencia de control). A5 CWE-22→**CWE-538**
+    (exposición de archivo, no traversal); A11 CWE-798→**CWE-200** (clave PÚBLICA servida; el riesgo real es la
+    clave privada embebida en código, hallazgo SAST aparte); A8 CORS = configuración insegura (no robo de datos
+    demostrado); A10 = ausencia de rate limiting (no prueba de contraseña adivinada). Etiquetas corregidas
+    también en `security/attacks/run.sh` para futuros runs.
+  - **F45-06 (P0) conteo reproducible de rutas**: 50 GET+40 POST+13 PUT+5 DELETE+1 PATCH = **109** (corrige
+    "102"); comando determinista documentado.
+  - **F45-07 (P1) BOLA/IDOR genuino** con dos cuentas de laboratorio: usuario B leyó la cesta de A
+    (`UserId:26` vs `UserId:27`, HTTP 200) → **VULNERABLE confirmado** (CWE-639). Evidencia `evidence/fase-4/bola/`.
+  - **F45-08/09 (P1)**: metodología black box (pasiva) separada de gray/white; perímetro con conteo reproducible;
+    webhooks = no aplica. Matriz de cobertura OWASP Top 10 honesta (probado/revisado/no probado/no aplica).
+  - **F45-10/11/12 (P1) Fase 5**: tabla artefacto **auditado** (`app-hardened/Dockerfile`, Hadolint 11→0, NO
+    desplegado) vs **desplegado** (`deploy/hardened/Dockerfile`→`juice-hardened:local`, endurecimiento por
+    runtime); CVE de imagen siguen presentes (mitigadas en ejecución, no eliminadas); 5 skips Checkov justificados.
+  - Lab levantado solo en `127.0.0.1:3000`, pruebas ejecutadas y lab detenido. Evidencia histórica `antes/`
+    preservada sin cambios. MANIFEST (72 archivos) y bitácora actualizados; Gitleaks limpio en rutas commiteadas.
+
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 
-## Siguiente tarea
-1. Equipo: DFD en Threat Dragon, IDs ASVS 5.0.0, capturas Burp, ensamblar documentos Word con plantilla T3.
-2. [P] Recompilar app-hardened, actualizar dependencias con CVE, desplegar SIEM, arquitectura cloud (aprobación de costos).
+## Pendientes diferidos (NO en esta entrega de Fases 4-5)
+- Despliegue cloud AWS (`terraform apply`, EC2/ECS/ALB/WAFv2/RDS/CDN/API Gateway): **pospuesto para evitar
+  costos** (solo validación estática Checkov + plan offline). BD administrada (SQLite, no RDS). SIEM/monitoreo
+  cloud. Fase 6 (WAF/residual) fuera del alcance de esta entrega parcial.
+- Recompilar `app-hardened` con los 7 parches y medir residual sin WAF; actualizar dependencias con CVE.
+- Equipo: DFD en Threat Dragon, confirmación IDs ASVS 5.0.0, capturas manuales con Burp, logo UMG en portada.
