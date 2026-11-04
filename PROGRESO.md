@@ -14,13 +14,13 @@ Etapa 3 – Fases 2-3 (completadas en local); preparando Fase 5 (imagen endureci
   validate OK, plan offline 45 recursos; Checkov 142/7 → 144/0 (5 omisiones justificadas).
 - 2026-11-03 Fase 3 (local): Semgrep 90 hallazgos; Gitleaks 0; npm audit 40 (7 críticas, 20 altas);
   OSV 62 vulns; SBOM Syft 2745 componentes; Grype 12 críticas/44 altas.
+- 2026-11-03 Etapa 1-3: repo publicado; primer run de Actions 7/7 success (run 41778118097).
 - 2026-11-03 Fase 5 (antes): Trivy imagen original 11 CRITICAL/32 HIGH, 5 secretos; Hadolint 11 avisos.
 
 ## Problemas / bloqueos
-- `git push` a GitHub en espera: Git Credential Manager pide inicio de sesión del equipo (cuenta
-  jmolinap1-universidad). Hasta entonces no hay ejecuciones de GitHub Actions.
+- (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 
 ## Siguiente tarea
-1. Equipo: completar inicio de sesión de GitHub para el push.
+1. Descargar artefactos del run 41778118097 a evidence/ (ZAP baseline = primera evidencia DAST, Fase 4).
 2. Fase 5: `app-hardened/Dockerfile` + compose endurecido; Trivy/Hadolint después.
 3. Fase 4: ZAP baseline y casos de abuso automatizados contra 127.0.0.1.
