@@ -1,0 +1,10 @@
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-11-04 06:18 +0000
+Nmap scan report for juice-lab.juice-lab_default (172.18.0.2)
+Host is up (0.000089s latency).
+
+PORT     STATE SERVICE VERSION
+3000/tcp open  ppp?
+SF-Port3000-TCP:V=7.98%I=7%D=11/4%Time=6AEACE41%P=x86_64-unknown-linux-gnu
+MAC Address: EA:FB:43:9C:6F:70 (Unknown)
+
+Nmap done: 1 IP address (1 host up) scanned in 11.83 seconds

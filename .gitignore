@@ -6,3 +6,8 @@ node_modules/
 .env
 *.local
 evidence/**/tmp/
+
+# Artefactos de build del documento
+docs/evidencias-fase4-5/build/node_modules/
+docs/evidencias-fase4-5/build/package.json
+docs/evidencias-fase4-5/term/*.html

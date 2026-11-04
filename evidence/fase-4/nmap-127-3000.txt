@@ -1,0 +1,41 @@
+Starting Nmap 7.98 ( https://nmap.org ) at 2026-11-04 06:18 +0000
+Nmap scan report for juice-lab.juice-lab_default (172.18.0.2)
+Host is up (0.000089s latency).
+
+PORT     STATE SERVICE VERSION
+3000/tcp open  ppp?
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port3000-TCP:V=7.98%I=7%D=11/4%Time=6AEACE41%P=x86_64-unknown-linux-gnu
+SF:%r(GetRequest,28B7,"HTTP/1\.1\x20200\x20OK\r\nAccess-Control-Allow-Orig
+SF:in:\x20\*\r\nX-Content-Type-Options:\x20nosniff\r\nX-Frame-Options:\x20
+SF:SAMEORIGIN\r\nFeature-Policy:\x20payment\x20'self'\r\nX-Recruiting:\x20
+SF:/#/jobs\r\nAccept-Ranges:\x20bytes\r\nCache-Control:\x20public,\x20max-
+SF:age=0\r\nLast-Modified:\x20Wed,\x2004\x20Nov\x202026\x2006:10:19\x20GMT
+SF:\r\nETag:\x20W/\"2700-1a1a52e07aa\"\r\nContent-Type:\x20text/html;\x20c
+SF:harset=UTF-8\r\nContent-Length:\x209984\r\nVary:\x20Accept-Encoding\r\n
+SF:Date:\x20Wed,\x2004\x20Nov\x202026\x2006:18:41\x20GMT\r\nConnection:\x2
+SF:0close\r\n\r\n<!--\n\x20\x20~\x20Copyright\x20\(c\)\x202014-2026\x20Bjo
+SF:ern\x20Kimminich\x20&\x20the\x20OWASP\x20Juice\x20Shop\x20contributors\
+SF:.\n\x20\x20~\x20SPDX-License-Identifier:\x20MIT\n\x20\x20-->\n\n<!docty
+SF:pe\x20html>\n<html\x20lang=\"en\"\x20data-beasties-container>\n<head>\n
+SF:\x20\x20<meta\x20charset=\"utf-8\">\n\x20\x20<title>OWASP\x20Juice\x20S
+SF:hop</title>\n\x20\x20<meta\x20name=\"description\"\x20content=\"Probabl
+SF:y\x20the\x20most\x20modern\x20and\x20sophisticated\x20insecure\x20web\x
+SF:20application\">\n\x20\x20<meta\x20name=\"viewport\"\x20content=\"width
+SF:=device-width,\x20initial-scale=1\">\n\x20\x20<link\x20rel=\"preconnect
+SF:\"\x20href=\"htt")%r(Help,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nCon
+SF:nection:\x20close\r\n\r\n")%r(NCP,2F,"HTTP/1\.1\x20400\x20Bad\x20Reques
+SF:t\r\nConnection:\x20close\r\n\r\n")%r(HTTPOptions,EA,"HTTP/1\.1\x20204\
+SF:x20No\x20Content\r\nAccess-Control-Allow-Origin:\x20\*\r\nAccess-Contro
+SF:l-Allow-Methods:\x20GET,HEAD,PUT,PATCH,POST,DELETE\r\nVary:\x20Access-C
+SF:ontrol-Request-Headers\r\nContent-Length:\x200\r\nDate:\x20Wed,\x2004\x
+SF:20Nov\x202026\x2006:18:41\x20GMT\r\nConnection:\x20close\r\n\r\n")%r(RT
+SF:SPRequest,EA,"HTTP/1\.1\x20204\x20No\x20Content\r\nAccess-Control-Allow
+SF:-Origin:\x20\*\r\nAccess-Control-Allow-Methods:\x20GET,HEAD,PUT,PATCH,P
+SF:OST,DELETE\r\nVary:\x20Access-Control-Request-Headers\r\nContent-Length
+SF::\x200\r\nDate:\x20Wed,\x2004\x20Nov\x202026\x2006:18:41\x20GMT\r\nConn
+SF:ection:\x20close\r\n\r\n");
+MAC Address: EA:FB:43:9C:6F:70 (Unknown)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+Nmap done: 1 IP address (1 host up) scanned in 11.83 seconds

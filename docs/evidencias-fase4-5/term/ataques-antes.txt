@@ -1,0 +1,13 @@
+[VULNERABLE] A1 SQLi bypass de login            Autenticado sin credenciales; 
+[VULNERABLE] A2 SQLi UNION (volcado de Users)   Se obtienen email y hash MD5 de usuarios
+[VULNERABLE] A3 SQLi enumeración de esquema    sqlite_master revela DDL de las tablas
+[VULNERABLE] A4 Listado de directorios          Navegables: /ftp /encryptionkeys /support/logs
+[VULNERABLE] A5 Acceso a documento interno (/ftp) acquisitions.md descargado (HTTP 200)
+[VULNERABLE] A6 /metrics sin autenticación     Métricas Prometheus accesibles (HTTP 200)
+[VULNERABLE] A7 Asignación masiva (role=admin) Usuario creado con role=admin
+[VULNERABLE] A8 CORS permisivo                  ACAO refleja/permite origen arbitrario
+[VULNERABLE] A9 Cabeceras de seguridad          Ausentes: content-security-policy strict-transport-security
+[VULNERABLE] A10 Fuerza bruta en login          12 intentos sin 429: 401 401 401 401 401 401 401 401 401 401 401 401
+[VULNERABLE] A11 Material criptográfico expuesto jwt.pub servido en /encryptionkeys (HTTP 200)
+
+=== 11 VULNERABLE / 0 MITIGADO de 11 casos (antes) ===

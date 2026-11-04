@@ -1,4 +1,4 @@
-a58d573ea16fefc75daa23c46a3e15af0af3ab04f64db56ccdfba09839ffe38f *./bitacora.md
+574877fca4c39d2b1d63ea47bbe9e89d6b7632869ac2f0298c3f09d07e34a19c *./bitacora.md
 35eaf43e97dfcb28185d5b47f4572e454b6d217c6dce3736e8244e89dd416ccf *./fase-0/diagnostico.txt
 420c0172448a7195ebd21fcf1a20bf006d19d17fdc86496df5facada2f6c55f7 *./fase-1/lab-puertos.txt
 5abe7d18800d45ba08251f5d3726d8acbd63046cc52dc52574d046d19bcc1eae *./fase-2/checkov-final/results_cli.txt
@@ -48,6 +48,7 @@ c5bcadc3d788fd4646ba87bb4f6c2057ead6266828cae7a05e8611f4d84a2401 *./fase-4/despu
 a247dea5510b55d6fd5c8c935f626b3ce7fc37fb2b041373c103640c543887d7 *./fase-4/despues/a8-cors-headers.txt
 abf51d54d94c46ad3ec71898827e4cef7efc4fd75c029863d279f1744d3374d4 *./fase-4/despues/a9-security-headers.txt
 d524840ece6850dbfc6bb757f1e0d15e8ad32631867c5317f4736e8ebcd8ddb5 *./fase-4/despues/resumen-ataques.md
+ca6b5075c741645af1e3b8884d25f38b03a3cea74ce40878bf867fd444706a8d *./fase-4/nmap-127-3000.txt
 8dbb4882a07b8f2af1ac266ad4b6ffdde5d09eb334cb366999a94b265050713f *./fase-4/zap/resumen-zap.md
 e087bfc3e55e53c12e7995e44e2e80f987b8fa1b721398f0cf5a8eb005959370 *./fase-4/zap/zap-baseline.html
 5c23912476b2f22496ed6670be8e8fcbeba61eef1bd25ae77ccc0a595c21b449 *./fase-4/zap/zap-baseline.json

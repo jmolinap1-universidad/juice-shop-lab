@@ -1,0 +1,5 @@
+$ checkov -d infra/terraform   (Fase 2 - arquitectura cloud)
+Passed checks: 144, Failed checks: 0, Skipped checks: 5
+
+$ checkov -d deploy -d app-hardened --framework dockerfile,yaml   (Fase 5)
+Passed checks: 47, Failed checks: 0, Skipped checks: 0

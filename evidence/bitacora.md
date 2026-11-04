@@ -32,3 +32,6 @@ Cada línea: fecha, fase, comando, herramienta/versión, resultado. Hashes en `M
 | 2026-11-03T23:56:54-06:00 | 6 | `recolección de audit log del WAF` | ModSecurity JSON audit | 64 transacciones; CRS 942100/949110 (SQLi) y VP propias 100001/100002. evidence/fase-6/waf-logs/ |
 | 2026-11-03T23:56:54-06:00 | 6 | `git apply --check app-hardened/patches/*.patch` | git 2.56 | 6/7 aplican; 04 manual (contiene secreto redactado). app-hardened/patches/ |
 | 2026-11-04T00:03:30-06:00 | 6 | `GitHub Actions devsecops (push c8f65c1, Fase 6)` | ubuntu-24.04; versiones fijas | 7/7 jobs success incl. Gitleaks con .gitleaks.toml. https://github.com/jmolinap1-universidad/juice-shop-lab/actions/runs/41782674548 |
+| 2026-11-04T00:20:01-06:00 | 4 | `security/attacks/run.sh (http://127.0.0.1:3000, antes)` | curl + código del laboratorio | 11 VULNERABLE / 0 MITIGADO de 11. /c/Users/CHINO/Desktop/Proyecto Seg Aplicacion/evidence/fase-4/antes/resumen-ataques.md |
+| 2026-11-04T00:31:59-06:00 | 4 | `nmap -sV -Pn -p 3000 (red del contenedor)` | Nmap 7.98 (instrumentisto/nmap) | 3000/tcp open; banner HTTP revela ACAO:*. evidence/fase-4/nmap-127-3000.txt |
+| 2026-11-04T00:31:59-06:00 | 4 | `generación del documento Word+PDF (Fases 4-5, APA 7, 14 capturas)` | docx-js 9.5.1, LibreOffice | docs/evidencias-fase4-5/*.docx y *.pdf (19 páginas) |

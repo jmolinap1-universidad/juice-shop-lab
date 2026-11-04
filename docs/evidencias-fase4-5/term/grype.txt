@@ -1,0 +1,14 @@
+Coincidencias únicas (vuln×paquete): 129; CVE/GHSA únicos: 108
+
+| Severidad | Cantidad |
+|---|---|
+| Critical | 12 |
+| High | 44 |
+| Medium | 61 |
+| Low | 5 |
+| Negligible | 7 | 
+
+| ID | Severidad | Paquete | Versión | Corregido en |
+|---|---|---|---|---|
+| CVE-2026-111497 | Critical | node | 24.21.0 | 11.0.0, 22.23.4, 24.22.1, 26.12.1 |
+| GHSA-c7hr-j4mj-j2w6 | Critical | jsonwebtoken | 0.1.0 | 4.2.2 |

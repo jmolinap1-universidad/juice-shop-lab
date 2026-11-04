@@ -1,0 +1,16 @@
+# app/Dockerfile (ORIGINAL)
+Avisos: 11
+- L5 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L6 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L7 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L8 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L9 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L10 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L11 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L12 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L13 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L20 DL3059 (info): Multiple consecutive `RUN` instructions. Consider consolidation.
+- L22 DL3006 (warning): Always tag the version of an image explicitly
+
+# app-hardened/Dockerfile (ENDURECIDO)
+Avisos: 0
