@@ -45,6 +45,7 @@ e087bfc3e55e53c12e7995e44e2e80f987b8fa1b721398f0cf5a8eb005959370 *./fase-4/zap/z
 248b879623bae909377c9c94b81fff0cc93dfefa69d55918a6799dda4eba4d9f *./fase-5/antes/resumen-trivy.md
 e592988c8d6e09c892923bdfed28496fcf629448ffbb5059e22a9236cd520092 *./fase-5/antes/trivy-juice-shop-v20.3.0.json
 4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945 *./fase-5/despues/hadolint-Dockerfile.json
+d36ae2c21fb524d4464e1dc07e78d123d4e09f97b3f21d03130f5d1f6c3ff238 *./fase-5/despues/resumen-hadolint.md
 9ee2e5849e2153df982e56100b6a10e1291b2531b07b4ae605c317753addb7cf *./fase-5/despues/resumen-trivy.md
 6f28672b9b39a1bbd65c82dd91e45e9011a20813d19df9112b3697de6e1aa387 *./fase-5/despues/runtime-hardening-inspect.txt
 3496e9c380067559ddca1e4a31d88564dd31c3bab4a3825548a7bd05204e837f *./fase-5/despues/trivy-juice-hardened.json
