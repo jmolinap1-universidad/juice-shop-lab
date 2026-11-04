@@ -1,0 +1,55 @@
+# Reglas Semgrep propias del equipo (Fase 3). Derivadas de la revisión manual del código (Fase 1).
+rules:
+  - id: sequelize-raw-query-template-literal
+    message: >-
+      Consulta SQL cruda construida con template literal interpolando datos. Use reemplazos
+      parametrizados (replacements/bind) o el ORM. ASVS V1.2.4 / CWE-89.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-89", owasp: "A05:2025 Injection", asvs: "V1.2.4" }
+    patterns:
+      - pattern-either:
+          - pattern: $SEQ.query(`...${$X}...`, ...)
+          - pattern: $SEQ.query("..." + $X + "...", ...)
+
+  - id: node-eval-user-input
+    message: >-
+      eval()/vm.runInContext con datos externos permite ejecución de código (RCE/SSTI).
+      ASVS V1.3.2 / CWE-95.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-95", owasp: "A05:2025 Injection", asvs: "V1.3.2" }
+    pattern-either:
+      - pattern: eval($X)
+      - pattern: vm.runInContext($X, ...)
+
+  - id: weak-password-hash-md5
+    message: >-
+      Contraseñas con MD5 sin sal. Use bcrypt/argon2id con factor de trabajo adecuado.
+      ASVS V11.4.2 / CWE-916.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-916", owasp: "A04:2025 Cryptographic Failures", asvs: "V11.4.2" }
+    pattern: crypto.createHash('md5')
+
+  - id: hardcoded-private-key
+    message: Clave privada embebida en el código fuente. ASVS V13.3.1 / CWE-798.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-798", owasp: "A04:2025 Cryptographic Failures", asvs: "V13.3.1" }
+    pattern-regex: "-----BEGIN (RSA )?PRIVATE KEY-----"
+
+  - id: express-directory-listing
+    message: >-
+      serve-index expone listados de directorios (ftp, logs, claves). ASVS V13.4.3 / CWE-548.
+    severity: WARNING
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-548", owasp: "A02:2025 Security Misconfiguration", asvs: "V13.4.3" }
+    pattern: $APP.use($PATH, ..., serveIndex(...), ...)
+
+  - id: cors-wildcard
+    message: CORS abierto a cualquier origen. ASVS V3.4.2 / CWE-942.
+    severity: WARNING
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-942", owasp: "A02:2025 Security Misconfiguration", asvs: "V3.4.2" }
+    pattern: $APP.use(cors())
