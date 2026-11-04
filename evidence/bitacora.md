@@ -31,3 +31,4 @@ Cada línea: fecha, fase, comando, herramienta/versión, resultado. Hashes en `M
 | 2026-11-03T23:56:54-06:00 | 6 | `security/attacks/run.sh http://127.0.0.1:8080 (despues)` | curl + WAF | 0 VULNERABLE / 11 MITIGADO de 11 (residual). evidence/fase-4/despues/ |
 | 2026-11-03T23:56:54-06:00 | 6 | `recolección de audit log del WAF` | ModSecurity JSON audit | 64 transacciones; CRS 942100/949110 (SQLi) y VP propias 100001/100002. evidence/fase-6/waf-logs/ |
 | 2026-11-03T23:56:54-06:00 | 6 | `git apply --check app-hardened/patches/*.patch` | git 2.56 | 6/7 aplican; 04 manual (contiene secreto redactado). app-hardened/patches/ |
+| 2026-11-04T00:03:30-06:00 | 6 | `GitHub Actions devsecops (push c8f65c1, Fase 6)` | ubuntu-24.04; versiones fijas | 7/7 jobs success incl. Gitleaks con .gitleaks.toml. https://github.com/jmolinap1-universidad/juice-shop-lab/actions/runs/41782674548 |
