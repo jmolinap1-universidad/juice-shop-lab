@@ -16,7 +16,7 @@ c00eb939a2d31492db8a05de57a6dcdd5c698c8ae59a5ff476221f3c635a5863 *./fase-3/sast/
 00bd184a7ff795b157fe1acb4154ea7659a31897b13acc36054ed099b3694db9 *./fase-3/sca/grype.json
 5e95aba85a6bb7e2d52866d5831dbba942003d30490a60e9e90f0a1de1c48a8e *./fase-3/sca/npm-audit.json
 57c68968a3664cc58aef75e636f5b1eec06ae7487407f82cf5ca56db01cc765c *./fase-3/sca/osv.json
-57afa4b95adb9cafe6bd03359923f2ccf130ec2e46aa5e2be58768c3887def3f *./fase-3/sca/package-lock.generated.json
+970f3e1067705148406fea2a4e36b16642c424bb1c97a752626aa0d2fb09cd93 *./fase-3/sca/package-lock.generated.json
 5dccf307b1ab27fa1007163f4c7480e12329e1ab1e1bfe5310b0fcc57d9314c0 *./fase-3/sca/resumen-grype.md
 8a1c0b800284b13a40167dab08639e7c18c71e5d7711325ea82911de66a459d7 *./fase-3/sca/resumen-npm-audit.md
 792ee0a98a1afd9c48343e9cf7cb54e2dcefa34ca3169e0579831220c89d86bc *./fase-3/sca/resumen-osv.md
