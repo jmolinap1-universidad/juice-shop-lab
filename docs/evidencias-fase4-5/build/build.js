@@ -16,7 +16,7 @@ const GREY = 'F2F2F2'
 const img = (file, w, h) => new Paragraph({
   alignment: AlignmentType.CENTER,
   spacing: { before: 120, after: 40 },
-  children: [new ImageRun({ type: 'jpg', data: fs.readFileSync(IMG + file), transformation: { width: w, height: h } })]
+  children: [new ImageRun({ type: file.endsWith('.png') ? 'png' : 'jpg', data: fs.readFileSync(IMG + file), transformation: { width: w, height: h } })]
 })
 const figCaption = (n, txt) => new Paragraph({
   alignment: AlignmentType.CENTER, spacing: { after: 200 },
@@ -148,14 +148,16 @@ const body = [
     ['Clasificación', 'VULNERABLE — BOLA/IDOR (CWE-639, OWASP API1:2023 / A01)']
   ], [3200, 6400]),
   p('Evidencia: evidence/fase-4/bola/ (resultado-bola.md, cross-read.json, own-read.json). Limitación: la prueba demuestra la lectura de la cesta por identificador; no se generaliza a todos los objetos de la API.'),
+  img('15-bola-idor.png', 450, 216),
+  figCaption(6, 'Prueba BOLA/IDOR con dos cuentas: el usuario B solicita la cesta del usuario A (/rest/basket/6) con su propio token y la aplicación responde HTTP 200 devolviendo la cesta de A (UserId 26, distinto del 27 de B). Datos ficticios del laboratorio.'),
 
   h2('4.3 Modelado y ejecución de casos de abuso (Abuse Cases)'),
   p('Se definieron y ejecutaron escenarios donde un atacante abusa de funciones legítimas. El conjunto automatizado security/attacks/run.sh ejecutó once casos contra la instancia local. Para no sobreafirmar los resultados, cada observación se clasifica en una de cuatro clases: explotación demostrada, exposición observada, configuración insegura o ausencia de control. El resultado es: 4 vulnerabilidades explotadas (dos inyecciones SQL que comprometen la base de datos, enumeración de esquema y asignación masiva de rol), 4 exposiciones de información (listado de directorios, documento interno, métricas y clave pública), 2 configuraciones inseguras (CORS permisivo y ausencia de cabeceras) y 1 ausencia de control (sin limitación de intentos de inicio de sesión: 12 intentos con respuesta 401 y sin 429, lo que evidencia la falta de bloqueo pero no demuestra que se adivinara contraseña alguna).'),
   img('08-ataques-antes-consola.jpg', 300, 556),
-  figCaption(6, 'Salida del conjunto de casos de ataque: las 11 pruebas registran una debilidad cada una; 4 constituyen explotación demostrada y 7 son exposiciones, configuraciones inseguras o ausencia de controles (riesgo inherente).'),
-  p('Como evidencia complementaria de casos de abuso sobre funciones legítimas, la Figura 7 muestra el acceso sin autenticación al endpoint de métricas Prometheus (/metrics), que expone telemetría interna de la aplicación.'),
+  figCaption(7, 'Salida del conjunto de casos de ataque: las 11 pruebas registran una debilidad cada una; 4 constituyen explotación demostrada y 7 son exposiciones, configuraciones inseguras o ausencia de controles (riesgo inherente).'),
+  p('Como evidencia complementaria de casos de abuso sobre funciones legítimas, la Figura 8 muestra el acceso sin autenticación al endpoint de métricas Prometheus (/metrics), que expone telemetría interna de la aplicación.'),
   img('05-metrics-expuesto.jpg', 430, 327),
-  figCaption(7, 'Exfiltración de información: el endpoint /metrics se sirve sin autenticación, revelando métricas internas (conteos de peticiones, tiempos de arranque, CPU).'),
+  figCaption(8, 'Exfiltración de información: el endpoint /metrics se sirve sin autenticación, revelando métricas internas (conteos de peticiones, tiempos de arranque, CPU).'),
 
   h2('4.4 Delimitación del perímetro del software'),
   p('Se mapeó la superficie de ataque expuesta a partir del código con un conteo reproducible (comando grep sobre app/server.ts): 109 rutas declaradas (50 GET, 40 POST, 13 PUT, 5 DELETE, 1 PATCH; la suma coincide: 50+40+13+5+1 = 109), aproximadamente 81 endpoints bajo /rest, /api y /b2b, y 14 modelos de datos expuestos como API CRUD automática. Se identificaron puntos de entrada de archivos (carga de ZIP/XML/YAML, imagen por URL con riesgo de SSRF) y rutas estáticas con listado de directorios habilitado, que exponen documentos internos y material criptográfico. No se identificaron webhooks entrantes ni salientes (no aplica). Dado que la aplicación solo escuchó en 127.0.0.1, el perímetro evaluado es local y no un servicio publicado en Internet.'),
@@ -169,9 +171,9 @@ const body = [
   ], [3200, 4000, 2400]),
   new Paragraph({ spacing: { after: 120 }, children: [] }),
   img('03-ftp-directory-listing.jpg', 430, 322),
-  figCaption(8, 'Listado de directorios habilitado en /ftp: documentos internos accesibles (acquisitions.md, coupons_2013.md.bak, incident-support.kdbx).'),
+  figCaption(9, 'Listado de directorios habilitado en /ftp: documentos internos accesibles (acquisitions.md, coupons_2013.md.bak, incident-support.kdbx).'),
   img('04-encryptionkeys-listing.jpg', 430, 322),
-  figCaption(9, 'Listado del directorio /encryptionkeys: se expone material criptográfico (jwt.pub, premium.key).'),
+  figCaption(10, 'Listado del directorio /encryptionkeys: se expone material criptográfico (jwt.pub, premium.key).'),
   new Paragraph({ children: [new PageBreak()] }),
 
   // ======================= FASE 5 =======================
@@ -181,20 +183,20 @@ const body = [
   h2('5.1 Escaneo de contenedores y artefactos'),
   p('Se analizó la imagen oficial de Juice Shop (fijada por digest) con Trivy 0.75.0 y, de forma independiente, con Grype 0.120.1 sobre el SBOM generado con Syft (formato CycloneDX). Trivy identificó 11 vulnerabilidades críticas y 32 altas, además de 5 secretos y 66 malas configuraciones embebidas en los archivos de reto de la propia aplicación. La mayoría de las vulnerabilidades se concentran en las dependencias de Node.js (81) frente a las del sistema operativo base Debian 13 (45).'),
   img('10-trivy-imagen.jpg', 300, 556),
-  figCaption(10, 'Escaneo de la imagen con Trivy 0.75.0: 11 vulnerabilidades CRITICAL y 32 HIGH; detección de secretos y malas configuraciones.'),
+  figCaption(11, 'Escaneo de la imagen con Trivy 0.75.0: 11 vulnerabilidades CRITICAL y 32 HIGH; detección de secretos y malas configuraciones.'),
   img('11-grype-sbom.jpg', 300, 556),
-  figCaption(11, 'Verificación independiente con Grype 0.120.1 sobre el SBOM (Syft): 12 críticas y 44 altas, confirmando los hallazgos de Trivy.'),
+  figCaption(12, 'Verificación independiente con Grype 0.120.1 sobre el SBOM (Syft): 12 críticas y 44 altas, confirmando los hallazgos de Trivy.'),
   p('Hallazgo relevante: el re-empaquetado o endurecimiento de la imagen no reduce las vulnerabilidades de las dependencias de la aplicación, pues residen en su código fuente; su corrección corresponde a la actualización de dependencias (documentada como trabajo propuesto, ya que rompe los retos de Juice Shop). El endurecimiento de la Fase 5 se centra en lo que sí es verificable: la higiene del Dockerfile y el endurecimiento del tiempo de ejecución del contenedor.'),
 
   h2('5.2 Hardening de Infraestructura como Código (IaC)'),
   p('Se auditaron los Dockerfiles con Hadolint 2.15.1 y la Infraestructura como Código (Dockerfiles, Terraform y Compose) con Checkov 3.4.0. Es necesario distinguir dos artefactos: el Dockerfile auditado app-hardened/Dockerfile (una propuesta de construcción desde el código fuente que corrige los 11 avisos del original y queda en 0, pero que no es la imagen desplegada) y el Dockerfile realmente desplegado deploy/hardened/Dockerfile, que produce la imagen juice-hardened:local a partir de la imagen oficial fijada por digest y cuyo endurecimiento proviene del tiempo de ejecución. Por tanto, la mejora de Hadolint pertenece al artefacto propuesto; la imagen en ejecución conserva las CVE de la imagen base, que se mitigan en runtime pero no se eliminan (su eliminación requiere recompilar con dependencias actualizadas, trabajo de la fase siguiente). Checkov validó 144 comprobaciones sin fallos en la arquitectura Terraform de la nube (con 5 omisiones justificadas) y 47 sin fallos en los Dockerfiles y archivos de despliegue.'),
   img('12-hadolint.jpg', 300, 556),
-  figCaption(12, 'Hadolint: el Dockerfile original presenta 11 avisos (DL3059, DL3006); el Dockerfile endurecido queda en 0 avisos.'),
+  figCaption(13, 'Hadolint: el Dockerfile original presenta 11 avisos (DL3059, DL3006); el Dockerfile endurecido queda en 0 avisos.'),
   img('13-checkov.jpg', 430, 327),
-  figCaption(13, 'Checkov 3.4.0: 144/0 en la arquitectura Terraform (Fase 2) y 47/0 en Dockerfiles y despliegue (Fase 5).'),
+  figCaption(14, 'Checkov 3.4.0: 144/0 en la arquitectura Terraform (Fase 2) y 47/0 en Dockerfiles y despliegue (Fase 5).'),
   p('Adicionalmente, se verificó el endurecimiento del tiempo de ejecución del contenedor mediante docker inspect: sistema de archivos raíz de solo lectura, eliminación de todas las capacidades de Linux (cap_drop ALL), prohibición de nuevos privilegios (no-new-privileges), usuario no root (65532), límites de procesos y memoria, y modo de producción. Se comprobó que la aplicación responde correctamente (HTTP 200) y que una escritura en el sistema de archivos raíz es bloqueada (EROFS).'),
   img('14-docker-inspect-hardening.jpg', 300, 556),
-  figCaption(14, 'Verificación del endurecimiento del runtime con docker inspect: FS de solo lectura, cap_drop ALL, no-new-privileges, límites y escritura bloqueada (EROFS).'),
+  figCaption(15, 'Verificación del endurecimiento del runtime con docker inspect: FS de solo lectura, cap_drop ALL, no-new-privileges, límites y escritura bloqueada (EROFS).'),
   new Paragraph({ children: [new PageBreak()] }),
 
   // ======================= CIERRE =======================
