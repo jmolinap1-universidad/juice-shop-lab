@@ -87,14 +87,15 @@ const indice = [
   tocLine('Fase 4: Implementación de Ciberdefensa', 5),
   tocLine('4.1 Pruebas de penetración – Caja negra (Black Box)', 5, true),
   tocLine('4.2 Pruebas basadas en riesgos – Caja gris / blanca', 7, true),
-  tocLine('4.3 Modelado y ejecución de casos de abuso (Abuse Cases)', 8, true),
-  tocLine('4.4 Delimitación del perímetro del software', 10, true),
-  tocLine('Fase 5: Despliegue Seguro e Infraestructura Cloud', 12),
-  tocLine('5.1 Escaneo de contenedores y artefactos', 12, true),
-  tocLine('5.2 Hardening de Infraestructura como Código (IaC)', 14, true),
-  tocLine('Conclusiones', 18),
-  tocLine('Referencias', 18),
-  tocLine('Anexos', 19),
+  tocLine('4.3 Modelado y ejecución de casos de abuso (Abuse Cases)', 9, true),
+  tocLine('4.4 Delimitación del perímetro del software', 11, true),
+  tocLine('Fase 5: Despliegue Seguro e Infraestructura Cloud', 13),
+  tocLine('5.1 Escaneo de contenedores y artefactos', 13, true),
+  tocLine('5.2 Hardening de Infraestructura como Código (IaC)', 15, true),
+  tocLine('Delimitación de alcance: despliegue cloud diferido', 20),
+  tocLine('Conclusiones', 20),
+  tocLine('Referencias', 21),
+  tocLine('Anexos', 21),
   new Paragraph({ children: [new PageBreak()] })
 ]
 
@@ -132,20 +133,32 @@ const body = [
   figCaption(4, 'Detalle de alertas de ZAP: ausencia de Content Security Policy (CSP) y configuración incorrecta de CORS (Cross-Domain Misconfiguration), entre otras.'),
 
   h2('4.2 Pruebas basadas en riesgos – Caja gris / blanca (Gray/White Box)'),
-  p('Con acceso a la arquitectura, las API y el código fuente, se verificó la lógica de autenticación y el control de acceso. Se confirmó una inyección SQL en el inicio de sesión (routes/login.ts) que permite autenticarse como administrador sin credenciales, y una inyección SQL de tipo UNION en la búsqueda (routes/search.ts) que extrae la tabla de usuarios completa, incluyendo correos y hashes de contraseñas MD5. También se verificó el control de acceso roto por asignación masiva (BOLA/mass assignment) al registrar un usuario con rol de administrador.'),
+  p('Con acceso a la arquitectura, las API y el código fuente, se verificó la lógica de autenticación y el control de acceso. Se confirmó una inyección SQL en el inicio de sesión (routes/login.ts) que permite autenticarse como administrador sin credenciales, y una inyección SQL de tipo UNION en la búsqueda (routes/search.ts) que extrae la tabla de usuarios completa, incluyendo correos y hashes de contraseñas MD5.'),
   img('02-sqli-union-users.jpg', 440, 335),
   figCaption(5, 'Inyección SQL UNION en la búsqueda: la respuesta expone los correos y los hashes MD5 de todas las cuentas (p. ej. admin@juice-sh.op).'),
+  p([run('Control de acceso: dos hallazgos ', { bold: true }), run('distintos', { bold: true, it: true }), run('. Es importante no confundir dos debilidades diferentes de control de acceso. La ', {}), run('asignación masiva', { bold: true }), run(' (mass assignment, CWE-915) permite que el registro acepte el parámetro no filtrado "role": "admin" y crea una cuenta privilegiada. En cambio, el ', {}), run('BOLA/IDOR', { bold: true }), run(' (Broken Object Level Authorization, CWE-639) es la falta de verificación de propiedad de un objeto entre usuarios distintos.', {})]),
+  p('Para demostrar un BOLA genuino se crearon dos cuentas propias de laboratorio con datos ficticios (A, víctima; B, atacante). Autenticado como B, se solicitó la cesta de compras de A mediante GET /rest/basket/{id de A} empleando el token de B. La aplicación respondió HTTP 200 devolviendo la cesta de A, demostrando que no verifica la propiedad del objeto. La prueba se contrastó con un control negativo (B accede a su propia cesta).'),
+  table([
+    ['Campo', 'Valor observado'],
+    ['Cuenta A (víctima)', 'cesta id 6 — UserId 26'],
+    ['Cuenta B (atacante)', 'cesta id 7 — UserId 27'],
+    ['Petición', 'GET /rest/basket/6 con el token de B'],
+    ['Esperado (si fuera seguro)', 'HTTP 401/403, o solo la cesta propia de B'],
+    ['Observado', 'HTTP 200 devolviendo la cesta de A (UserId 26 ≠ 27)'],
+    ['Clasificación', 'VULNERABLE — BOLA/IDOR (CWE-639, OWASP API1:2023 / A01)']
+  ], [3200, 6400]),
+  p('Evidencia: evidence/fase-4/bola/ (resultado-bola.md, cross-read.json, own-read.json). Limitación: la prueba demuestra la lectura de la cesta por identificador; no se generaliza a todos los objetos de la API.'),
 
   h2('4.3 Modelado y ejecución de casos de abuso (Abuse Cases)'),
-  p('Se definieron y ejecutaron escenarios donde un atacante abusa de funciones legítimas. El conjunto automatizado security/attacks/run.sh ejecutó once casos contra la instancia local, obteniendo 11 de 11 vectores explotables (riesgo inherente). Entre ellos: fuerza bruta en el inicio de sesión sin bloqueo (12 intentos sin respuesta 429), exfiltración masiva de usuarios vía inyección SQL, y creación de cuentas privilegiadas.'),
+  p('Se definieron y ejecutaron escenarios donde un atacante abusa de funciones legítimas. El conjunto automatizado security/attacks/run.sh ejecutó once casos contra la instancia local. Para no sobreafirmar los resultados, cada observación se clasifica en una de cuatro clases: explotación demostrada, exposición observada, configuración insegura o ausencia de control. El resultado es: 4 vulnerabilidades explotadas (dos inyecciones SQL que comprometen la base de datos, enumeración de esquema y asignación masiva de rol), 4 exposiciones de información (listado de directorios, documento interno, métricas y clave pública), 2 configuraciones inseguras (CORS permisivo y ausencia de cabeceras) y 1 ausencia de control (sin limitación de intentos de inicio de sesión: 12 intentos con respuesta 401 y sin 429, lo que evidencia la falta de bloqueo pero no demuestra que se adivinara contraseña alguna).'),
   img('08-ataques-antes-consola.jpg', 300, 556),
-  figCaption(6, 'Salida del conjunto de casos de ataque automatizados: 11 de 11 casos resultan VULNERABLE en la aplicación sin controles (riesgo inherente).'),
+  figCaption(6, 'Salida del conjunto de casos de ataque: las 11 pruebas registran una debilidad cada una; 4 constituyen explotación demostrada y 7 son exposiciones, configuraciones inseguras o ausencia de controles (riesgo inherente).'),
   p('Como evidencia complementaria de casos de abuso sobre funciones legítimas, la Figura 7 muestra el acceso sin autenticación al endpoint de métricas Prometheus (/metrics), que expone telemetría interna de la aplicación.'),
   img('05-metrics-expuesto.jpg', 430, 327),
   figCaption(7, 'Exfiltración de información: el endpoint /metrics se sirve sin autenticación, revelando métricas internas (conteos de peticiones, tiempos de arranque, CPU).'),
 
   h2('4.4 Delimitación del perímetro del software'),
-  p('Se mapeó la superficie de ataque expuesta a partir del código: 102 rutas declaradas (50 GET, 40 POST, 13 PUT, 5 DELETE, 1 PATCH), 79 endpoints REST/API únicos y 14 modelos de datos expuestos como API CRUD automática. Se identificaron puntos de entrada de archivos (carga de ZIP/XML/YAML, imagen por URL con riesgo de SSRF) y rutas estáticas con listado de directorios habilitado, que exponen documentos internos y material criptográfico.'),
+  p('Se mapeó la superficie de ataque expuesta a partir del código con un conteo reproducible (comando grep sobre app/server.ts): 109 rutas declaradas (50 GET, 40 POST, 13 PUT, 5 DELETE, 1 PATCH; la suma coincide: 50+40+13+5+1 = 109), aproximadamente 81 endpoints bajo /rest, /api y /b2b, y 14 modelos de datos expuestos como API CRUD automática. Se identificaron puntos de entrada de archivos (carga de ZIP/XML/YAML, imagen por URL con riesgo de SSRF) y rutas estáticas con listado de directorios habilitado, que exponen documentos internos y material criptográfico. No se identificaron webhooks entrantes ni salientes (no aplica). Dado que la aplicación solo escuchó en 127.0.0.1, el perímetro evaluado es local y no un servicio publicado en Internet.'),
   table([
     ['Elemento del perímetro', 'Detalle', 'Riesgo asociado'],
     ['Listado de directorios', '/ftp, /encryptionkeys, /support/logs', 'Exposición de documentos y claves (CWE-548)'],
@@ -174,7 +187,7 @@ const body = [
   p('Hallazgo relevante: el re-empaquetado o endurecimiento de la imagen no reduce las vulnerabilidades de las dependencias de la aplicación, pues residen en su código fuente; su corrección corresponde a la actualización de dependencias (documentada como trabajo propuesto, ya que rompe los retos de Juice Shop). El endurecimiento de la Fase 5 se centra en lo que sí es verificable: la higiene del Dockerfile y el endurecimiento del tiempo de ejecución del contenedor.'),
 
   h2('5.2 Hardening de Infraestructura como Código (IaC)'),
-  p('Se auditaron los Dockerfiles con Hadolint 2.15.1 y la Infraestructura como Código (Dockerfiles, Terraform y Compose) con Checkov 3.4.0. El Dockerfile endurecido (app-hardened/Dockerfile) corrige los 11 avisos del original (consolidación de instrucciones RUN y fijación de imágenes base por digest), quedando en 0 avisos. Checkov validó 144 comprobaciones sin fallos en la arquitectura Terraform de la nube (con 5 omisiones justificadas) y 47 sin fallos en los Dockerfiles y archivos de despliegue.'),
+  p('Se auditaron los Dockerfiles con Hadolint 2.15.1 y la Infraestructura como Código (Dockerfiles, Terraform y Compose) con Checkov 3.4.0. Es necesario distinguir dos artefactos: el Dockerfile auditado app-hardened/Dockerfile (una propuesta de construcción desde el código fuente que corrige los 11 avisos del original y queda en 0, pero que no es la imagen desplegada) y el Dockerfile realmente desplegado deploy/hardened/Dockerfile, que produce la imagen juice-hardened:local a partir de la imagen oficial fijada por digest y cuyo endurecimiento proviene del tiempo de ejecución. Por tanto, la mejora de Hadolint pertenece al artefacto propuesto; la imagen en ejecución conserva las CVE de la imagen base, que se mitigan en runtime pero no se eliminan (su eliminación requiere recompilar con dependencias actualizadas, trabajo de la fase siguiente). Checkov validó 144 comprobaciones sin fallos en la arquitectura Terraform de la nube (con 5 omisiones justificadas) y 47 sin fallos en los Dockerfiles y archivos de despliegue.'),
   img('12-hadolint.jpg', 300, 556),
   figCaption(12, 'Hadolint: el Dockerfile original presenta 11 avisos (DL3059, DL3006); el Dockerfile endurecido queda en 0 avisos.'),
   img('13-checkov.jpg', 430, 327),
@@ -185,8 +198,11 @@ const body = [
   new Paragraph({ children: [new PageBreak()] }),
 
   // ======================= CIERRE =======================
+  h1('Delimitación de alcance: despliegue cloud diferido'),
+  p('Durante la entrega de las Fases 4 y 5, la evaluación práctica se realizó en una estación local mediante contenedores Docker y la ejecución controlada de herramientas de seguridad; la aplicación vulnerable no estuvo publicada en Internet. La infraestructura AWS se conserva como arquitectura objetivo definida en Terraform y sometida a análisis estático y validaciones de configuración (Checkov, terraform validate y plan), sin aplicar los recursos en una cuenta cloud. Esta separación permite obtener evidencias reproducibles de ciberdefensa, escaneo de imágenes y hardening de IaC, evitando costos y la exposición innecesaria de una aplicación deliberadamente vulnerable. El despliegue cloud y la verificación operativa de los controles administrados (ALB, WAFv2, RDS, API Gateway, CDN, KMS y SIEM) quedan planificados para la etapa final, previa autorización del equipo y aceptación del alcance por el catedrático.'),
+
   h1('Conclusiones'),
-  p('Las pruebas de la Fase 4 confirmaron un riesgo inherente alto a crítico: 11 de 11 vectores evaluados resultaron explotables, incluyendo el compromiso total de la aplicación como administrador por dos vías independientes (inyección SQL y asignación masiva de rol). El reconocimiento de caja negra y el análisis de caja gris/blanca permitieron mapear con precisión la superficie de ataque y la causa raíz de cada vulnerabilidad en el código.'),
+  p('Las pruebas de la Fase 4 confirmaron un riesgo inherente alto: de las 11 observaciones registradas, 4 constituyen vulnerabilidades explotadas —incluido el compromiso total de la aplicación como administrador por dos vías independientes (inyección SQL y asignación masiva de rol)— y 7 corresponden a exposiciones de información, configuraciones inseguras o ausencia de controles. Adicionalmente, una prueba específica con dos cuentas confirmó un BOLA/IDOR genuino (lectura de la cesta de otro usuario). El reconocimiento de caja negra y el análisis de caja gris/blanca permitieron mapear con precisión la superficie de ataque y la causa raíz de cada hallazgo en el código, sin atribuir cobertura total del OWASP Top 10 ni afirmar más de lo demostrado.'),
   p('La Fase 5 evidenció que las vulnerabilidades de las dependencias del contenedor no se resuelven con el empaquetado de la imagen, sino con la actualización del código; no obstante, el endurecimiento del Dockerfile (de 11 a 0 avisos de Hadolint), la auditoría de la Infraestructura como Código (Checkov 144/0 y 47/0) y el endurecimiento verificable del tiempo de ejecución reducen de forma medible la superficie de ataque del host y del contenedor.'),
   p('En conjunto, el trabajo demuestra la aplicación de un enfoque DevSecOps con evidencia reproducible y trazable, sentando la base para la fase de mitigación (WAF, correcciones de código y medición del riesgo residual).'),
 
