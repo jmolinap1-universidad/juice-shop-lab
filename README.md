@@ -13,7 +13,7 @@ Cambara Castillo Vanessa Odeth. Catedrático: Matthew Alexander Seigne Samayoa.
 git clone --recurse-submodules https://github.com/jmolinap1-universidad/juice-shop-lab.git
 make lab-up        # laboratorio vulnerable en http://127.0.0.1:3000
 make scan          # SAST/SCA/contenedores/IaC locales vía Docker → evidence/
-make attack        # casos de ataque automatizados (Fase 4, pendiente)
+make attack        # casos de ataque automatizados (Fase 4) → evidence/fase-4/run-<fecha>/
 make lab-down
 ```
 

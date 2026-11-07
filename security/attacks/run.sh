@@ -147,7 +147,13 @@ else reg A11 "Clave pública JWT servida" CWE-200 X MITIGADO "HTTP $code"; fi
 # usuario autenticado puede leer el recurso (cesta) de OTRO usuario. Se crean dos cuentas propias con datos
 # ficticios en la instancia aislada. No confundir con asignación masiva (A7). Registra caso positivo y
 # control negativo. Evidencia dedicada en evidence/fase-4/bola/ (no altera la línea base histórica A1-A11).
-BO="$ROOT/evidence/fase-4/bola"; mkdir -p "$BO"
+# Aísla la evidencia BOLA según el TAG: 'antes'/'despues' conservan la ruta histórica documentada;
+# cualquier otro tag (p. ej. 'make attack' usa run-FECHA) escribe en su propia carpeta y NO la sobrescribe.
+case "$TAG" in
+  antes|despues) BO="${BOLA_DIR:-$ROOT/evidence/fase-4/bola}" ;;
+  *)             BO="${BOLA_DIR:-$OUT/bola}" ;;
+esac
+mkdir -p "$BO"
 RB="$BO/resultado-bola.md"
 TS=$(date +%s)
 ua="bola_a_${TS}@juice-sh.op"; ub="bola_b_${TS}@juice-sh.op"; pw="Passw0rd!123"
@@ -200,7 +206,7 @@ printf '[%s/%s] %-34s %s\n' "$bverdict" "$bclase" "A12 BOLA/IDOR" "$bdet"
 echo "   -> $RB"
 
 echo "" >> "$SUM"
-echo "**Resultado:** $fail VULNERABLE / $pass MITIGADO de $n casos (A1-A11). A12 BOLA/IDOR: ver evidence/fase-4/bola/." >> "$SUM"
+echo "**Resultado:** $fail VULNERABLE / $pass MITIGADO de $n casos (A1-A11). A12 BOLA/IDOR: ver ${BO#$ROOT/}/." >> "$SUM"
 echo ""
 echo "=== $fail VULNERABLE / $pass MITIGADO de $n casos ($TAG) ==="
 bash "$ROOT/scripts/bitacora.sh" 4 "security/attacks/run.sh ($TARGET, $TAG)" "curl + código del laboratorio" "$fail VULNERABLE / $pass MITIGADO de $n. $SUM"

@@ -6,6 +6,10 @@ node_modules/
 .env
 *.local
 evidence/**/tmp/
+# Corridas ad-hoc de `make attack`: cada ejecución crea su propia carpeta y NO toca la
+# evidencia curada (antes/, despues/, bola/, inherente-*, blackbox-*). Son artefactos locales
+# (pueden contener tokens emitidos por el laboratorio); la evidencia de referencia es la ya commiteada.
+evidence/fase-4/run-*/
 
 # Artefactos de build del documento
 docs/evidencias-fase4-5/build/node_modules/
