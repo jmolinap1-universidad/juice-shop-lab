@@ -5,7 +5,8 @@ Son la **remediación definitiva** en el código; en el entorno en ejecución de
 mide con el **WAF** como control compensatorio (ver `docs/fase-6/`), porque recompilar la aplicación desde
 fuente queda fuera del tiempo del laboratorio.
 
-**Estado:** Implementado como diff y **verificado con `git apply --check`** (6 de 7 aplican sin conflicto).
+**Estado:** Implementado como diff y **verificado con `git apply --check`** (7 de 8 aplican sin conflicto;
+el 04 es manual a propósito). El 08 (BOLA) se añadió en la Fase 6 (2026-11-10).
 
 | # | Archivo | Vulnerabilidad | ASVS 5.0.0 | CWE | `git apply` |
 |---|---|---|---|---|---|
@@ -16,6 +17,7 @@ fuente queda fuera del tiempo del laboratorio.
 | 05 | `routes/userProfile.ts` | `eval()` sobre entrada → se elimina | V1.3.2 | CWE-95 | OK |
 | 06 | `server.ts` | Asignación masiva de `role` en registro | V8.2.2 | CWE-915 | OK |
 | 07 | `server.ts` | CORS comodín → origen explícito | V3.4.2 | CWE-942 | OK |
+| 08 | `routes/basket.ts` | BOLA/IDOR: lectura de cesta ajena → verificación de propietario (403) | V8.2.2 | CWE-639 | OK |
 
 \* El patch 04 **no se aplica automáticamente a propósito**: su línea original contiene la clave privada de
 prueba, que no se versiona (regla de no manejar secretos). El diff muestra la clave **redactada**; aplicar el

@@ -1,0 +1,48 @@
+# Reglas de correlación y alerta del SIEM (Loki ruler, LogQL). Fase 6.
+# Cada regla se asocia a un riesgo del registro (docs/fase-6/tratamiento-riesgo.md) y a OWASP Top 10:2025.
+# Ventanas cortas (5 min) para el laboratorio; en producción se ajustarían umbrales y supresión.
+groups:
+  - name: juice-shop-seguridad
+    interval: 15s
+    rules:
+      - alert: WAF_InyeccionSQL_Bloqueada
+        expr: sum(count_over_time({job="waf_audit"} |= "\"ruleId\":\"942" [5m])) > 0
+        labels: {severity: high, owasp: "A05:2025", riesgo: "R01,R02", fuente: waf}
+        annotations:
+          summary: "El WAF bloqueó intentos de inyección SQL (familia CRS 942xxx)"
+
+      - alert: WAF_ParcheVirtual_Activado
+        expr: sum(count_over_time({job="waf_audit"} |~ "\"ruleId\":\"10000[0-9]\"" [5m])) > 0
+        labels: {severity: high, owasp: "A01/A02:2025", riesgo: "R07,R17", fuente: waf}
+        annotations:
+          summary: "Se activó un parche virtual propio (100001 asignación masiva / 100002 /metrics)"
+
+      - alert: Login_FuerzaBruta_RateLimit
+        expr: sum(count_over_time({job="waf_access", status="429"} [5m])) >= 3
+        labels: {severity: medium, owasp: "A07:2025", riesgo: "R16", fuente: waf}
+        annotations:
+          summary: "Ráfaga de intentos de login frenada por limitación de tasa (HTTP 429)"
+
+      - alert: Acceso_Rutas_Sensibles_Denegado
+        expr: sum(count_over_time({job="waf_access", status="403"} | json | uri=~"/(ftp|encryptionkeys|metrics|support/logs).*" [5m])) > 0
+        labels: {severity: medium, owasp: "A02:2025", riesgo: "R12,R17", fuente: waf}
+        annotations:
+          summary: "Intentos de acceso a rutas sensibles bloqueadas (listados, /metrics, claves)"
+
+      - alert: API_Enumeracion_Objetos_PosibleBOLA
+        expr: count(sum by (uri) (count_over_time({job="waf_access", status="200"} | json | uri=~"/rest/basket/[0-9]+" [5m]))) >= 2
+        labels: {severity: high, owasp: "A01:2025 / API1:2023", riesgo: "R06", fuente: api-monitoring}
+        annotations:
+          summary: "Acceso a varias cestas distintas en 5 min (patrón de enumeración / BOLA)"
+
+      - alert: RASP_Ataque_Detectado
+        expr: sum(count_over_time({job="docker", container="juice-hardened"} |~ "^Zen has (blocked|detected)" [5m])) > 0
+        labels: {severity: critical, owasp: "A05:2025", riesgo: "R01,R02", fuente: rasp}
+        annotations:
+          summary: "El RASP (Aikido Zen) detectó o bloqueó un ataque dentro de la aplicación"
+
+      - alert: App_Errores_5xx
+        expr: sum(count_over_time({job="waf_access"} | json | status=~"5.." [5m])) > 5
+        labels: {severity: medium, owasp: "A10:2025", riesgo: "R18", fuente: api-monitoring}
+        annotations:
+          summary: "Tasa anómala de errores 5xx (posibles condiciones excepcionales mal gestionadas)"

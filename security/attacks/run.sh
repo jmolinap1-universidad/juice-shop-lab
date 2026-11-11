@@ -14,7 +14,8 @@ esac
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 TAG="${ATTACK_TAG:-antes}"            # 'antes' (vulnerable) o 'despues' (endurecido)
-OUT="$ROOT/evidence/fase-4/$TAG"
+# ATTACK_OUT permite dirigir la evidencia a otra carpeta (p. ej. evidence/fase-6/...) sin tocar la de Fase 4.
+OUT="${ATTACK_OUT:-$ROOT/evidence/fase-4/$TAG}"
 mkdir -p "$OUT"
 SUM="$OUT/resumen-ataques.md"
 : > "$SUM"
@@ -142,6 +143,10 @@ if [ "$code" = "200" ] && grep -qi "PUBLIC KEY" "$OUT/a11-jwt-key.txt"; then
   reg A11 "Clave pública JWT servida" CWE-200 X VULNERABLE "jwt.pub (clave PÚBLICA) servida HTTP 200; riesgo real = clave privada embebida en código (SAST)"
 else reg A11 "Clave pública JWT servida" CWE-200 X MITIGADO "HTTP $code"; fi
 
+# A12_DELAY (opcional, segundos): pausa antes del caso BOLA para que el rate limit del login (control de A10)
+# no impida obtener los tokens de las dos cuentas y contamine la prueba de AUTORIZACIÓN.
+if [ -n "${A12_DELAY:-}" ]; then echo "(pausa de ${A12_DELAY}s antes de A12 para no confundir rate limit con autorización)"; sleep "$A12_DELAY"; fi
+
 ### A12 — BOLA / IDOR entre dos usuarios del laboratorio (CWE-639, OWASP API1/A01)
 # Prueba de AUTORIZACIÓN a nivel de objeto. Fin exclusivamente defensivo y académico: comprobar si un
 # usuario autenticado puede leer el recurso (cesta) de OTRO usuario. Se crean dos cuentas propias con datos
@@ -182,7 +187,7 @@ else
   bverdict="MITIGADO/NEGATIVO"; bclase="N"; bdet="B no obtuvo la cesta de A (cross HTTP $cross). Recurso protegido o no explotable en esta ruta."
 fi
 {
-  echo "# A12 — BOLA/IDOR entre dos cuentas (riesgo inherente)"
+  echo "# A12 — BOLA/IDOR entre dos cuentas ($TAG)"
   echo ""
   echo "Ejecutado: $(date -Iseconds) · Objetivo: $TARGET (instancia propia, aislada)"
   echo ""
@@ -209,4 +214,4 @@ echo "" >> "$SUM"
 echo "**Resultado:** $fail VULNERABLE / $pass MITIGADO de $n casos (A1-A11). A12 BOLA/IDOR: ver ${BO#$ROOT/}/." >> "$SUM"
 echo ""
 echo "=== $fail VULNERABLE / $pass MITIGADO de $n casos ($TAG) ==="
-bash "$ROOT/scripts/bitacora.sh" 4 "security/attacks/run.sh ($TARGET, $TAG)" "curl + código del laboratorio" "$fail VULNERABLE / $pass MITIGADO de $n. $SUM"
+bash "$ROOT/scripts/bitacora.sh" "${ATTACK_FASE:-4}" "security/attacks/run.sh ($TARGET, $TAG)" "curl + código del laboratorio" "A1-A11: $fail VULNERABLE / $pass MITIGADO de $n; A12 BOLA: $bverdict. ${SUM#$ROOT/}"

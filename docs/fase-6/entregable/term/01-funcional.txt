@@ -1,0 +1,11 @@
+# Tráfico legítimo a través de WAF + RASP (control de falsos positivos)
+Fecha: 2026-11-10T21:22:56-06:00 · Objetivo: http://127.0.0.1:8088 (WAF_PORT=8088; app con AIKIDO_BLOCK=true)
+
+GET /                                  -> 200
+GET /rest/products/search?q=apple      -> 200, productos=3
+POST /api/Users (registro sin role)    -> 201
+POST /rest/user/login (credenciales OK)-> token=emitido [REDACTADO] bid=6
+GET /rest/basket/6 (cesta propia)     -> 200
+GET /rest/products/1/reviews           -> 200
+
+Esperado: 200/201 en todas (los controles no deben bloquear uso legítimo).

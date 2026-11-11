@@ -1,0 +1,18 @@
+diff --git a/routes/basket.ts b/routes/basket.ts
+index 18dd06914..1c51d093c 100644
+--- a/routes/basket.ts
++++ b/routes/basket.ts
+@@ -16,6 +16,13 @@ export function retrieveBasket () {
+   return async (req: Request, res: Response, next: NextFunction) => {
+     try {
+       const id = req.params.id
++      // Control de acceso a nivel de objeto (BOLA/IDOR, CWE-639 / OWASP API1:2023):
++      // solo el propietario autenticado puede leer su cesta; cualquier otro id se rechaza.
++      const requester = security.authenticatedUsers.from(req)
++      if (!requester?.bid || requester.bid != parseInt(id, 10)) { // eslint-disable-line eqeqeq
++        res.status(403).json({ status: 'error', message: 'No autorizado para acceder a esta cesta' })
++        return
++      }
+       const basket = await BasketModel.findOne({ where: { id }, include: [{ model: ProductModel, paranoid: false, as: 'Products' }] })
+       /* jshint eqeqeq:false */
+       challengeUtils.solveIf(challenges.basketAccessChallenge, () => {

@@ -1,0 +1,26 @@
+# Fase 6 – Runtime endurecido + RASP (Runtime Application Self-Protection) in-process.
+# Parte de la MISMA imagen oficial auditada (digest fijo) y solo añade el agente open source
+# Aikido Zen (@aikidosec/firewall, AGPL-3.0), que instrumenta sqlite3, fs, child_process y http
+# para detectar/bloquear inyecciones en tiempo de ejecución, aunque el WAF sea evadido.
+# - Sin AIKIDO_TOKEN el agente NO reporta a ningún servicio externo (todo queda en stdout → SIEM).
+# - AIKIDO_BLOCK=true bloquea; AIKIDO_BLOCK=false solo detecta y registra (modo monitoreo).
+# - No modifica el código de Juice Shop: se carga con NODE_OPTIONS=--require.
+
+# Etapa 1: obtener el agente (sin scripts de instalación, versión exacta)
+FROM node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9 AS rasp
+WORKDIR /rasp
+RUN npm init -y >/dev/null \
+ && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
+
+# Etapa 2: imagen de ejecución (distroless de Juice Shop, sin shell ni root)
+FROM bkimminich/juice-shop:v20.3.0@sha256:cea5a4af4aacee498c491491af0408934ec81d004035c0a02ef3e54395e3bf27
+COPY --from=rasp --chown=65532:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
+LABEL org.opencontainers.image.title="OWASP Juice Shop (runtime endurecido + RASP Aikido Zen)" \
+      org.opencontainers.image.version="20.3.0-hardened-rasp" \
+      org.opencontainers.image.vendor="MASI-UMG-2026" \
+      org.opencontainers.image.source="https://github.com/jmolinap1-universidad/juice-shop-lab"
+ENV NODE_OPTIONS="--require @aikidosec/firewall"
+USER 65532
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \
+    CMD ["/nodejs/bin/node", "-e", "fetch('http://127.0.0.1:3000/rest/admin/application-version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]

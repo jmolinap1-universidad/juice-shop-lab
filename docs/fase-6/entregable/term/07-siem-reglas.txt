@@ -1,0 +1,16 @@
+# Estado de las reglas del SIEM tras la prueba de defensa completa (resumen literal de reglas-estado.json)
+# Grupo: juice-shop-seguridad · Loki ruler, evaluación cada 15 s
+
+FIRING    WAF_InyeccionSQL_Bloqueada             sev=high      OWASP=A05:2025
+          activa desde 2026-11-11T03:28:57.701488602Z  valor=3e+00
+FIRING    WAF_ParcheVirtual_Activado             sev=high      OWASP=A01/A02:2025
+          activa desde 2026-11-11T03:28:57.701488602Z  valor=2e+00
+FIRING    Login_FuerzaBruta_RateLimit            sev=medium    OWASP=A07:2025
+          activa desde 2026-11-11T03:28:57.701488602Z  valor=8e+00
+FIRING    Acceso_Rutas_Sensibles_Denegado        sev=medium    OWASP=A02:2025
+          activa desde 2026-11-11T03:28:57.701488602Z  valor=9e+00
+FIRING    API_Enumeracion_Objetos_PosibleBOLA    sev=high      OWASP=A01:2025 / API1:2023
+          activa desde 2026-11-11T03:29:57.701488602Z  valor=2e+00
+FIRING    RASP_Ataque_Detectado                  sev=critical  OWASP=A05:2025
+          activa desde 2026-11-11T03:23:27.701488602Z  valor=6e+00
+INACTIVE  App_Errores_5xx                        sev=medium    OWASP=A10:2025

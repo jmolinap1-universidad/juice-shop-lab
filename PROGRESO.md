@@ -1,7 +1,7 @@
 # Progreso del proyecto
 
 ## Etapa actual
-Etapa 6 – Fase 6 completada (WAF, mitigaciones, riesgo residual). Proyecto en revisión final.
+Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y tratamiento formal del riesgo. Proyecto en revisión final.
 
 ## Completado
 - 2026-11-03 Etapa 0: diagnóstico (`evidence/fase-0/diagnostico.txt`): Win11, i3-10100F, 31.9 GB RAM,
@@ -54,12 +54,23 @@ Etapa 6 – Fase 6 completada (WAF, mitigaciones, riesgo residual). Proyecto en 
   - **Dictamen:** Fases 4 y 5 técnicamente listas para la redacción académica final. Cloud **no desplegado**
     (sin costos); Fase 6 ampliada y figuras del `.docx` quedan fuera de esta auditoría.
 
+- 2026-11-10 **Fase 6 – Operaciones, monitoreo y ciberseguridad** (`docs/fase-6/`, Word+PDF en `docs/fase-6/entregable/`):
+  - Capa de operaciones como override (`deploy/hardened/docker-compose.ops.yml`): **RASP Aikido Zen 1.8.46** in-process y
+    **SIEM** Alloy v1.10.2 → Loki 3.5.5 (7 reglas de correlación) → Grafana 12.1.1; todo en 127.0.0.1, sin telemetría externa.
+  - WAF mapeado al OWASP Top 10:2025 con inventario real del CRS (`evidence/fase-6/waf/`). Falsos positivos: 6/6 legítimas OK.
+  - Defensa completa: A1-A11 mitigados; **BOLA (A12) sigue explotable a través del WAF** → detectado por el SIEM; parche 08 diseñado.
+  - RASP: 3 SQLi detectadas (monitoreo) y bloqueadas; **hallazgo**: el bloqueo por defecto hacía caer el proceso Node →
+    corregido con `--unhandled-rejections=warn` y verificado (corrida inválida preservada y marcada).
+  - SIEM: 6/7 reglas en firing (SQLi, parche virtual, fuerza bruta, rutas sensibles, enumeración BOLA, RASP).
+  - Tratamiento formal: 24 riesgos (tipo e impacto), decisiones Aceptar/Eliminar/Evitar/Mitigar/Transferir, método
+    reproducible desde el DREAD de la Fase 1; heatmaps: Crítico 8→1, Alto 15→9, Medio 1→9, Bajo 0→5.
+
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 
 ## Pendientes diferidos (NO en esta entrega de Fases 4-5)
 - Despliegue cloud AWS (`terraform apply`, EC2/ECS/ALB/WAFv2/RDS/CDN/API Gateway): **pospuesto para evitar
   costos** (solo validación estática Checkov + plan offline). BD administrada (SQLite, no RDS). SIEM/monitoreo
-  cloud. Fase 6 (WAF/residual) fuera del alcance de esta entrega parcial.
-- Recompilar `app-hardened` con los 7 parches y medir residual sin WAF; actualizar dependencias con CVE.
+  cloud (el SIEM local de la Fase 6 es de un solo nodo).
+- Recompilar `app-hardened` con los 8 parches (incl. 08 BOLA) y medir residual sin WAF; actualizar dependencias con CVE.
 - Equipo: DFD en Threat Dragon, confirmación IDs ASVS 5.0.0, capturas manuales con Burp, logo UMG en portada.

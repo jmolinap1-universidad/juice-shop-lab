@@ -1,0 +1,8 @@
+# Estado del stack de operaciones (2026-11-10T21:44:00-06:00) — docker ps, tras corregir el healthcheck del WAF
+# (antes: juice-waf 'unhealthy' porque el healthcheck de la imagen probaba https://localhost:8443, puerto no servido)
+NAMES            IMAGE                                                 STATUS                    PORTS
+juice-waf        owasp/modsecurity-crs:4.25.2-nginx-202610180210-lts   Up 8 seconds (healthy)    127.0.0.1:8088->8080/tcp
+juice-hardened   juice-hardened-rasp:local                             Up 18 minutes (healthy)   3000/tcp
+siem-alloy       grafana/alloy:v1.10.2                                 Up 21 minutes             
+siem-grafana     grafana/grafana:12.1.1                                Up 12 minutes             127.0.0.1:3001->3000/tcp
+siem-loki        grafana/loki:3.5.5                                    Up 12 minutes             127.0.0.1:3100->3100/tcp

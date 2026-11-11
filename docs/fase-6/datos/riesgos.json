@@ -1,0 +1,171 @@
+{
+  "metodo": {
+    "escala": "Probabilidad (P) e Impacto (I) en 1-5; nivel = P x I: 1-4 Bajo, 5-9 Medio, 10-16 Alto, 20-25 Crítico",
+    "inherente_dread": "P = ceil(media(R, E, Di) / 2); I = ceil(media(D, A) / 2). DREAD de docs/fase-1 (orden D, R, E, A, Di)",
+    "inherente_cualitativa": "Riesgos sin DREAD en Fase 1 (cloud, legal, operativos, hallazgo del RASP): valoración cualitativa del equipo, marcada como tal",
+    "residual": [
+      "Eliminación o evitación implementada y verificada con evidencia: P = 1",
+      "Si no: controles preventivos verificados n=1 -> P-2; n>=2 -> P-3 (mínimo 1)",
+      "Detección/alerta verificada para el riesgo -> I-1; contención verificada (runtime endurecido) -> I-1 (mínimo 1)",
+      "Controles diseñados (diff validado) o propuestos NO reducen el residual: se reportan como plan"
+    ]
+  },
+  "riesgos": [
+    {"id": "R01", "nombre": "Inyección SQL en el login (bypass de autenticación)", "origen": "T01 / A1", "owasp": "A05:2025", "cwe": "CWE-89",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Legal", "Financiero"], "dread": [10, 10, 9, 10, 9],
+     "decision": "Mitigar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "WAF ModSecurity + CRS 942xxx (bloqueo 403)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/"},
+       {"control": "RASP Aikido Zen: bloqueo en el sink sqlite3.all", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/rasp/03-bloqueo-sin-caída/"},
+       {"control": "Alerta SIEM WAF_InyeccionSQL_Bloqueada / RASP_Ataque_Detectado", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Parche 01: consulta parametrizada", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/01-sqli-login.patch"}]},
+    {"id": "R02", "nombre": "Inyección SQL UNION en búsqueda (extracción de tablas)", "origen": "T02 / A2-A3", "owasp": "A05:2025", "cwe": "CWE-89",
+     "tipo": "Seguridad", "impactos": ["Legal", "Reputacional", "Financiero"], "dread": [10, 10, 7, 10, 8],
+     "decision": "Mitigar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "WAF ModSecurity + CRS 942xxx (bloqueo 403)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/"},
+       {"control": "RASP Aikido Zen: bloqueo en el sink sqlite3.all (query.q)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/rasp/03-bloqueo-sin-caída/"},
+       {"control": "Alerta SIEM WAF_InyeccionSQL_Bloqueada / RASP_Ataque_Detectado", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Parche 02: consulta parametrizada", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/02-sqli-search.patch"}]},
+    {"id": "R03", "nombre": "Clave privada JWT embebida en el código (forja de tokens)", "origen": "T03", "owasp": "A04:2025", "cwe": "CWE-798/321",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Legal", "Financiero"], "dread": [10, 10, 6, 10, 7],
+     "decision": "Eliminar", "decision_sec": "Transferir",
+     "controles": [
+       {"control": "Parche 04: clave fuera del código (variable/secreto)", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/04-clave-privada-embebida.patch"},
+       {"control": "Gestor de secretos / KMS en la arquitectura cloud (Fase 2)", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "infra/terraform/"}],
+     "nota": "Ningún control desplegado detecta un JWT forjado: el residual se mantiene hasta desplegar el parche 04."},
+    {"id": "R04", "nombre": "Bibliotecas JWT obsoletas (algoritmos débiles)", "origen": "T04", "owasp": "A03:2025", "cwe": "CWE-347",
+     "tipo": "Software", "impactos": ["Reputacional", "Financiero"], "dread": [9, 7, 5, 10, 5],
+     "decision": "Aceptar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "SCA en CI (npm audit, OSV, Grype) que alerta del componente", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-3/sca/"},
+       {"control": "Actualizar jsonwebtoken/express-jwt y fijar algorithms RS256", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"}],
+     "nota": "Aceptación TEMPORAL solo en el laboratorio (actualizar rompe retos de Juice Shop); en producción la decision es Eliminar."},
+    {"id": "R05", "nombre": "Contraseñas con MD5 sin sal", "origen": "T05", "owasp": "A04:2025", "cwe": "CWE-916",
+     "tipo": "Seguridad", "impactos": ["Legal", "Reputacional"], "dread": [8, 10, 6, 10, 5],
+     "decision": "Eliminar", "decision_sec": "Mitigar",
+     "controles": [
+       {"control": "Bloqueo de la vía principal de extracción de hashes (SQLi: WAF + RASP)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/"},
+       {"control": "Alerta SIEM de inyeccion SQL", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Parche 03: bcrypt (factor 12)", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/03-md5-a-bcrypt.patch"}]},
+    {"id": "R06", "nombre": "BOLA/IDOR: lectura de recursos de otro usuario", "origen": "T06 / A12", "owasp": "A01:2025 (API1:2023)", "cwe": "CWE-639",
+     "tipo": "Seguridad", "impactos": ["Legal", "Reputacional"], "dread": [7, 10, 8, 8, 8],
+     "decision": "Eliminar", "decision_sec": "Mitigar",
+     "controles": [
+       {"control": "WAF: NO lo bloquea (A12 VULNERABLE a través del WAF)", "tipo": "preventivo", "estado": "no_efectivo", "evidencia": "evidence/fase-6/defensa-completa/bola/"},
+       {"control": "Monitoreo de API: alerta API_Enumeracion_Objetos_PosibleBOLA", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Parche 08: verificación de propietario (403)", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/08-bola-cesta-propietario.patch"}]},
+    {"id": "R07", "nombre": "Asignación masiva de role=admin en el registro", "origen": "T07 / A7", "owasp": "A01:2025", "cwe": "CWE-915",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Financiero"], "dread": [8, 10, 7, 5, 6],
+     "decision": "Mitigar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "Parche virtual ModSecurity 100001", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/"},
+       {"control": "Alerta SIEM WAF_ParcheVirtual_Activado", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Parche 06: lista blanca de campos", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/06-asignacion-masiva-registro.patch"}]},
+    {"id": "R08", "nombre": "Inyección NoSQL en reseñas (MarsDB)", "origen": "T08", "owasp": "A05:2025", "cwe": "CWE-943",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Operacional"], "dread": [5, 9, 6, 8, 5],
+     "decision": "Eliminar", "decision_sec": "",
+     "controles": [
+       {"control": "Rechazar operadores ($ne, $where...) en filtros", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"}],
+     "nota": "El RASP solo cubre NoSQL de MongoDB (no MarsDB) y el CRS no se verifico en esta ruta: brecha documentada."},
+    {"id": "R09", "nombre": "Ejecución de código via eval()/vm", "origen": "T09", "owasp": "A05:2025", "cwe": "CWE-95",
+     "tipo": "Seguridad", "impactos": ["Operacional", "Reputacional", "Financiero"], "dread": [10, 8, 5, 10, 5],
+     "decision": "Eliminar", "decision_sec": "Mitigar",
+     "controles": [
+       {"control": "Contención: FS solo lectura, cap_drop ALL, no root, no-new-privileges", "tipo": "contencion", "estado": "verificado", "evidencia": "evidence/fase-5/despues/runtime-hardening-inspect.txt"},
+       {"control": "Parche 05: eliminar eval()", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/05-eval-userprofile.patch"}]},
+    {"id": "R10", "nombre": "XXE en la carga de XML", "origen": "T10", "owasp": "A02:2025", "cwe": "CWE-611",
+     "tipo": "Seguridad", "impactos": ["Legal", "Operacional"], "dread": [8, 8, 5, 10, 5],
+     "decision": "Eliminar", "decision_sec": "",
+     "controles": [
+       {"control": "Parser XML sin entidades externas ni DTD", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "app-hardened/patches/README.md"}]},
+    {"id": "R11", "nombre": "SSRF en la imagen de perfil por URL", "origen": "T11", "owasp": "A01:2025", "cwe": "CWE-918",
+     "tipo": "Seguridad", "impactos": ["Operacional", "Legal"], "dread": [7, 8, 6, 5, 5],
+     "decision": "Mitigar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "Lista blanca de destinos y filtrado de egreso", "tipo": "preventivo", "estado": "propuesto", "evidencia": "app-hardened/patches/README.md"}],
+     "nota": "El RASP instrumenta node:http (protección SSRF) pero no se verifico en esta ruta; no reduce el residual."},
+    {"id": "R12", "nombre": "Listado de directorios y archivos internos (/ftp, /encryptionkeys)", "origen": "T12 / A4-A5", "owasp": "A02:2025", "cwe": "CWE-548/538",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Legal"], "dread": [6, 10, 10, 10, 9],
+     "decision": "Evitar", "decision_sec": "Mitigar",
+     "controles": [
+       {"control": "nginx deny de rutas sensibles (403)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/"},
+       {"control": "Alerta SIEM Acceso_Rutas_Sensibles_Denegado", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Retirar serve-index y archivos internos del servidor web", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "app-hardened/patches/README.md"}]},
+    {"id": "R13", "nombre": "XSS (CSP debil, sin codificación de salida)", "origen": "T13", "owasp": "A05:2025", "cwe": "CWE-79",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Legal"], "dread": [6, 9, 7, 7, 8],
+     "decision": "Mitigar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "CSP estricta (script-src 'self') y cabeceras en el WAF", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/a9-security-headers.txt"},
+       {"control": "Codificación de salida en el frontend", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"}]},
+    {"id": "R14", "nombre": "CORS permisivo (ACAO *)", "origen": "T14 / A8", "owasp": "A02:2025", "cwe": "CWE-942",
+     "tipo": "Seguridad", "impactos": ["Reputacional"], "dread": [4, 9, 6, 6, 8],
+     "decision": "Mitigar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "WAF oculta Access-Control-Allow-Origin", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/a8-cors-headers.txt"},
+       {"control": "Parche 07: origen explicito", "tipo": "eliminacion", "estado": "disenado", "evidencia": "app-hardened/patches/07-cors-restringido.patch"}]},
+    {"id": "R15", "nombre": "Redirección abierta (lista blanca evadible)", "origen": "T15", "owasp": "A01:2025", "cwe": "CWE-601",
+     "tipo": "Seguridad", "impactos": ["Reputacional"], "dread": [4, 9, 7, 5, 6],
+     "decision": "Eliminar", "decision_sec": "",
+     "controles": [
+       {"control": "Comparación exacta de destinos permitidos", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"}]},
+    {"id": "R16", "nombre": "Fuerza bruta en el login (sin limitación de intentos)", "origen": "T16 / A10", "owasp": "A07:2025", "cwe": "CWE-307",
+     "tipo": "Seguridad", "impactos": ["Reputacional", "Operacional"], "dread": [6, 9, 8, 5, 8],
+     "decision": "Mitigar", "decision_sec": "",
+     "controles": [
+       {"control": "Rate limiting nginx 5/min (HTTP 429)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/a10-bruteforce-login.txt"},
+       {"control": "Alerta SIEM Login_FuerzaBruta_RateLimit", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"}]},
+    {"id": "R17", "nombre": "/metrics expuesto sin autenticación", "origen": "T17 / A6", "owasp": "A02:2025", "cwe": "CWE-200",
+     "tipo": "Seguridad", "impactos": ["Reputacional"], "dread": [3, 10, 10, 2, 7],
+     "decision": "Evitar", "decision_sec": "Mitigar",
+     "controles": [
+       {"control": "nginx deny /metrics (403)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/a6-metrics.txt"},
+       {"control": "Parche virtual ModSecurity 100002", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/consultas-logql.jsonl"},
+       {"control": "Alerta SIEM Acceso_Rutas_Sensibles_Denegado", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"}]},
+    {"id": "R18", "nombre": "Denegación de servicio por vm/ZIP (agotamiento de recursos)", "origen": "T18", "owasp": "A10:2025", "cwe": "CWE-400",
+     "tipo": "Técnico", "impactos": ["Operacional", "Financiero"], "dread": [5, 6, 5, 10, 4],
+     "decision": "Mitigar", "decision_sec": "",
+     "controles": [
+       {"control": "Límites de pids (200), memoria (1 GiB) y CPU (1.0)", "tipo": "contencion", "estado": "verificado", "evidencia": "evidence/fase-5/despues/runtime-hardening-inspect.txt"}]},
+    {"id": "R19", "nombre": "Registro sin centralización ni alertas", "origen": "T19", "owasp": "A09:2025", "cwe": "CWE-778",
+     "tipo": "Operacional", "impactos": ["Operacional", "Legal"], "dread": [5, 8, 4, 10, 4],
+     "decision": "Eliminar", "decision_sec": "",
+     "controles": [
+       {"control": "SIEM: Alloy -> Loki -> Grafana con 7 reglas de correlación", "tipo": "eliminacion", "estado": "verificado", "evidencia": "evidence/fase-6/siem/"},
+       {"control": "Alertas activas verificadas (6/7 en firing durante las pruebas)", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"}]},
+    {"id": "R20", "nombre": "Dependencias con CVE criticas (cadena de suministro)", "origen": "T20", "owasp": "A03:2025", "cwe": "CWE-1395",
+     "tipo": "Software", "impactos": ["Financiero", "Reputacional", "Legal"], "dread": [8, 6, 5, 10, 8],
+     "decision": "Aceptar", "decision_sec": "Eliminar",
+     "controles": [
+       {"control": "SCA en CI (npm audit, OSV, Grype, Trivy) en cada push", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-3/sca/"},
+       {"control": "Actualizar dependencias (crypto-js, lodash, marsdb...)", "tipo": "eliminacion", "estado": "propuesto", "evidencia": "docs/fase-5/fase5-contenedores-hardening.md"}],
+     "nota": "Aceptación TEMPORAL solo en el laboratorio (la actualización rompe retos); en producción: Eliminar."},
+    {"id": "R21", "nombre": "Configuración insegura al desplegar la arquitectura cloud (AWS)", "origen": "Fase 2", "owasp": "A02:2025", "cwe": "CWE-16",
+     "tipo": "Cloud", "impactos": ["Financiero", "Operacional", "Legal"], "pi_cualitativa": {"P": 3, "I": 4},
+     "decision": "Evitar", "decision_sec": "Transferir",
+     "controles": [
+       {"control": "Checkov sobre Terraform (144 passed / 0 failed)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-2/checkov-final/"},
+       {"control": "No desplegar sin aprobación de costos (sin terraform apply)", "tipo": "evitacion", "estado": "verificado", "evidencia": "docs/AUDITORIA_FINAL_FASES_4_5.md"},
+       {"control": "Servicios gestionados (AWS WAFv2, KMS) y responsabilidad compartida", "tipo": "transferencia", "estado": "propuesto", "evidencia": "infra/terraform/"}]},
+    {"id": "R22", "nombre": "RASP en modo bloqueo provoca la caída del proceso (auto-DoS)", "origen": "Hallazgo Fase 6", "owasp": "A10:2025", "cwe": "CWE-248/755",
+     "tipo": "Técnico", "impactos": ["Operacional", "Reputacional"], "pi_cualitativa": {"P": 5, "I": 3},
+     "decision": "Eliminar", "decision_sec": "",
+     "controles": [
+       {"control": "Node --unhandled-rejections=warn (proceso sin caídas, RestartCount 0)", "tipo": "eliminacion", "estado": "verificado", "evidencia": "evidence/fase-6/rasp/03-bloqueo-sin-caída/rasp-bloqueos.log"}],
+     "nota": "Inherente medido: el primer bloqueo termino el proceso (evidence/fase-6/rasp/02-bloqueo-caída-del-proceso/). Residual: la petición bloqueada no recibe respuesta; el resto del servicio sigue operativo."},
+    {"id": "R23", "nombre": "Exposición de datos personales (incumplimiento de protección de datos)", "origen": "R01, R02, R06", "owasp": "A01/A05:2025", "cwe": "CWE-200",
+     "tipo": "Cumplimiento", "impactos": ["Legal", "Reputacional", "Financiero"], "pi_cualitativa": {"P": 5, "I": 5},
+     "decision": "Mitigar", "decision_sec": "Transferir",
+     "controles": [
+       {"control": "Bloqueo de la extracción masiva por SQLi (WAF + RASP)", "tipo": "preventivo", "estado": "verificado", "evidencia": "evidence/fase-6/defensa-completa/"},
+       {"control": "Detección SIEM (SQLi, enumeracion BOLA)", "tipo": "detectivo", "estado": "verificado", "evidencia": "evidence/fase-6/siem/reglas-estado.json"},
+       {"control": "Póliza de ciberriesgo / cláusulas contractuales", "tipo": "transferencia", "estado": "propuesto", "evidencia": "docs/fase-6/tratamiento-riesgo.md"}],
+     "nota": "La vía BOLA sigue abierta (R06): por eso el residual no baja más."},
+    {"id": "R24", "nombre": "SIEM de un solo nodo (sin alta disponibilidad; agente con acceso al socket de Docker)", "origen": "Riesgo introducido por la Fase 6", "owasp": "A09:2025", "cwe": "CWE-250",
+     "tipo": "Operacional", "impactos": ["Operacional"], "pi_cualitativa": {"P": 2, "I": 3},
+     "decision": "Aceptar", "decision_sec": "",
+     "controles": [
+       {"control": "Solo 127.0.0.1, socket de solo lectura, retención 30 dias, sin telemetría externa", "tipo": "contencion", "estado": "verificado", "evidencia": "deploy/hardened/docker-compose.ops.yml"}],
+     "nota": "Aceptado para el laboratorio; en producción: cluster gestionado y driver de logs en lugar del socket."}
+  ]
+}

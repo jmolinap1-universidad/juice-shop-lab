@@ -14,6 +14,8 @@ git clone --recurse-submodules https://github.com/jmolinap1-universidad/juice-sh
 make lab-up        # laboratorio vulnerable en http://127.0.0.1:3000
 make scan          # SAST/SCA/contenedores/IaC locales vía Docker → evidence/
 make attack        # casos de ataque automatizados (Fase 4) → evidence/fase-4/run-<fecha>/
+make ops-up        # Fase 6: WAF + RASP + SIEM (Grafana en http://127.0.0.1:3001)
+make risk          # Fase 6: recalcula riesgos y matrices de calor
 make lab-down
 ```
 

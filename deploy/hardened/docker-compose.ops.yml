@@ -1,0 +1,96 @@
+# Fase 6 – Capa de OPERACIONES y MONITOREO sobre el entorno endurecido (override de Compose).
+# Uso:  docker compose -f docker-compose.yml -f docker-compose.ops.yml up -d --build
+# Añade, sin modificar la configuración de la Fase 5:
+#  - RASP in-process (Aikido Zen) en la aplicación  → detección/bloqueo en tiempo de ejecución
+#  - SIEM ligero: Grafana Alloy (recolección) → Loki (almacén + reglas de correlación/alerta) → Grafana
+# Aislamiento: solo se publican puertos en 127.0.0.1 (Grafana 3001, Loki 3100). Sin telemetría externa.
+services:
+  juice-shop:
+    build:
+      context: .
+      dockerfile: Dockerfile.rasp
+    image: juice-hardened-rasp:local
+    environment:
+      AIKIDO_BLOCK: "${AIKIDO_BLOCK:-true}"   # true = bloquear; false = solo detectar (monitoreo)
+      AIKIDO_DEBUG: "true"                    # registra en stdout cada detección → SIEM
+      # Hallazgo de la Fase 6 (evidence/fase-6/rasp/02-bloqueo-caida-del-proceso/): en modo bloqueo, el error
+      # del RASP dentro de Sequelize/sqlite3 queda como rechazo de promesa no manejado y Node TERMINABA el
+      # proceso (auto-DoS). Con --unhandled-rejections=warn el proceso sigue vivo y solo esa petición falla.
+      NODE_OPTIONS: "--require @aikidosec/firewall --unhandled-rejections=warn"
+    labels:
+      siem.fuente: "app+rasp"
+
+  waf:
+    labels:
+      siem.fuente: "waf"
+
+  loki:
+    image: grafana/loki:3.5.5@sha256:31628519045e7f28692a7ae73b4a3fd293dccb425585ed5d16ceea3b5c9592e6
+    container_name: siem-loki
+    command: ["-config.file=/etc/loki/loki.yaml"]
+    volumes:
+      - ./siem/loki.yaml:/etc/loki/loki.yaml:ro
+      - ./siem/rules:/etc/loki/rules:ro
+      - loki-data:/loki
+    ports:
+      - "127.0.0.1:3100:3100"
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 1g
+    restart: unless-stopped
+    networks: [siem]
+
+  alloy:
+    image: grafana/alloy:v1.10.2@sha256:bcf27f18c4402869af112fb39e35e1db3804a404686f4caa20bdf77814219223
+    container_name: siem-alloy
+    # root solo para leer el socket de Docker (stdout de la app/RASP). Riesgo aceptado en el laboratorio:
+    # montaje de solo lectura, sin puertos publicados; en producción se usaría el driver de logs de Docker.
+    user: "0"
+    command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "--storage.path=/var/lib/alloy/data",
+              "--disable-reporting", "/etc/alloy/config.alloy"]
+    volumes:
+      - ./siem/config.alloy:/etc/alloy/config.alloy:ro
+      - ./logs:/var/log/waf:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - alloy-data:/var/lib/alloy/data
+    depends_on: [loki]
+    cap_drop: [ALL]
+    cap_add: [DAC_OVERRIDE]   # mínima: escribir su estado (posiciones) en el volumen de datos
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    restart: unless-stopped
+    networks: [siem]
+
+  grafana:
+    image: grafana/grafana:12.1.1@sha256:a1701c2180249361737a99a01bc770db39381640e4d631825d38ff4535efa47d
+    container_name: siem-grafana
+    environment:
+      GF_AUTH_ANONYMOUS_ENABLED: "true"        # solo lectura en 127.0.0.1 (laboratorio)
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: "/var/lib/grafana/dashboards/seguridad.json"
+    volumes:
+      - ./siem/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./siem/grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana-data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:3001:3000"
+    depends_on: [loki]
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 512m
+    restart: unless-stopped
+    networks: [siem]
+
+networks:
+  siem:
+    driver: bridge
+
+volumes:
+  loki-data:
+  alloy-data:
+  grafana-data:

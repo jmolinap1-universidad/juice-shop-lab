@@ -1,0 +1,466 @@
+{
+  "uid": "siem-juice",
+  "title": "SIEM - Juice Shop endurecido (Fase 6)",
+  "tags": [
+    "seguridad",
+    "waf",
+    "rasp",
+    "fase-6"
+  ],
+  "timezone": "browser",
+  "schemaVersion": 39,
+  "refresh": "30s",
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Peticiones bloqueadas por el WAF (403)",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "red"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "instant",
+          "expr": "sum(count_over_time({job=\"waf_access\", status=\"403\"}[$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Inyección SQL bloqueada (CRS 942xxx)",
+      "gridPos": {
+        "x": 6,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "orange"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "instant",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"942\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Login frenado por rate limit (429)",
+      "gridPos": {
+        "x": 12,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "yellow"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "instant",
+          "expr": "sum(count_over_time({job=\"waf_access\", status=\"429\"}[$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Detecciones del RASP (Aikido Zen)",
+      "gridPos": {
+        "x": 18,
+        "y": 0,
+        "w": 6,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed",
+            "fixedColor": "purple"
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "instant",
+          "expr": "sum(count_over_time({job=\"docker\", container=\"juice-hardened\"} |~ \"^Zen has (blocked|detected)\" [$__range]))"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "bargauge",
+      "title": "Reglas del WAF activadas por familia (OWASP Top 10:2025)",
+      "gridPos": {
+        "x": 0,
+        "y": 4,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "orientation": "horizontal",
+        "displayMode": "gradient",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "instant",
+          "legendFormat": "942 SQLi (A05)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"942\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "B",
+          "queryType": "instant",
+          "legendFormat": "941 XSS (A05)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"941\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "C",
+          "queryType": "instant",
+          "legendFormat": "932 RCE / comandos (A05)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"932\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "D",
+          "queryType": "instant",
+          "legendFormat": "930/931 LFI-RFI (A01)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"93[01]\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "E",
+          "queryType": "instant",
+          "legendFormat": "920/921 Protocolo (A02/A10)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"92[01]\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "F",
+          "queryType": "instant",
+          "legendFormat": "913 Escáneres (A02)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"913\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "G",
+          "queryType": "instant",
+          "legendFormat": "95x Fuga de datos en respuesta (A02/A04)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"95[0-9]\" [$__range])) or vector(0)"
+        },
+        {
+          "refId": "H",
+          "queryType": "instant",
+          "legendFormat": "1000xx Parches virtuales (A01/A02)",
+          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"1000\" [$__range])) or vector(0)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "A"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "942 SQLi (A05)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "B"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "941 XSS (A05)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "C"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "932 RCE / comandos (A05)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "D"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "930/931 LFI-RFI (A01)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "E"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "920/921 Protocolo (A02/A10)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "F"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "913 Escáneres (A02)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "G"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "95x Fuga de datos en respuesta (A02/A04)"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byFrameRefID",
+              "options": "H"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "1000xx Parches virtuales (A01/A02)"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Respuestas del WAF por código HTTP (por minuto)",
+      "gridPos": {
+        "x": 12,
+        "y": 4,
+        "w": 12,
+        "h": 9
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "legendFormat": "{{status}}",
+          "expr": "sum by (status) (count_over_time({job=\"waf_access\"}[1m]))"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "type": "stat",
+      "title": "Cestas distintas accedidas en 5 min (monitoreo BOLA)",
+      "gridPos": {
+        "x": 0,
+        "y": 13,
+        "w": 8,
+        "h": 4
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "max"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 2
+              }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "count(sum by (uri) (count_over_time({job=\"waf_access\", status=\"200\"} | json | uri=~\"/rest/basket/[0-9]+\" [5m])))"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "logs",
+      "title": "Eventos del RASP (stdout de la aplicación)",
+      "gridPos": {
+        "x": 8,
+        "y": 13,
+        "w": 16,
+        "h": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{job=\"docker\", container=\"juice-hardened\"} |~ \"^Zen has (blocked|detected)\""
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "type": "logs",
+      "title": "Auditoría del WAF (transacciones bloqueadas)",
+      "gridPos": {
+        "x": 0,
+        "y": 21,
+        "w": 24,
+        "h": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{job=\"waf_audit\", status=\"403\"}"
+        }
+      ]
+    }
+  ]
+}

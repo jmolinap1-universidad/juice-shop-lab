@@ -1,0 +1,12 @@
+# Métricas del periodo de pruebas (resumen literal de consultas-logql.jsonl, Loki 3.5.5)
+
+waf_403                  13
+waf_429                  8
+waf_por_status           200=14  201=3  400=1  401=4  403=13  429=8
+crs_942_sqli             3
+vp_100001                1
+vp_100002                1
+anomalia_949110          3
+rasp_detectado           3
+rasp_bloqueado           4
+bola_cestas_distintas    3

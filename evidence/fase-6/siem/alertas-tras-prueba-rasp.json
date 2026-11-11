@@ -1,0 +1,1 @@
+{"status":"success","data":{"alerts":[{"labels":{"alertname":"RASP_Ataque_Detectado","fuente":"rasp","owasp":"A05:2025","riesgo":"R01,R02","severity":"critical"},"annotations":{"summary":"El RASP (Aikido Zen) detectó o bloqueó un ataque dentro de la aplicación"},"state":"firing","activeAt":"2026-11-11T03:23:27.701488602Z","value":"1.1e+01"}]},"errorType":"","error":""}

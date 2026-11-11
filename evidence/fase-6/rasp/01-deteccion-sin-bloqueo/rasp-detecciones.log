@@ -1,0 +1,5 @@
+# Detecciones del RASP (Aikido Zen 1.8.46) — modo monitoreo AIKIDO_BLOCK=false, sin WAF delante
+# Fuente: docker logs juice-hardened desde 2026-11-10T21:23:23-06:00
+Zen has detected an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="::ffff:172.22.0.4"
+Zen has detected an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="query.q" ip="::ffff:172.22.0.4"
+Zen has detected an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="query.q" ip="::ffff:172.22.0.4"

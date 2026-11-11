@@ -63,11 +63,19 @@ services:
       MODSEC_AUDIT_ENGINE: "RelevantOnly"
       SERVER_TOKENS: "off"
     ports:
-      - "127.0.0.1:8080:8080"           # único punto de entrada; la app no se publica
+      - "127.0.0.1:${WAF_PORT:-8080}:8080"   # único punto de entrada; la app no se publica (WAF_PORT si 8080 está ocupado)
     volumes:
       - ./logs:/var/log/modsec:rw
       - ./waf/default.conf.template:/etc/nginx/templates/conf.d/default.conf.template:ro
       - ./waf/rules/99-virtual-patches.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf:ro
+    # El healthcheck de la imagen consulta https://localhost:8443/healthz, pero esta plantilla solo sirve HTTP en
+    # 8080: el WAF quedaba "unhealthy" aunque funcionara (hallazgo de operación, Fase 6). Se comprueba por HTTP.
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf -A healthcheck http://localhost:8080/healthz || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
     cap_drop: [ALL]
     cap_add: [CHOWN, SETGID, SETUID, NET_BIND_SERVICE]
     security_opt:

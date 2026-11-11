@@ -1,0 +1,10 @@
+# RASP Aikido Zen 1.8.46 — AIKIDO_BLOCK=true + --unhandled-rejections=warn (sin WAF delante)
+# Fuente: docker logs juice-hardened desde 2026-11-10T21:26:10-06:00
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="::ffff:172.22.0.4"
+(node:1) UnhandledPromiseRejectionWarning: Error: Zen has blocked an SQL injection: sqlite3.all(...) originating from body.email
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="query.q" ip="::ffff:172.22.0.4"
+(node:1) UnhandledPromiseRejectionWarning: Error: Zen has blocked an SQL injection: sqlite3.all(...) originating from query.q
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="query.q" ip="::ffff:172.22.0.4"
+(node:1) UnhandledPromiseRejectionWarning: Error: Zen has blocked an SQL injection: sqlite3.all(...) originating from query.q
+
+# RestartCount tras la corrida: 0 (proceso sin caídas)

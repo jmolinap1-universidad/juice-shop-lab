@@ -1,0 +1,26 @@
+# Detecciones/bloqueos del RASP y caída del proceso — AIKIDO_BLOCK=true (configuración inicial)
+# Fuente: docker logs juice-hardened desde 2026-11-10T21:24:41-06:00
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="::ffff:172.22.0.4"
+node:internal/process/promises:394
+    triggerUncaughtException(err, true /* fromPromise */);
+    ^
+
+Error: Zen has blocked an SQL injection: sqlite3.all(...) originating from body.email
+    at executeSql (/juice-shop/node_modules/sequelize/lib/dialects/sqlite/query.js:211:21)
+    at Database.<anonymous> (/juice-shop/node_modules/sequelize/lib/dialects/sqlite/query.js:223:18)
+    at /juice-shop/node_modules/sequelize/lib/dialects/sqlite/query.js:183:50
+    at new Promise (<anonymous>)
+    at Query.run (/juice-shop/node_modules/sequelize/lib/dialects/sqlite/query.js:183:12)
+    at /juice-shop/node_modules/sequelize/lib/sequelize.js:315:28
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+
+Node.js v24.21.0
+AIKIDO: Starting agent v1.8.46...
+AIKIDO: No token provided, disabling reporting.
+AIKIDO: No token provided, not starting heartbeats
+WARNING: NODE_ENV value of 'production' did not match any deployment config file names.
+WARNING: See https://github.com/node-config/node-config/wiki/Strict-Mode
+
+# docker inspect tras la corrida: RestartCount=1
+...
+# docker inspect tras la corrida: RestartCount=1

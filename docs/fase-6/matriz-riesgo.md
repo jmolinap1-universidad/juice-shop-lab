@@ -5,6 +5,14 @@ el **residual** reejecutando exactamente los mismos ataques (`security/attacks/r
 endurecido (`deploy/hardened`: app con FS de solo lectura + WAF ModSecurity/CRS). Evidencia:
 `evidence/fase-4/antes/`, `evidence/fase-4/despues/`, `evidence/fase-6/waf-logs/`.
 
+> **Nota (2026-11-10) — documento histórico de la primera iteración.** Esta matriz (WAF, 2026-11-03) estima el
+> residual de A1-A11 con DREAD por juicio experto. El **tratamiento formal vigente** de la Fase 6 —24 riesgos con
+> método reproducible, decisiones Aceptar/Eliminar/Evitar/Mitigar/Transferir, categorización por tipo e impacto y
+> matrices de calor— está en [`tratamiento-riesgo.md`](tratamiento-riesgo.md). Diferencias relevantes: allí el
+> **BOLA (A12/R06)** queda con residual **Alto** (verificado que el WAF no lo bloquea) y la **clave privada JWT
+> embebida (R03)** se separa del endpoint de clave pública (A11) y sigue **Crítica** hasta desplegar el parche 04;
+> la fila A11 de abajo solo refleja el bloqueo de `/encryptionkeys`.
+
 ## 1. Resultado global
 | | Inherente (laboratorio) | Residual (endurecido) |
 |---|---|---|

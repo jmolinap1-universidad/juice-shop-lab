@@ -1,0 +1,17 @@
+# Arranque del agente RASP en juice-hardened (2026-11-10T21:41:50-06:00) — docker logs, líneas AIKIDO
+# Imagen: juice-hardened-rasp:local (deploy/hardened/Dockerfile.rasp); env: AIKIDO_BLOCK=true AIKIDO_DEBUG=true NODE_OPTIONS=--require @aikidosec/firewall --unhandled-rejections=warn 
+AIKIDO: No token provided, disabling reporting.
+AIKIDO: No token provided, not starting heartbeats
+AIKIDO: Starting agent v1.8.46...
+AIKIDO: ai@6.0.303 is supported!
+AIKIDO: express@4.22.3 is supported!
+AIKIDO: node:child_process is supported!
+AIKIDO: node:fs is supported!
+AIKIDO: node:fs/promises is supported!
+AIKIDO: node:http is supported!
+AIKIDO: node:https is supported!
+AIKIDO: node:path is supported!
+AIKIDO: node:vm is supported!
+AIKIDO: node:zlib is supported!
+AIKIDO: raw-body@2.5.3 is supported!
+AIKIDO: sqlite3@5.1.7 is supported!

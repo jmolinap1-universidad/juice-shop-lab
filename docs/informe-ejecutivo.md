@@ -18,10 +18,16 @@ con evidencia verificable, midiendo el **riesgo inherente** (aplicación vulnera
 | 3 | DevSecOps (SAST/SCA) | Semgrep 90 hallazgos; npm audit 40 (7 críticas); OSV 62; SBOM 2 745 comp.; Grype 12 críticas; Gitleaks limpio. Pipeline GitHub Actions **7/7**. `evidence/fase-3/` |
 | 4 | Pruebas de seguridad | 11 observaciones: **4 explotación demostrada** (SQLi ×3 + asignación masiva) + 7 debilidades (listados, exposición, CORS, cabeceras, rate limit); BOLA/IDOR confirmado; SQLi corroborada por prueba activa de caja negra (sqlmap); ZAP baseline pasivo. `docs/fase-4/` |
 | 5 | Contenedores y hardening | Hadolint **11→0**; runtime read-only + cap_drop ALL + no-new-privileges + límites (verificado con `docker inspect`); Checkov **47/0**. `docs/fase-5/` |
-| 6 | Mitigación y riesgo residual | WAF ModSecurity/CRS + hardening + parches; ataques **11/11 MITIGADO**; logs de bloqueo; matriz e ISO 27005. `docs/fase-6/` |
+| 6 | Operaciones, monitoreo y riesgo residual | WAF ModSecurity/CRS 4.25.2 mapeado al OWASP Top 10:2025 + **RASP** Aikido Zen + **SIEM** (Alloy → Loki → Grafana, 7 reglas; 6 dispararon en las pruebas). Defensa completa: A1-A11 mitigados, **BOLA residual** (el WAF no lo bloquea; el SIEM lo detecta). 24 riesgos tratados (Aceptar/Eliminar/Evitar/Mitigar/Transferir): Crítico **8 → 1**, Alto **15 → 9**; heatmaps antes/después. `docs/fase-6/` |
 
 ## Reducción de riesgo (inherente → residual)
 - Observaciones de ataque activas: **11 → 0** (4 explotación demostrada + 7 debilidades, todas bloqueadas por el WAF/endurecimiento).
+  **Excepción verificada:** el BOLA/IDOR (A12) sigue explotable a través del WAF; queda detectado por el SIEM y su
+  eliminación requiere desplegar el parche 08 (`evidence/fase-6/defensa-completa/bola/`).
+- Registro de 24 riesgos (método reproducible, `docs/fase-6/tratamiento-riesgo.md`): Crítico 8 → 1 (R03, clave
+  privada JWT embebida), Alto 15 → 9, Medio 1 → 9, Bajo 0 → 5. Solo los controles verificados reducen el residual.
+- Hallazgo operativo: el RASP en modo bloqueo por defecto provocaba la caída del proceso Node; corregido y
+  verificado (`evidence/fase-6/rasp/`).
 - Compromiso total como administrador (SQLi y asignación masiva): **posible → bloqueado** por el WAF (reglas
   CRS 942100/949110 y parches virtuales 100001/100002), con evidencia en `evidence/fase-6/waf-logs/`.
 - Riesgo por capas: capas de datos, código y perímetro de aplicación bajan de **Crítico** a **Medio/Bajo**.
@@ -41,5 +47,5 @@ con evidencia verificable, midiendo el **riesgo inherente** (aplicación vulnera
 ## Trabajo a cargo del equipo / propuesto
 - DFD en OWASP Threat Dragon; confirmación de los IDs ASVS 5.0.0; capturas manuales con Burp Suite.
 - Ensamblado de los documentos Word con la plantilla T3 (carátula UMG, Arial 12, APA 7) a partir de `docs/`.
-- [P] Recompilar `app-hardened` con los parches y medir el residual sin WAF; actualizar dependencias; desplegar
-  SIEM (Loki/Promtail o Wazuh) y la arquitectura cloud de la Fase 2 (con aprobación de costos).
+- [P] Recompilar `app-hardened` con los parches 01-08 y medir el residual sin WAF; actualizar dependencias;
+  SIEM en clúster con notificaciones; desplegar la arquitectura cloud de la Fase 2 (con aprobación de costos).

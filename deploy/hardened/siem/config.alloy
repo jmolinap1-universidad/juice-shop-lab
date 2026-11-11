@@ -1,0 +1,82 @@
+// Grafana Alloy v1.10.2 – agente de recolección del SIEM (Fase 6).
+// Centraliza en Loki: (1) audit log JSON de ModSecurity, (2) access log JSON del WAF,
+// (3) salida estándar de la app (incluye las detecciones del RASP Aikido Zen) y del WAF.
+
+logging {
+  level = "warn"
+}
+
+// ---------- 1) Auditoría del WAF (ModSecurity, JSON, una transacción por línea) ----------
+local.file_match "waf_audit" {
+  path_targets = [{"__path__" = "/var/log/waf/audit.log", "job" = "waf_audit", "fuente" = "waf"}]
+}
+
+loki.source.file "waf_audit" {
+  targets    = local.file_match.waf_audit.targets
+  forward_to = [loki.process.waf_audit.receiver]
+}
+
+loki.process "waf_audit" {
+  stage.json {
+    expressions = { status = "transaction.response.http_code" }
+  }
+  stage.labels {
+    values = { status = "" }
+  }
+  forward_to = [loki.write.local.receiver]
+}
+
+// ---------- 2) Acceso del WAF (nginx, JSON) ----------
+local.file_match "waf_access" {
+  path_targets = [{"__path__" = "/var/log/waf/access.log", "job" = "waf_access", "fuente" = "waf"}]
+}
+
+loki.source.file "waf_access" {
+  targets    = local.file_match.waf_access.targets
+  forward_to = [loki.process.waf_access.receiver]
+}
+
+loki.process "waf_access" {
+  stage.json {
+    expressions = { status = "status", method = "method" }
+  }
+  stage.labels {
+    values = { status = "", method = "" }
+  }
+  forward_to = [loki.write.local.receiver]
+}
+
+// ---------- 3) stdout de los contenedores del entorno endurecido (app + RASP, WAF) ----------
+discovery.docker "contenedores" {
+  host = "unix:///var/run/docker.sock"
+}
+
+discovery.relabel "contenedores" {
+  targets = discovery.docker.contenedores.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+
+  rule {
+    source_labels = ["container"]
+    regex         = "juice-hardened|juice-waf"
+    action        = "keep"
+  }
+}
+
+loki.source.docker "contenedores" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.contenedores.output
+  labels     = {"job" = "docker", "fuente" = "runtime"}
+  forward_to = [loki.write.local.receiver]
+}
+
+// ---------- Destino ----------
+loki.write "local" {
+  endpoint {
+    url = "http://loki:3100/loki/api/v1/push"
+  }
+}

@@ -15,3 +15,12 @@ evidence/fase-4/run-*/
 docs/evidencias-fase4-5/build/node_modules/
 docs/evidencias-fase4-5/build/package.json
 docs/evidencias-fase4-5/term/*.html
+
+# Logs vivos del entorno endurecido (WAF): la evidencia se copia a evidence/fase-6/ con su hash
+deploy/hardened/logs/
+
+# Entregable Word/PDF de la Fase 6: dependencias y HTML intermedio
+docs/fase-6/entregable/build/node_modules/
+docs/fase-6/entregable/term/*.html
+!docs/fase-6/entregable/term/arquitectura.html
+docs/fase-6/entregable/build/pdf.txt
