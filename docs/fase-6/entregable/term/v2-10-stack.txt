@@ -1,0 +1,8 @@
+# Estado del stack de operaciones tras la validación (2026-11-10T23:29:48-06:00) — docker ps
+NAMES               IMAGE                                                 STATUS                    PORTS
+juice-hardened      juice-hardened-rasp:local                             Up 13 minutes (healthy)   3000/tcp
+siem-socket-proxy   tecnativa/docker-socket-proxy:v0.4.1                  Up 24 minutes             2375/tcp
+juice-waf           owasp/modsecurity-crs:4.25.2-nginx-202610180210-lts   Up 32 minutes (healthy)   127.0.0.1:8088->8080/tcp
+siem-grafana        grafana/grafana:12.1.1                                Up 32 minutes             127.0.0.1:3001->3000/tcp
+siem-alloy          grafana/alloy:v1.10.2                                 Up 32 minutes             
+siem-loki           grafana/loki:3.5.5                                    Up 32 minutes             127.0.0.1:3100->3100/tcp

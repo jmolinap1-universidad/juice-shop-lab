@@ -4,7 +4,7 @@ LAB_URL := http://127.0.0.1:3000
 
 HARD := deploy/hardened/docker-compose.yml
 
-.PHONY: lab-up lab-down hard-up hard-down scan attack report ops-up ops-down risk
+.PHONY: lab-up lab-down hard-up hard-down scan attack report ops-up ops-down risk ops-validar
 
 lab-up:     ## Laboratorio vulnerable solo en 127.0.0.1:3000
 	docker compose -f $(LAB) up -d
@@ -35,6 +35,10 @@ ops-up:     ## Fase 6: endurecido + RASP + SIEM (Grafana 127.0.0.1:3001). Si 808
 ops-down:
 	cd deploy/hardened && docker compose -f docker-compose.yml -f docker-compose.ops.yml down
 
-risk:       ## Fase 6: recalcula riesgos, heatmaps y docs/fase-6/tratamiento-riesgo.md (Python en Docker)
-	MSYS_NO_PATHCONV=1 docker run --rm -v "$(CURDIR)/docs/fase-6":/f6 python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b \
-		sh -c 'pip install -q --no-cache-dir --root-user-action=ignore matplotlib==3.9.2 && python -I /f6/datos/riesgo.py /f6 && python -I /f6/datos/generar_md.py /f6'
+risk:       ## Fase 6: valida el registro (falla si hay reducciones sin control probado), heatmaps y tratamiento-riesgo.md
+	MSYS_NO_PATHCONV=1 docker run --rm -v "$(CURDIR)":/r python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b \
+		sh -c 'pip install -q --no-cache-dir --root-user-action=ignore matplotlib==3.9.2 && python -I /r/docs/fase-6/datos/riesgo.py /r && python -I /r/docs/fase-6/datos/generar_md.py /r'
+
+ops-validar: ## Fase 6: escenarios del RASP sin WAF (R22) con registro HTTP y disponibilidad (requiere make ops-up)
+	bash security/ops/escenario-rasp.sh "$(CURDIR)/evidence/fase-6/validacion-$$(date +%F)/rasp-monitoreo" false
+	bash security/ops/escenario-rasp.sh "$(CURDIR)/evidence/fase-6/validacion-$$(date +%F)/rasp-bloqueo-integrado" true

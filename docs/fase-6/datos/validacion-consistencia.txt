@@ -1,0 +1,303 @@
+# Validación de consistencia del registro de riesgos (generado por riesgo.py)
+# 301 comprobaciones, 0 fallas
+OK   V1 24 riesgos con ID único R01-R24
+OK   V2 R01 P/I en escala 1-5
+OK   V3 R01 residual no mayor que inherente
+OK   V4 R01 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R01 razonamiento residual de P e I
+OK   V7 R01 decisiones válidas
+OK   V7 R01 estado de tratamiento válido
+OK   V8 R01 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R01 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+OK   V12 R01 coherencia estado/verificación del control
+OK   V11 R01 evidencia existe: evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv
+OK   V12 R01 coherencia estado/verificación del control
+OK   V11 R01 evidencia existe: evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+OK   V12 R01 coherencia estado/verificación del control
+OK   V11 R01 evidencia existe: app-hardened/patches/01-sqli-login.patch
+OK   V12 R01 coherencia estado/verificación del control
+OK   V13 R01 plan: responsable, revisión y pendiente
+OK   V14 R01 tipo e impactos válidos
+OK   V2 R02 P/I en escala 1-5
+OK   V3 R02 residual no mayor que inherente
+OK   V4 R02 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R02 razonamiento residual de P e I
+OK   V7 R02 decisiones válidas
+OK   V7 R02 estado de tratamiento válido
+OK   V8 R02 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R02 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+OK   V12 R02 coherencia estado/verificación del control
+OK   V11 R02 evidencia existe: evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv
+OK   V12 R02 coherencia estado/verificación del control
+OK   V11 R02 evidencia existe: evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+OK   V12 R02 coherencia estado/verificación del control
+OK   V11 R02 evidencia existe: app-hardened/patches/02-sqli-search.patch
+OK   V12 R02 coherencia estado/verificación del control
+OK   V13 R02 plan: responsable, revisión y pendiente
+OK   V14 R02 tipo e impactos válidos
+OK   V2 R03 P/I en escala 1-5
+OK   V3 R03 residual no mayor que inherente
+OK   V6 R03 razonamiento residual de P e I
+OK   V7 R03 decisiones válidas
+OK   V7 R03 estado de tratamiento válido
+OK   V10 R03 transferencia no ejecutada marcada como Propuesta
+OK   V11 R03 evidencia existe: app-hardened/patches/04-clave-privada-embebida.patch
+OK   V12 R03 coherencia estado/verificación del control
+OK   V11 R03 evidencia existe: infra/terraform/
+OK   V12 R03 coherencia estado/verificación del control
+OK   V13 R03 plan: responsable, revisión y pendiente
+OK   V14 R03 tipo e impactos válidos
+OK   V2 R04 P/I en escala 1-5
+OK   V3 R04 residual no mayor que inherente
+OK   V6 R04 razonamiento residual de P e I
+OK   V7 R04 decisiones válidas
+OK   V7 R04 estado de tratamiento válido
+OK   V9 R04 aceptación temporal documentada (quién, motivo, condiciones, vigencia)
+OK   V11 R04 evidencia existe: evidence/fase-3/sca/
+OK   V12 R04 coherencia estado/verificación del control
+OK   V11 R04 evidencia existe: docs/fase-1/fase1-modelado-amenazas.md
+OK   V12 R04 coherencia estado/verificación del control
+OK   V13 R04 plan: responsable, revisión y pendiente
+OK   V14 R04 tipo e impactos válidos
+OK   V2 R05 P/I en escala 1-5
+OK   V3 R05 residual no mayor que inherente
+OK   V4 R05 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R05 razonamiento residual de P e I
+OK   V7 R05 decisiones válidas
+OK   V7 R05 estado de tratamiento válido
+OK   V11 R05 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+OK   V12 R05 coherencia estado/verificación del control
+OK   V11 R05 evidencia existe: app-hardened/patches/03-md5-a-bcrypt.patch
+OK   V12 R05 coherencia estado/verificación del control
+OK   V13 R05 plan: responsable, revisión y pendiente
+OK   V14 R05 tipo e impactos válidos
+OK   V2 R06 P/I en escala 1-5
+OK   V3 R06 residual no mayor que inherente
+OK   V6 R06 razonamiento residual de P e I
+OK   V7 R06 decisiones válidas
+OK   V7 R06 estado de tratamiento válido
+OK   V11 R06 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/bola/resultado-bola.md
+OK   V12 R06 coherencia estado/verificación del control
+OK   V11 R06 evidencia existe: evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/alertas-tras-trafico-legitimo.json
+OK   V12 R06 coherencia estado/verificación del control
+OK   V11 R06 evidencia existe: app-hardened/patches/08-bola-cesta-propietario.patch
+OK   V12 R06 coherencia estado/verificación del control
+OK   V13 R06 plan: responsable, revisión y pendiente
+OK   V14 R06 tipo e impactos válidos
+OK   V2 R07 P/I en escala 1-5
+OK   V3 R07 residual no mayor que inherente
+OK   V4 R07 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R07 razonamiento residual de P e I
+OK   V7 R07 decisiones válidas
+OK   V7 R07 estado de tratamiento válido
+OK   V8 R07 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R07 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+OK   V12 R07 coherencia estado/verificación del control
+OK   V11 R07 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+OK   V12 R07 coherencia estado/verificación del control
+OK   V11 R07 evidencia existe: app-hardened/patches/06-asignacion-masiva-registro.patch
+OK   V12 R07 coherencia estado/verificación del control
+OK   V13 R07 plan: responsable, revisión y pendiente
+OK   V14 R07 tipo e impactos válidos
+OK   V2 R08 P/I en escala 1-5
+OK   V3 R08 residual no mayor que inherente
+OK   V6 R08 razonamiento residual de P e I
+OK   V7 R08 decisiones válidas
+OK   V7 R08 estado de tratamiento válido
+OK   V11 R08 evidencia existe: docs/fase-1/fase1-modelado-amenazas.md
+OK   V12 R08 coherencia estado/verificación del control
+OK   V13 R08 plan: responsable, revisión y pendiente
+OK   V14 R08 tipo e impactos válidos
+OK   V2 R09 P/I en escala 1-5
+OK   V3 R09 residual no mayor que inherente
+OK   V5 R09 baja de I respaldada por contención/respuesta PROBADA (la detección no cuenta)
+OK   V6 R09 razonamiento residual de P e I
+OK   V7 R09 decisiones válidas
+OK   V7 R09 estado de tratamiento válido
+OK   V11 R09 evidencia existe: evidence/fase-5/despues/runtime-hardening-inspect.txt
+OK   V12 R09 coherencia estado/verificación del control
+OK   V11 R09 evidencia existe: app-hardened/patches/05-eval-userprofile.patch
+OK   V12 R09 coherencia estado/verificación del control
+OK   V13 R09 plan: responsable, revisión y pendiente
+OK   V14 R09 tipo e impactos válidos
+OK   V2 R10 P/I en escala 1-5
+OK   V3 R10 residual no mayor que inherente
+OK   V6 R10 razonamiento residual de P e I
+OK   V7 R10 decisiones válidas
+OK   V7 R10 estado de tratamiento válido
+OK   V11 R10 evidencia existe: app-hardened/patches/README.md
+OK   V12 R10 coherencia estado/verificación del control
+OK   V13 R10 plan: responsable, revisión y pendiente
+OK   V14 R10 tipo e impactos válidos
+OK   V2 R11 P/I en escala 1-5
+OK   V3 R11 residual no mayor que inherente
+OK   V6 R11 razonamiento residual de P e I
+OK   V7 R11 decisiones válidas
+OK   V7 R11 estado de tratamiento válido
+OK   V11 R11 evidencia existe: app-hardened/patches/README.md
+OK   V12 R11 coherencia estado/verificación del control
+OK   V13 R11 plan: responsable, revisión y pendiente
+OK   V14 R11 tipo e impactos válidos
+OK   V2 R12 P/I en escala 1-5
+OK   V3 R12 residual no mayor que inherente
+OK   V4 R12 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R12 razonamiento residual de P e I
+OK   V7 R12 decisiones válidas
+OK   V7 R12 estado de tratamiento válido
+OK   V8 R12 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R12 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+OK   V12 R12 coherencia estado/verificación del control
+OK   V11 R12 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+OK   V12 R12 coherencia estado/verificación del control
+OK   V11 R12 evidencia existe: app-hardened/patches/README.md
+OK   V12 R12 coherencia estado/verificación del control
+OK   V13 R12 plan: responsable, revisión y pendiente
+OK   V14 R12 tipo e impactos válidos
+OK   V2 R13 P/I en escala 1-5
+OK   V3 R13 residual no mayor que inherente
+OK   V6 R13 razonamiento residual de P e I
+OK   V7 R13 decisiones válidas
+OK   V7 R13 estado de tratamiento válido
+OK   V11 R13 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a9-security-headers.txt
+OK   V12 R13 coherencia estado/verificación del control
+OK   V11 R13 evidencia existe: evidence/fase-6/waf/crs-inventario.txt
+OK   V12 R13 coherencia estado/verificación del control
+OK   V11 R13 evidencia existe: docs/fase-1/fase1-modelado-amenazas.md
+OK   V12 R13 coherencia estado/verificación del control
+OK   V13 R13 plan: responsable, revisión y pendiente
+OK   V14 R13 tipo e impactos válidos
+OK   V2 R14 P/I en escala 1-5
+OK   V3 R14 residual no mayor que inherente
+OK   V4 R14 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R14 razonamiento residual de P e I
+OK   V7 R14 decisiones válidas
+OK   V7 R14 estado de tratamiento válido
+OK   V8 R14 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R14 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a8-cors-headers.txt
+OK   V12 R14 coherencia estado/verificación del control
+OK   V11 R14 evidencia existe: app-hardened/patches/07-cors-restringido.patch
+OK   V12 R14 coherencia estado/verificación del control
+OK   V13 R14 plan: responsable, revisión y pendiente
+OK   V14 R14 tipo e impactos válidos
+OK   V2 R15 P/I en escala 1-5
+OK   V3 R15 residual no mayor que inherente
+OK   V6 R15 razonamiento residual de P e I
+OK   V7 R15 decisiones válidas
+OK   V7 R15 estado de tratamiento válido
+OK   V11 R15 evidencia existe: docs/fase-1/fase1-modelado-amenazas.md
+OK   V12 R15 coherencia estado/verificación del control
+OK   V13 R15 plan: responsable, revisión y pendiente
+OK   V14 R15 tipo e impactos válidos
+OK   V2 R16 P/I en escala 1-5
+OK   V3 R16 residual no mayor que inherente
+OK   V4 R16 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R16 razonamiento residual de P e I
+OK   V7 R16 decisiones válidas
+OK   V7 R16 estado de tratamiento válido
+OK   V8 R16 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R16 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a10-bruteforce-login.txt
+OK   V12 R16 coherencia estado/verificación del control
+OK   V11 R16 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+OK   V12 R16 coherencia estado/verificación del control
+OK   V13 R16 plan: responsable, revisión y pendiente
+OK   V14 R16 tipo e impactos válidos
+OK   V2 R17 P/I en escala 1-5
+OK   V3 R17 residual no mayor que inherente
+OK   V4 R17 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R17 razonamiento residual de P e I
+OK   V7 R17 decisiones válidas
+OK   V7 R17 estado de tratamiento válido
+OK   V8 R17 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V11 R17 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a6-metrics.txt
+OK   V12 R17 coherencia estado/verificación del control
+OK   V11 R17 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+OK   V12 R17 coherencia estado/verificación del control
+OK   V13 R17 plan: responsable, revisión y pendiente
+OK   V14 R17 tipo e impactos válidos
+OK   V2 R18 P/I en escala 1-5
+OK   V3 R18 residual no mayor que inherente
+OK   V6 R18 razonamiento residual de P e I
+OK   V7 R18 decisiones válidas
+OK   V7 R18 estado de tratamiento válido
+OK   V11 R18 evidencia existe: evidence/fase-5/despues/runtime-hardening-inspect.txt
+OK   V12 R18 coherencia estado/verificación del control
+OK   V13 R18 plan: responsable, revisión y pendiente
+OK   V14 R18 tipo e impactos válidos
+OK   V2 R19 P/I en escala 1-5
+OK   V3 R19 residual no mayor que inherente
+OK   V4 R19 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R19 razonamiento residual de P e I
+OK   V7 R19 decisiones válidas
+OK   V7 R19 estado de tratamiento válido
+OK   V11 R19 evidencia existe: evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+OK   V12 R19 coherencia estado/verificación del control
+OK   V13 R19 plan: responsable, revisión y pendiente
+OK   V14 R19 tipo e impactos válidos
+OK   V2 R20 P/I en escala 1-5
+OK   V3 R20 residual no mayor que inherente
+OK   V6 R20 razonamiento residual de P e I
+OK   V7 R20 decisiones válidas
+OK   V7 R20 estado de tratamiento válido
+OK   V9 R20 aceptación temporal documentada (quién, motivo, condiciones, vigencia)
+OK   V11 R20 evidencia existe: evidence/fase-3/sca/
+OK   V12 R20 coherencia estado/verificación del control
+OK   V11 R20 evidencia existe: docs/fase-5/fase5-contenedores-hardening.md
+OK   V12 R20 coherencia estado/verificación del control
+OK   V13 R20 plan: responsable, revisión y pendiente
+OK   V14 R20 tipo e impactos válidos
+OK   V2 R21 P/I en escala 1-5
+OK   V3 R21 residual no mayor que inherente
+OK   V4 R21 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R21 razonamiento residual de P e I
+OK   V7 R21 decisiones válidas
+OK   V7 R21 estado de tratamiento válido
+OK   V8 R21 decisión 'Evitar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V10 R21 transferencia no ejecutada marcada como Propuesta
+OK   V11 R21 evidencia existe: evidence/fase-6/validacion-2026-11-10/06-cloud-no-desplegado.txt
+OK   V12 R21 coherencia estado/verificación del control
+OK   V11 R21 evidencia existe: evidence/fase-2/checkov-final/
+OK   V12 R21 coherencia estado/verificación del control
+OK   V11 R21 evidencia existe: infra/terraform/
+OK   V12 R21 coherencia estado/verificación del control
+OK   V13 R21 plan: responsable, revisión y pendiente
+OK   V14 R21 tipo e impactos válidos
+OK   V2 R22 P/I en escala 1-5
+OK   V3 R22 residual no mayor que inherente
+OK   V4 R22 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R22 razonamiento residual de P e I
+OK   V7 R22 decisiones válidas
+OK   V7 R22 estado de tratamiento válido
+OK   V11 R22 evidencia existe: evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/estado-contenedor.txt
+OK   V12 R22 coherencia estado/verificación del control
+OK   V11 R22 evidencia existe: evidence/fase-6/validacion-2026-11-10/02c-rasp-bloqueo-warn/http.tsv
+OK   V12 R22 coherencia estado/verificación del control
+OK   V13 R22 plan: responsable, revisión y pendiente
+OK   V14 R22 tipo e impactos válidos
+OK   V2 R23 P/I en escala 1-5
+OK   V3 R23 residual no mayor que inherente
+OK   V4 R23 baja de P respaldada por control preventivo/eliminación/evitación PROBADO
+OK   V6 R23 razonamiento residual de P e I
+OK   V7 R23 decisiones válidas
+OK   V7 R23 estado de tratamiento válido
+OK   V10 R23 transferencia no ejecutada marcada como Propuesta
+OK   V11 R23 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+OK   V12 R23 coherencia estado/verificación del control
+OK   V11 R23 evidencia existe: docs/fase-6/tratamiento-riesgo.md
+OK   V12 R23 coherencia estado/verificación del control
+OK   V13 R23 plan: responsable, revisión y pendiente
+OK   V14 R23 tipo e impactos válidos
+OK   V2 R24 P/I en escala 1-5
+OK   V3 R24 residual no mayor que inherente
+OK   V5 R24 baja de I respaldada por contención/respuesta PROBADA (la detección no cuenta)
+OK   V6 R24 razonamiento residual de P e I
+OK   V7 R24 decisiones válidas
+OK   V7 R24 estado de tratamiento válido
+OK   V8 R24 decisión 'Mitigar' marcada Ejecutado con control PROBADO de ese tipo
+OK   V9 R24 aceptación temporal documentada (quién, motivo, condiciones, vigencia)
+OK   V11 R24 evidencia existe: evidence/fase-6/validacion-2026-11-10/05-siem-seguridad/proxy-socket-api.txt
+OK   V12 R24 coherencia estado/verificación del control
+OK   V11 R24 evidencia existe: deploy/hardened/docker-compose.ops.yml
+OK   V12 R24 coherencia estado/verificación del control
+OK   V13 R24 plan: responsable, revisión y pendiente
+OK   V14 R24 tipo e impactos válidos
+OK   V15 recuento por nivel suma 24 (inherente y residual)

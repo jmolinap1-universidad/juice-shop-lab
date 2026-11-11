@@ -1,0 +1,2 @@
+Antes: app RestartCount=0 health=healthy · waf health=healthy
+Después: app RestartCount=0 health=healthy · waf health=healthy

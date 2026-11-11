@@ -1,0 +1,32 @@
+[MITIGADO/E] A1 SQLi bypass de login            Sin token (HTTP <html>
+[MITIGADO/E] A2 SQLi UNION (volcado de Users)   Sin datos de Users en la respuesta
+[MITIGADO/E] A3 SQLi enumeración de esquema    Sin DDL en la respuesta
+[MITIGADO/X] A4 Listado de directorios          Sin listados navegables
+[MITIGADO/X] A5 Exposición de documento interno (/ftp) HTTP 403
+[MITIGADO/X] A6 /metrics sin autenticación     HTTP 403
+[MITIGADO/E] A7 Asignación masiva (role=admin) role no aceptado ()
+[MITIGADO/C] A8 CORS permisivo (configuración) Sin ACAO abierto
+[MITIGADO/C] A9 Cabeceras de seguridad          Presentes las 4 cabeceras clave
+[MITIGADO/N] A10 Fuerza bruta en login          Aparece HTTP 429: 401 401 401 401 429 429 429 429 429 429 429 429
+[MITIGADO/X] A11 Clave pública JWT servida     HTTP 403
+[VULNERABLE/E] A12 BOLA/IDOR                      Usuario B (bid=9) leyó la cesta de A (bid=8) con su propio token; HTTP 200. BOLA confirmado.
+=== 0 VULNERABLE / 11 MITIGADO de 11 casos (03-waf-rasp-siem) ===
+
+# http.tsv (código HTTP real por petición)
+metodo	ruta	codigo	tiempo
+POST	/rest/user/login	403	0.018458s
+GET	/rest/products/search	403	0.013199s
+GET	/rest/products/search	403	0.007941s
+GET	/ftp/	403	0.005981s
+GET	/encryptionkeys/	403	0.005782s
+GET	/support/logs/	403	0.006171s
+POST	/api/Users	403	0.013266s
+GET	/rest/admin/application-version	200	0.018338s
+GET	/	200	0.017795s
+POST	/api/Users	201	0.084368s
+POST	/api/Users	201	0.073082s
+POST	/rest/user/login	200	0.075083s
+POST	/rest/user/login	200	0.069392s
+POST	/api/BasketItems	400	0.027058s
+Antes: app RestartCount=0 health=healthy · waf health=healthy
+Después: app RestartCount=0 health=healthy · waf health=healthy

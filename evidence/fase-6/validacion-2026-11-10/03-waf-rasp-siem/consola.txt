@@ -1,0 +1,17 @@
+[MITIGADO/E] A1 SQLi bypass de login            Sin token (HTTP <html>
+<head><title>403 Forbidden</titl)
+[MITIGADO/E] A2 SQLi UNION (volcado de Users)   Sin datos de Users en la respuesta
+[MITIGADO/E] A3 SQLi enumeración de esquema    Sin DDL en la respuesta
+[MITIGADO/X] A4 Listado de directorios          Sin listados navegables
+[MITIGADO/X] A5 Exposición de documento interno (/ftp) HTTP 403
+[MITIGADO/X] A6 /metrics sin autenticación     HTTP 403
+[MITIGADO/E] A7 Asignación masiva (role=admin) role no aceptado ()
+[MITIGADO/C] A8 CORS permisivo (configuración) Sin ACAO abierto
+[MITIGADO/C] A9 Cabeceras de seguridad          Presentes las 4 cabeceras clave
+[MITIGADO/N] A10 Fuerza bruta en login          Aparece HTTP 429: 401 401 401 401 429 429 429 429 429 429 429 429
+[MITIGADO/X] A11 Clave pública JWT servida     HTTP 403
+(pausa de 65s antes de A12 para no confundir rate limit con autorización)
+[VULNERABLE/E] A12 BOLA/IDOR                      Usuario B (bid=9) leyó la cesta de A (bid=8) con su propio token; HTTP 200. BOLA confirmado.
+   -> /c/Users/CHINO/Desktop/Proyecto Seg Aplicacion/evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/bola/resultado-bola.md
+
+=== 0 VULNERABLE / 11 MITIGADO de 11 casos (03-waf-rasp-siem) ===

@@ -1,0 +1,14 @@
+# git apply --check de los parches de código sobre app/ (Juice Shop v20.3.0, f189f5212) — 2026-11-10T23:39:32-06:00
+# Valida que el diff aplica; NO prueba el comportamiento corregido (la app no se recompiló): estado 'diseñado'.
+OK      01-sqli-login.patch
+OK      02-sqli-search.patch
+OK      03-md5-a-bcrypt.patch
+NO APLICA 04-clave-privada-embebida.patch: error: patch failed: lib/insecurity.ts:18
+OK      05-eval-userprofile.patch
+OK      06-asignacion-masiva-registro.patch
+OK      07-cors-restringido.patch
+OK      08-bola-cesta-propietario.patch
+
+app/ sin cambios tras la comprobación: sí
+Interpretación: el 04 no aplica automáticamente A PROPÓSITO: su línea original contiene la clave privada de
+prueba, que no se versiona; el diff la muestra redactada y se aplica a mano (app-hardened/patches/README.md).

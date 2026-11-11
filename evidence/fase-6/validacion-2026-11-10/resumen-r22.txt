@@ -1,0 +1,7 @@
+# R22 — comparación de las configuraciones del RASP sin WAF (resumen literal de http.tsv, estado-contenedor.txt y disponibilidad.tsv)
+Escenario                          A1-A3: código (tiempo)      Disponibilidad (200)   RestartCount
+02a-rasp-monitoreo                 200(0.06s) 200(0.15s) 200(0.26s)  41/41                  0->0
+02b-rasp-bloqueo-sin-integracion   000(0.07s) 000(0.00s) 000(1.02s)  1/6                    0->1
+02c-rasp-bloqueo-warn              000(20.00s) 000(20.00s) 000(20.00s)  106/106                0->0
+02d-rasp-bloqueo-integrado         403(0.06s) 403(0.15s) 403(0.04s)  41/41                  0->0
+03b-rasp-a-siem                    403(0.06s) 403(0.04s) 403(0.04s)  41/41                  0->0

@@ -15,11 +15,13 @@ RUN npm init -y >/dev/null \
 # Etapa 2: imagen de ejecución (distroless de Juice Shop, sin shell ni root)
 FROM bkimminich/juice-shop:v20.3.0@sha256:cea5a4af4aacee498c491491af0408934ec81d004035c0a02ef3e54395e3bf27
 COPY --from=rasp --chown=65532:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
+# Integración del bloqueo con la capa de datos (R22): convierte el bloqueo en error controlado HTTP 403
+COPY --chown=65532:0 rasp/rasp-guard.js /juice-shop/rasp/rasp-guard.js
 LABEL org.opencontainers.image.title="OWASP Juice Shop (runtime endurecido + RASP Aikido Zen)" \
       org.opencontainers.image.version="20.3.0-hardened-rasp" \
       org.opencontainers.image.vendor="MASI-UMG-2026" \
       org.opencontainers.image.source="https://github.com/jmolinap1-universidad/juice-shop-lab"
-ENV NODE_OPTIONS="--require @aikidosec/firewall"
+ENV NODE_OPTIONS="--require @aikidosec/firewall --require /juice-shop/rasp/rasp-guard.js"
 USER 65532
 EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=3 \

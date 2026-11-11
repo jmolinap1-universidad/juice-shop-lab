@@ -18,19 +18,22 @@ con evidencia verificable, midiendo el **riesgo inherente** (aplicación vulnera
 | 3 | DevSecOps (SAST/SCA) | Semgrep 90 hallazgos; npm audit 40 (7 críticas); OSV 62; SBOM 2 745 comp.; Grype 12 críticas; Gitleaks limpio. Pipeline GitHub Actions **7/7**. `evidence/fase-3/` |
 | 4 | Pruebas de seguridad | 11 observaciones: **4 explotación demostrada** (SQLi ×3 + asignación masiva) + 7 debilidades (listados, exposición, CORS, cabeceras, rate limit); BOLA/IDOR confirmado; SQLi corroborada por prueba activa de caja negra (sqlmap); ZAP baseline pasivo. `docs/fase-4/` |
 | 5 | Contenedores y hardening | Hadolint **11→0**; runtime read-only + cap_drop ALL + no-new-privileges + límites (verificado con `docker inspect`); Checkov **47/0**. `docs/fase-5/` |
-| 6 | Operaciones, monitoreo y riesgo residual | WAF ModSecurity/CRS 4.25.2 mapeado al OWASP Top 10:2025 + **RASP** Aikido Zen + **SIEM** (Alloy → Loki → Grafana, 7 reglas; 6 dispararon en las pruebas). Defensa completa: A1-A11 mitigados, **BOLA residual** (el WAF no lo bloquea; el SIEM lo detecta). 24 riesgos tratados (Aceptar/Eliminar/Evitar/Mitigar/Transferir): Crítico **8 → 1**, Alto **15 → 9**; heatmaps antes/después. `docs/fase-6/` |
+| 6 | Operaciones, monitoreo y riesgo residual | WAF ModSecurity/CRS 4.25.2 (cobertura OWASP Top 10:2025 diferenciando instalado / observado / probado) + **RASP** Aikido Zen con integración que bloquea con HTTP 403 sin caídas + **SIEM** (Alloy → Loki → Grafana, 7 reglas; proxy de solo lectura del socket de Docker). Vía WAF: las 11 condiciones A1-A11 del arnés quedan neutralizadas; **BOLA (A12) sigue vulnerable** (heurística SIEM con falsos positivos). 24 riesgos con residual justificado y validado: Crítico **8 → 4**, Alto **16 → 12**, Medio **0 → 7**, Bajo **0 → 1**. `docs/fase-6/` |
 
 ## Reducción de riesgo (inherente → residual)
-- Observaciones de ataque activas: **11 → 0** (4 explotación demostrada + 7 debilidades, todas bloqueadas por el WAF/endurecimiento).
-  **Excepción verificada:** el BOLA/IDOR (A12) sigue explotable a través del WAF; queda detectado por el SIEM y su
-  eliminación requiere desplegar el parche 08 (`evidence/fase-6/defensa-completa/bola/`).
-- Registro de 24 riesgos (método reproducible, `docs/fase-6/tratamiento-riesgo.md`): Crítico 8 → 1 (R03, clave
-  privada JWT embebida), Alto 15 → 9, Medio 1 → 9, Bajo 0 → 5. Solo los controles verificados reducen el residual.
-- Hallazgo operativo: el RASP en modo bloqueo por defecto provocaba la caída del proceso Node; corregido y
-  verificado (`evidence/fase-6/rasp/`).
-- Compromiso total como administrador (SQLi y asignación masiva): **posible → bloqueado** por el WAF (reglas
-  CRS 942100/949110 y parches virtuales 100001/100002), con evidencia en `evidence/fase-6/waf-logs/`.
-- Riesgo por capas: capas de datos, código y perímetro de aplicación bajan de **Crítico** a **Medio/Bajo**.
+- Condiciones del arnés A1-A11 (4 explotación demostrada + 7 debilidades): presentes en la línea base y
+  **neutralizadas a través del WAF** (evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/). Son 11 condiciones,
+  no 11 explotaciones; A11 (clave pública) no es una vulnerabilidad. Sin WAF, la app conserva todas salvo la SQLi,
+  que el RASP bloquea con HTTP 403 (escenario 2d).
+- **BOLA/IDOR (A12) sigue explotable** a través del WAF y del RASP; la alerta del SIEM es una heurística con falsos
+  positivos demostrados. Su eliminación requiere desplegar el parche 08.
+- Registro de 24 riesgos (`docs/fase-6/tratamiento-riesgo.md`, 301 validaciones automáticas): Crítico 8 → 4
+  (R03 clave privada JWT, R06 BOLA, R20 dependencias, R23 datos personales), Alto 16 → 12, Medio 0 → 7, Bajo 0 → 1.
+  Solo los controles **probados** reducen el residual; la detección no reduce el impacto.
+- Hallazgo operativo: el bloqueo del RASP hacía caer el proceso (por defecto) o dejaba la petición colgada
+  (`warn`); corregido con la integración `rasp-guard` (403, disponibilidad 41/41, sin reinicios).
+- Compromiso total como administrador (SQLi y asignación masiva): **bloqueado en el perímetro** (CRS
+  942100/949110 y parche virtual 100001); la causa sigue en el código hasta desplegar los parches 01, 02 y 06.
 - Pendiente de mayor reducción: dependencias con CVE (requiere actualización que rompe retos de Juice Shop) y
   despliegue cloud/SIEM (requiere recursos y aprobación de costos).
 

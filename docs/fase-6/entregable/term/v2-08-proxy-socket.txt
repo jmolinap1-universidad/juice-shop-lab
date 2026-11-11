@@ -1,0 +1,18 @@
+# Proxy del socket de Docker (tecnativa/docker-socket-proxy v0.4.1): permitido vs denegado — 2026-11-10T23:07:47-06:00
+# Cliente: contenedor efimero en la red interna 'socketproxy' (la misma que usa Alloy). Esperado: lecturas 200; escrituras/ejecucion 403.
+GET    /_ping                                 -> HTTP 200
+GET    /version                               -> HTTP 200
+GET    /containers/json                       -> HTTP 200
+GET    /networks                              -> HTTP 200
+GET    /images/json                           -> HTTP 403
+GET    /info                                  -> HTTP 403
+GET    /volumes                               -> HTTP 403
+POST   /containers/create                     -> HTTP 403
+POST   /containers/juice-hardened/stop        -> HTTP 403
+POST   /containers/juice-hardened/exec        -> HTTP 403
+DELETE /containers/juice-hardened             -> HTTP 403
+POST   /images/create                         -> HTTP 403
+
+# Alloy: User=473:473 CapDrop=[ALL] CapAdd=[] Montajes=/etc/alloy/config.alloy /var/log/waf /var/lib/alloy/data 
+# docker.sock montado en Alloy: 0
+# Redes de siem-socket-proxy: juice-hardened_socketproxy  · internal=true · puertos publicados: 0

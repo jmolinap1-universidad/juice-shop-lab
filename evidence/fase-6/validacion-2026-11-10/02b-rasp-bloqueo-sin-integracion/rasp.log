@@ -1,0 +1,5 @@
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="::ffff:172.22.0.4"
+    triggerUncaughtException(err, true /* fromPromise */);
+Error: Zen has blocked an SQL injection: sqlite3.all(...) originating from body.email
+Node.js v24.21.0
+AIKIDO: Starting agent v1.8.46...

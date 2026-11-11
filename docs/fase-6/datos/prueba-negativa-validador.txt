@@ -1,0 +1,11 @@
+# Prueba negativa del validador (2026-11-10T23:25:43-06:00)
+# Sobre una COPIA temporal (repositorio montado en solo lectura) se forzaron dos reducciones sin respaldo:
+#   R13 P 4->2 (la cabecera CSP solo está 'inspeccionada', no probada contra XSS)
+#   R04 I 5->4 (el SCA es un control detectivo: no reduce impacto)
+# Resultado esperado: validación fallida y código de salida 1.
+
+
+VALIDACIÓN FALLIDA:
+  V5 R04 baja de I respaldada por contención/respuesta PROBADA (la detección no cuenta): 
+  V4 R13 baja de P respaldada por control preventivo/eliminación/evitación PROBADO: 
+código de salida: 1

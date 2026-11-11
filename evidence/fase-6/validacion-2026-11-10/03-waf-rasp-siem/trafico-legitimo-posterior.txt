@@ -1,0 +1,12 @@
+# Tráfico legítimo — 2026-11-10T23:16:32-06:00 — objetivo http://127.0.0.1:8088
+GET /                                      -> 200
+GET /rest/products/search?q=apple          -> 200
+GET /rest/products/1/reviews               -> 200
+POST /api/Users (registro A, sin role)   -> 201
+POST /rest/user/login (A)                 -> token=emitido [REDACTADO] bid=10
+GET /rest/basket/10 (cesta PROPIA de A)    -> 200
+POST /api/Users (registro B, sin role)   -> 201
+POST /rest/user/login (B)                 -> token=emitido [REDACTADO] bid=11
+GET /rest/basket/11 (cesta PROPIA de B)    -> 200
+
+Esperado: 200/201 en todo. Cada usuario lee SOLO su cesta (no hay lectura cruzada).

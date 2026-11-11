@@ -15,8 +15,13 @@ make lab-up        # laboratorio vulnerable en http://127.0.0.1:3000
 make scan          # SAST/SCA/contenedores/IaC locales vía Docker → evidence/
 make attack        # casos de ataque automatizados (Fase 4) → evidence/fase-4/run-<fecha>/
 make ops-up        # Fase 6: WAF + RASP + SIEM (Grafana en http://127.0.0.1:3001)
-make risk          # Fase 6: recalcula riesgos y matrices de calor
+make risk          # Fase 6: valida el registro de riesgos y regenera las matrices de calor
+make ops-validar   # Fase 6: escenarios del RASP sin WAF con código HTTP real y disponibilidad
 make lab-down
 ```
 
 Ver `CLAUDE.md` (reglas), `PROGRESO.md`, `DECISIONES.md` y `docs/` (entregables por fase).
+
+**Fase 6 — análisis vigente:** `docs/fase-6/CIERRE_Y_VALIDACION_FASE6.md` (cumplimiento y pendientes),
+`docs/fase-6/tratamiento-riesgo.md` (24 riesgos, generado y validado con `make risk`) y
+`docs/fase-6/fase6-mitigaciones.md` (WAF, RASP, SIEM). `docs/fase-6/matriz-riesgo.md` es histórico.

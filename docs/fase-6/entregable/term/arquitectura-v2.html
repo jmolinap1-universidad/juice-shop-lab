@@ -1,0 +1,37 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<style>
+  body{margin:0;background:#ffffff;font-family:Arial,Helvetica,sans-serif;color:#1f2937}
+  .wrap{width:1360px;padding:26px 30px}
+  h1{font-size:22px;margin:0 0 18px;color:#1F3864}
+  .row{display:flex;align-items:stretch;gap:14px}
+  .box{border:2px solid #1F3864;border-radius:10px;padding:12px 14px;background:#f5f8fc;font-size:14px;line-height:1.45}
+  .box b{color:#1F3864;font-size:15px}
+  .arrow{display:flex;align-items:center;font-size:30px;color:#1F3864}
+  .zone{border:2px dashed #94a3b8;border-radius:14px;padding:14px;margin-top:6px}
+  .zone .t{font-size:13px;color:#475569;font-weight:bold;margin-bottom:8px}
+  .waf{background:#fff4e6;border-color:#c2410c}
+  .app{background:#ecfdf5;border-color:#047857}
+  .siem{background:#f5f3ff;border-color:#6d28d9}
+  .note{font-size:12.5px;color:#475569;margin-top:14px}
+  .small{font-size:12.5px;color:#334155}
+</style></head><body><div class="wrap">
+<h1>Arquitectura operativa de la Fase 6 (v2, cierre) — defensa en profundidad (solo 127.0.0.1)</h1>
+<div class="row">
+  <div class="box" style="width:150px"><b>Cliente</b><br><span class="small">navegador / arnés<br>run.sh</span></div>
+  <div class="arrow">&#10140;</div>
+  <div class="box waf" style="width:330px"><b>WAF</b> — 127.0.0.1:8088&rarr;8080<br>Nginx 1.30.6 + ModSecurity 3.0.17<br>OWASP CRS 4.25.2 (PL1, bloqueo)<br><span class="small">VP 100001/100002 · deny rutas sensibles<br>CSP/HSTS/XFO · ocultar CORS · rate limit 5/min<br>audit log JSON + access log JSON</span></div>
+  <div class="arrow">&#10140;</div>
+  <div class="box app" style="width:380px"><b>Juice Shop 20.3.0 + RASP</b> (red <i>interna</i>, sin puertos publicados)<br>Aikido Zen 1.8.46 in-process (sqlite3, fs, http, child_process, vm)<br><span class="small">AIKIDO_BLOCK=true · sin token: sin reporte externo<br>integración rasp-guard: bloqueo → HTTP 403 sin caídas<br>Runtime Fase 5: read-only, cap_drop ALL, usuario 65532, límites</span></div>
+</div>
+<div class="zone">
+  <div class="t">Red "siem" — centralización, correlación y alertas</div>
+  <div class="row">
+    <div class="box siem" style="width:330px"><b>Grafana Alloy v1.10.2</b> (uid 473, sin root)<br><span class="small">loki.source.file: audit.log y access.log del WAF<br>loki.source.docker: stdout de app/RASP y WAF<br>vía docker-socket-proxy (API solo lectura; escrituras 403)</span></div>
+    <div class="arrow">&#10140;</div>
+    <div class="box siem" style="width:360px"><b>Loki 3.5.5</b> — 127.0.0.1:3100<br><span class="small">almacén de logs, retención 30 días<br>ruler: 7 reglas LogQL (SQLi, parche virtual, fuerza bruta,<br>rutas sensibles, enumeración BOLA, RASP, 5xx)</span></div>
+    <div class="arrow">&#10140;</div>
+    <div class="box siem" style="width:330px"><b>Grafana 12.1.1</b> — 127.0.0.1:3001<br><span class="small">panel "SIEM - Juice Shop endurecido"<br>lectura anónima, sin login, sin telemetría</span></div>
+  </div>
+</div>
+<div class="note">Fuentes de datos: WAF (perímetro) y RASP (dentro de la aplicación) &rarr; Alloy &rarr; Loki &rarr; alertas y panel. Override de Compose: deploy/hardened/docker-compose.ops.yml (no altera la configuración de la Fase 5).</div>
+</div></body></html>

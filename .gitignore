@@ -24,3 +24,5 @@ docs/fase-6/entregable/build/node_modules/
 docs/fase-6/entregable/term/*.html
 !docs/fase-6/entregable/term/arquitectura.html
 docs/fase-6/entregable/build/pdf.txt
+!docs/fase-6/entregable/term/arquitectura-v2.html
+docs/fase-6/entregable/build/v1.txt

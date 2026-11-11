@@ -1,0 +1,23 @@
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="::ffff:172.22.0.4"
+    triggerUncaughtException(err, true /* fromPromise */);
+Error: Zen has blocked an SQL injection: sqlite3.all(...) originating from body.email
+Node.js v24.21.0
+AIKIDO: Starting agent v1.8.46...
+
+# http.tsv (primeras peticiones)
+metodo	ruta	codigo	tiempo
+POST	/rest/user/login	000	0.074437s
+GET	/rest/products/search	000	0.000927s
+GET	/rest/products/search	000	1.018184s
+
+Antes:   estado=healthy RestartCount=0 StartedAt=2026-11-11T04:58:48.829191375Z
+Después: estado=healthy RestartCount=1 StartedAt=2026-11-11T04:59:10.646681959Z
+
+# disponibilidad.tsv
+hora	codigo	tiempo
+22:59:10	200	0.008621s
+22:59:11	000	0.000897s
+22:59:12	000	0.001101s
+22:59:13	000	0.000986s
+22:59:14	000	0.001170s
+22:59:15	000	0.000973s

@@ -1,0 +1,19 @@
+# Estado de las 7 reglas del SIEM (Loki ruler)
+## Escenario 3 — defensa completa vía WAF (evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json)
+  firing	WAF_InyeccionSQL_Bloqueada
+  firing	WAF_ParcheVirtual_Activado
+  firing	Login_FuerzaBruta_RateLimit
+  firing	Acceso_Rutas_Sensibles_Denegado
+  firing	API_Enumeracion_Objetos_PosibleBOLA
+  inactive	RASP_Ataque_Detectado
+  inactive	App_Errores_5xx
+
+## Escenario 3b — RASP sin WAF con ingesta activa (evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json, alertas en firing)
+  firing	WAF_InyeccionSQL_Bloqueada
+  firing	WAF_ParcheVirtual_Activado
+  firing	Login_FuerzaBruta_RateLimit
+  firing	Acceso_Rutas_Sensibles_Denegado
+  firing	API_Enumeracion_Objetos_PosibleBOLA
+  firing	RASP_Ataque_Detectado
+
+RASP en Loki (últimos 2m): 6 líneas

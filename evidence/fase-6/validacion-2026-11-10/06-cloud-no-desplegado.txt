@@ -1,0 +1,11 @@
+# Estado de la infraestructura cloud (Fase 2) — 2026-11-10T23:20:27-06:00
+## Archivos de estado de Terraform (existirían tras un 'terraform apply'):
+  infra/terraform/.terraform
+  total: 0 archivos .tfstate
+## Historial git: commits que añaden/eliminan archivos .tfstate: 0
+## Variables/credenciales AWS en el entorno de esta sesión: 0
+## Verificación estática disponible: results_cli.txt results_json.json results_sarif.sarif 
+
+Interpretación: no hay estado de Terraform ni credenciales AWS; la arquitectura de la Fase 2 está diseñada y
+validada estáticamente (terraform plan offline + Checkov), NO desplegada. La seguridad en ejecución de esa
+infraestructura no está verificada.

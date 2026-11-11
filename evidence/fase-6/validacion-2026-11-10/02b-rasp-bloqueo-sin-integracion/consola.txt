@@ -1,0 +1,15 @@
+[MITIGADO/E] A1 SQLi bypass de login            Sin token (HTTP )
+[MITIGADO/E] A2 SQLi UNION (volcado de Users)   Sin datos de Users en la respuesta
+[MITIGADO/E] A3 SQLi enumeración de esquema    Sin DDL en la respuesta
+[MITIGADO/X] A4 Listado de directorios          Sin listados navegables
+[MITIGADO/X] A5 Exposición de documento interno (/ftp) HTTP 000
+[MITIGADO/X] A6 /metrics sin autenticación     HTTP 000
+[MITIGADO/E] A7 Asignación masiva (role=admin) role no aceptado ()
+[MITIGADO/C] A8 CORS permisivo (configuración) Sin ACAO abierto
+[VULNERABLE/C] A9 Cabeceras de seguridad          Ausentes: content-security-policy strict-transport-security x-content-type-options x-frame-options
+[VULNERABLE/N] A10 Fuerza bruta en login          12 intentos sin 429: 000 000 000 000 000 000 000 000 000 000 000 000
+[MITIGADO/X] A11 Clave pública JWT servida     HTTP 000
+[MITIGADO/NEGATIVO/N] A12 BOLA/IDOR                      B no obtuvo la cesta de A (cross HTTP 000). Recurso protegido o no explotable en esta ruta.
+   -> /work/evidence/fase-6/validacion-2026-11-10/02b-rasp-bloqueo-sin-integracion/bola/resultado-bola.md
+
+=== 2 VULNERABLE / 9 MITIGADO de 11 casos (02b-rasp-bloqueo-sin-integracion) ===

@@ -47,8 +47,10 @@ loki.process "waf_access" {
 }
 
 // ---------- 3) stdout de los contenedores del entorno endurecido (app + RASP, WAF) ----------
+// Se consulta la API de Docker a traves de un proxy de SOLO LECTURA (siem-socket-proxy): Alloy no monta
+// docker.sock ni corre como root (riesgo R24).
 discovery.docker "contenedores" {
-  host = "unix:///var/run/docker.sock"
+  host = "tcp://socket-proxy:2375"
 }
 
 discovery.relabel "contenedores" {
@@ -68,7 +70,7 @@ discovery.relabel "contenedores" {
 }
 
 loki.source.docker "contenedores" {
-  host       = "unix:///var/run/docker.sock"
+  host       = "tcp://socket-proxy:2375"
   targets    = discovery.relabel.contenedores.output
   labels     = {"job" = "docker", "fuente" = "runtime"}
   forward_to = [loki.write.local.receiver]

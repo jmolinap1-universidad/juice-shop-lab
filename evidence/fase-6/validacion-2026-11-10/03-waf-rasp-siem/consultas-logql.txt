@@ -1,0 +1,11 @@
+ventana LogQL: 3m desde 2026-11-10T23:14:02-06:00
+waf_por_status             status":"200"=6 status":"201"=2 status":"400"=1 status":"401"=4 status":"403"=13 status":"429"=8 
+crs_942_sqli               =3 
+vp_100001                  =1 
+vp_100002                  =1 
+anomalia_949110            =3 
+host_ip_920350             =34 
+audit_transacciones        =34 
+rasp_eventos               
+cestas_distintas_200       =2 
+errores_5xx                

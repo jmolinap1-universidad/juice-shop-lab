@@ -1,0 +1,1 @@
+{"authentication":{"token":"[JWT-REDACTADO]","bid":1,"umail":"admin@juice-sh.op"}}POST	/rest/user/login	200	0.073637s

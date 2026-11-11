@@ -64,11 +64,26 @@ Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y
   - SIEM: 6/7 reglas en firing (SQLi, parche virtual, fuerza bruta, rutas sensibles, enumeración BOLA, RASP).
   - Tratamiento formal: 24 riesgos (tipo e impacto), decisiones Aceptar/Eliminar/Evitar/Mitigar/Transferir, método
     reproducible desde el DREAD de la Fase 1; heatmaps: Crítico 8→1, Alto 15→9, Medio 1→9, Bajo 0→5.
+    **(Cifras sustituidas por la auditoría de cierre del 2026-11-10: el método anterior reducía el impacto por
+    detección y contaba controles no probados. Vigente: Crítico 8→4, Alto 16→12, Medio 0→7, Bajo 0→1.)**
+
+- 2026-11-10 **Auditoría de cierre de la Fase 6** (`docs/fase-6/AUDITORIA_CUMPLIMIENTO_FASE6.md` → `CIERRE_Y_VALIDACION_FASE6.md`):
+  - R22: causa raíz en Sequelize (`serialize(async …)`); integración `deploy/hardened/rasp/rasp-guard.js` → bloqueo con
+    HTTP 403, disponibilidad 41/41, sin reinicios (antes: caída del proceso o petición colgada 20 s).
+  - Riesgo residual explícito y justificado por riesgo; 301 validaciones automáticas (`make risk`) que rechazan
+    reducciones sin control probado (prueba negativa incluida). Vigente: Crítico 8→4, Alto 16→12, Medio 0→7, Bajo 0→1.
+  - SIEM: Alloy sin root ni socket; proxy de la API de Docker de solo lectura (escrituras 403). Heurística BOLA con
+    falso positivo demostrado. Cinco escenarios de validación en `evidence/fase-6/validacion-2026-11-10/`.
+  - WAF: tabla instalado / observado / probado; A11 (clave pública) no es vulnerabilidad; 920350 = ruido cuantificado.
+  - Documento institucional: instrucciones de sincronización y borrador de validación (no sustituye el entregable).
 
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 
 ## Pendientes diferidos (NO en esta entrega de Fases 4-5)
+- **Fase 6 (vigentes):** parches 01-08 diseñados sin desplegar (R03, R06, R20 y R23 siguen críticos); bloqueos del RASP
+  en sinks distintos de sqlite3 sin probar; reglas CRS de XSS/RCE/LFI sin probar; SIEM sin notificaciones,
+  autenticación ni alta disponibilidad; carátula institucional (logo UMG) a cargo del equipo.
 - Despliegue cloud AWS (`terraform apply`, EC2/ECS/ALB/WAFv2/RDS/CDN/API Gateway): **pospuesto para evitar
   costos** (solo validación estática Checkov + plan offline). BD administrada (SQLite, no RDS). SIEM/monitoreo
   cloud (el SIEM local de la Fase 6 es de un solo nodo).

@@ -1,0 +1,5 @@
+# Escenario RASP sin WAF — 2026-11-10T22:57:49-06:00
+AIKIDO_BLOCK=false
+NODE_OPTIONS efectivo: --require @aikidosec/firewall --require /juice-shop/rasp/rasp-guard.js
+Antes:   estado=healthy RestartCount=0 StartedAt=2026-11-11T04:57:38.114541771Z
+Después: estado=healthy RestartCount=0 StartedAt=2026-11-11T04:57:38.114541771Z

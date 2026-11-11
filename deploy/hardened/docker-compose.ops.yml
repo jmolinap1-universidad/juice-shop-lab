@@ -13,10 +13,11 @@ services:
     environment:
       AIKIDO_BLOCK: "${AIKIDO_BLOCK:-true}"   # true = bloquear; false = solo detectar (monitoreo)
       AIKIDO_DEBUG: "true"                    # registra en stdout cada detección → SIEM
-      # Hallazgo de la Fase 6 (evidence/fase-6/rasp/02-bloqueo-caida-del-proceso/): en modo bloqueo, el error
-      # del RASP dentro de Sequelize/sqlite3 queda como rechazo de promesa no manejado y Node TERMINABA el
-      # proceso (auto-DoS). Con --unhandled-rejections=warn el proceso sigue vivo y solo esa petición falla.
-      NODE_OPTIONS: "--require @aikidosec/firewall --unhandled-rejections=warn"
+      # R22 (evidence/fase-6/rasp/ y evidence/fase-6/validacion-2026-11-11/): el bloqueo de Zen dentro de
+      # Sequelize/sqlite3 dejaba la petición colgada y, por defecto, terminaba el proceso. La integración
+      # rasp/rasp-guard.js lo convierte en error controlado HTTP 403 sin silenciar otros errores.
+      # RASP_NODE_OPTIONS permite reproducir las configuraciones anteriores para las pruebas comparativas.
+      NODE_OPTIONS: "${RASP_NODE_OPTIONS:---require @aikidosec/firewall --require /juice-shop/rasp/rasp-guard.js}"
     labels:
       siem.fuente: "app+rasp"
 
@@ -40,26 +41,46 @@ services:
     restart: unless-stopped
     networks: [siem]
 
+  # Proxy del socket de Docker (R24). Montar docker.sock con ":ro" NO limita la API (permite crear/ejecutar
+  # contenedores). El proxy solo expone lecturas de contenedores y eventos (POST=0, sin images/info/exec) en
+  # una red interna sin salida y sin puertos publicados; Alloy ya no monta el socket ni corre como root.
+  socket-proxy:
+    image: tecnativa/docker-socket-proxy:v0.4.1@sha256:3400c429c5f9e1b21d62130fb93b16e2e772d4fb7695bd52fc2b743800b9fe9e
+    container_name: siem-socket-proxy
+    environment:
+      CONTAINERS: "1"
+      EVENTS: "1"
+      PING: "1"
+      VERSION: "1"
+      POST: "0"
+      INFO: "0"
+      IMAGES: "0"
+      EXEC: "0"
+      NETWORKS: "1"   # GET /networks: lo requiere discovery.docker de Alloy (solo lectura; POST=0)
+      VOLUMES: "0"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    restart: unless-stopped
+    networks: [socketproxy]
+
   alloy:
     image: grafana/alloy:v1.10.2@sha256:bcf27f18c4402869af112fb39e35e1db3804a404686f4caa20bdf77814219223
     container_name: siem-alloy
-    # root solo para leer el socket de Docker (stdout de la app/RASP). Riesgo aceptado en el laboratorio:
-    # montaje de solo lectura, sin puertos publicados; en producción se usaría el driver de logs de Docker.
-    user: "0"
+    user: "473:473"   # usuario 'alloy' de la imagen: sin root y sin acceso directo al socket de Docker
     command: ["run", "--server.http.listen-addr=0.0.0.0:12345", "--storage.path=/var/lib/alloy/data",
               "--disable-reporting", "/etc/alloy/config.alloy"]
     volumes:
       - ./siem/config.alloy:/etc/alloy/config.alloy:ro
       - ./logs:/var/log/waf:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - alloy-data:/var/lib/alloy/data
-    depends_on: [loki]
+      - alloy-state:/var/lib/alloy/data   # volumen nuevo: hereda el propietario 'alloy' de la imagen
+    depends_on: [loki, socket-proxy]
     cap_drop: [ALL]
-    cap_add: [DAC_OVERRIDE]   # mínima: escribir su estado (posiciones) en el volumen de datos
     security_opt: [no-new-privileges:true]
     mem_limit: 512m
     restart: unless-stopped
-    networks: [siem]
+    networks: [siem, socketproxy]
 
   grafana:
     image: grafana/grafana:12.1.1@sha256:a1701c2180249361737a99a01bc770db39381640e4d631825d38ff4535efa47d
@@ -89,8 +110,11 @@ services:
 networks:
   siem:
     driver: bridge
+  socketproxy:
+    driver: bridge
+    internal: true   # sin salida: solo Alloy <-> proxy del socket
 
 volumes:
   loki-data:
-  alloy-data:
+  alloy-state:
   grafana-data:

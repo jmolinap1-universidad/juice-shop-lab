@@ -1,0 +1,15 @@
+[VULNERABLE/E] A1 SQLi bypass de login            Autenticado sin credenciales; 
+[VULNERABLE/E] A2 SQLi UNION (volcado de Users)   Se obtienen email y hash MD5 de usuarios
+[VULNERABLE/E] A3 SQLi enumeración de esquema    sqlite_master revela DDL de las tablas
+[VULNERABLE/X] A4 Listado de directorios          Navegables: /ftp /encryptionkeys /support/logs
+[VULNERABLE/X] A5 Exposición de documento interno (/ftp) acquisitions.md descargado por acceso directo (HTTP 200); no es traversal
+[VULNERABLE/X] A6 /metrics sin autenticación     Métricas Prometheus accesibles (HTTP 200)
+[VULNERABLE/E] A7 Asignación masiva (role=admin) Usuario creado con role=admin
+[VULNERABLE/C] A8 CORS permisivo (configuración) ACAO:* permisivo (config insegura); no demuestra robo de datos autenticados
+[VULNERABLE/C] A9 Cabeceras de seguridad          Ausentes: content-security-policy strict-transport-security
+[VULNERABLE/N] A10 Fuerza bruta en login          12 intentos sin 429: 401 401 401 401 401 401 401 401 401 401 401 401
+[VULNERABLE/X] A11 Clave pública JWT servida     jwt.pub (clave PÚBLICA) servida HTTP 200; riesgo real = clave privada embebida en código (SAST)
+[VULNERABLE/E] A12 BOLA/IDOR                      Usuario B (bid=7) leyó la cesta de A (bid=6) con su propio token; HTTP 200. BOLA confirmado.
+   -> /work/evidence/fase-6/validacion-2026-11-10/02a-rasp-monitoreo/bola/resultado-bola.md
+
+=== 11 VULNERABLE / 0 MITIGADO de 11 casos (02a-rasp-monitoreo) ===

@@ -1,0 +1,5 @@
+# Escenario RASP sin WAF — 2026-11-10T22:59:03-06:00
+AIKIDO_BLOCK=true
+NODE_OPTIONS efectivo: --require @aikidosec/firewall
+Antes:   estado=healthy RestartCount=0 StartedAt=2026-11-11T04:58:48.829191375Z
+Después: estado=healthy RestartCount=1 StartedAt=2026-11-11T04:59:10.646681959Z

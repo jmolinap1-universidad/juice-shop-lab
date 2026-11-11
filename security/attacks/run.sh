@@ -19,7 +19,19 @@ OUT="${ATTACK_OUT:-$ROOT/evidence/fase-4/$TAG}"
 mkdir -p "$OUT"
 SUM="$OUT/resumen-ataques.md"
 : > "$SUM"
-C="curl -s -k --max-time 20"
+# Cliente HTTP. ATTACK_TIMEOUT: segundos máximos por petición (20 por defecto).
+# ATTACK_HTTPLOG (opcional): archivo donde se registra método, ruta, código HTTP real y tiempo de cada
+# petición que no captura su propio código. Un código 000 significa SIN RESPUESTA (timeout o conexión
+# rechazada): nunca debe interpretarse como bloqueo.
+HTTPLOG_ARGS=()
+if [ -n "${ATTACK_HTTPLOG:-}" ]; then
+  HL="$ATTACK_HTTPLOG"
+  # En Git Bash (Windows), curl.exe es nativo y no entiende rutas /c/...: se convierte a C:/...
+  if command -v cygpath >/dev/null 2>&1; then HL="$(cygpath -m "$ATTACK_HTTPLOG")"; fi
+  HTTPLOG_ARGS=(-w "%output{>>${HL}}%{method}"$'\t'"%{url.path}"$'\t'"%{http_code}"$'\t'"%{time_total}s"$'\n')
+fi
+cx() { curl -s -k --max-time "${ATTACK_TIMEOUT:-20}" "${HTTPLOG_ARGS[@]}" "$@"; }
+C=cx
 pass=0; fail=0; n=0
 
 # registra(id, titulo, cwe, clase, veredicto, detalle)

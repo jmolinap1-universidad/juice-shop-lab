@@ -1,0 +1,17 @@
+HTTP/1.1 200 OK
+Date: Wed, 11 Nov 2026 05:14:07 GMT
+Content-Type: application/json; charset=utf-8
+Content-Length: 20
+Connection: keep-alive
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-Recruiting: /#/jobs
+ETag: W/"14-gR5H+kovk8yK+dg6IS6eqGtSSKc"
+Vary: Accept-Encoding
+Server: waf
+Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+Referrer-Policy: no-referrer
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Embedder-Policy: require-corp
+Permissions-Policy: geolocation=(), microphone=(), camera=()
