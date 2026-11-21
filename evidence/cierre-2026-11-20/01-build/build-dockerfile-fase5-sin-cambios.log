@@ -1,0 +1,197 @@
+# Construcción del Dockerfile propuesto de la Fase 5 (app-hardened/Dockerfile) SIN cambios — 2026-11-21T00:07:02-06:00
+# Contexto: código de app/ (v20.3.0) con las correcciones del hito A; comando: docker build -f app-hardened/Dockerfile app-hardened/build/src
+
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 2.56kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+#2 ...
+
+#3 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#3 DONE 1.0s
+
+#2 [internal] load metadata for gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+#2 DONE 1.4s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 392B 0.0s done
+#4 DONE 0.0s
+
+#5 [installer 1/4] FROM docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#5 resolve docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c 0.0s done
+#5 extracting sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc
+#5 ...
+
+#6 [stage-1 1/3] FROM gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+#6 resolve gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807 0.0s done
+#6 DONE 1.5s
+
+#7 [internal] load build context
+#7 transferring context: 12.95MB 5.0s
+#7 transferring context: 25.19MB 7.2s done
+#7 DONE 7.2s
+
+#6 [stage-1 1/3] FROM gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+#6 sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9 29.36MB / 44.78MB 5.9s
+#6 sha256:ec1b04bf2eb2122e86781f791b03ea0cf6588694e0f4a88245250224c186cdf0 142.00kB / 142.00kB 0.8s done
+#6 sha256:777e9d0975e474519f4f14ff87e547cbb8f9fff4cfc4f1a147ac81906880e503 257.71kB / 257.71kB 0.8s done
+#6 sha256:fc4330146a1cc76e06ce6def693f5da42c16e2615be6f49e1ea5b6e249ff8262 290.16kB / 290.16kB 0.9s done
+#6 extracting sha256:fc4330146a1cc76e06ce6def693f5da42c16e2615be6f49e1ea5b6e249ff8262 0.4s done
+#6 extracting sha256:777e9d0975e474519f4f14ff87e547cbb8f9fff4cfc4f1a147ac81906880e503 0.3s done
+#6 extracting sha256:d6b1b89eccacc15c2420b2776d72c1dae334a00805ed9af54bf2f71e4d536f28 0.1s done
+#6 extracting sha256:2780920e5dbfbe103d03a583ed75345306e572ec5a48cb10361f046767d9f29a 0.1s done
+#6 extracting sha256:7c12895b777bcaa8ccae0605b4de635b68fc32d60fa08f421dc3818bf55ee212 0.1s done
+#6 extracting sha256:3214acf345c0cc6bbdb56b698a41ccdefc624a09d6beb0d38b5de0b2303ecaf4 0.1s done
+#6 extracting sha256:52630fc75a18675c530ed9eba5f55eca09b03e91bd5bc15307918bbc1a7e7296 0.1s done
+#6 extracting sha256:dd64bf2dd177757451a98fcdc999a339c35dee5d9872d8f4dc69c8f3c4dd0112 0.1s done
+#6 extracting sha256:b839dfae01f66e15c6a8b63520557ed315bdfe036342fa7a0c537259f10d7a9a 0.1s done
+#6 extracting sha256:ebddc55facdc6b1f7e0f30816a5fc7cc62f38abdf76c0a8b0a0ce52085754795 0.1s done
+#6 extracting sha256:ec1b04bf2eb2122e86781f791b03ea0cf6588694e0f4a88245250224c186cdf0 0.1s done
+#6 extracting sha256:b96fe2995f90d0ef0bf14f9b4a67b5f4e77d478e6108166e0565adc9efd6e4a3 0.4s done
+#6 extracting sha256:810e2b405a0884835290e120ef380aa14dd1f53198a0cfa2260147e736d82cd5 0.2s done
+#6 extracting sha256:bd8962e292918c50c90edebd9684c053bc386b9c5503acd8fec75d0c6f93a0b7 0.1s done
+#6 extracting sha256:cac2ae0193cb073e7492050b05fc342a888651b4bbc966908c8793f889c299ba 0.1s done
+#6 extracting sha256:dd0d9bfd3bee080ad25a464362ec4f37ec5ca625695a4d7179fe69d207dc068d 0.1s done
+#6 extracting sha256:7cc70dfd88cf2327bb827123c9156f7cb95de95b2f98f3a7a931296aacec5786 0.1s done
+#6 extracting sha256:8224d91da70b7992430d3b04040ea38ecdef4a7b719bee38397c89aaa886e198 0.1s done
+#6 extracting sha256:1a4be5562d92d659f95e0b44b245ea5208bf5317481b9a351b07fad7fe5265ec 0.1s done
+#6 sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9 32.51MB / 44.78MB 6.0s
+#6 sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9 37.75MB / 44.78MB 6.3s
+#6 sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9 40.89MB / 44.78MB 6.5s
+#6 ...
+
+#5 [installer 1/4] FROM docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#5 extracting sha256:3c5439d0ae62993af4cc4e21b8c777297e81bc40e200d4633c85a3e0f977a3bc 3.2s done
+#5 extracting sha256:71cba37e8e979730332c9470b41e1d978d0fa9253c78769c62916bf084227639 0.1s done
+#5 extracting sha256:c82672318514ade64c9d9475b8887e67ae5ec0e018566b79795c23c22542e486 4.3s done
+#5 extracting sha256:e95aa4763e735fd31ba05431a12c6b7ec236a771aa6bda23f4be91af7c10b1c3 0.1s done
+#5 DONE 8.1s
+
+#5 [installer 1/4] FROM docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#5 extracting sha256:fc18cf7369573eeb5968534eb64b13d045bc5ca15d698ae3ef86d7e763138183 0.0s done
+#5 DONE 8.2s
+
+#6 [stage-1 1/3] FROM gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+#6 sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9 44.78MB / 44.78MB 6.7s done
+#6 extracting sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9
+#6 ...
+
+#8 [installer 2/4] COPY . /juice-shop
+#8 DONE 0.7s
+
+#9 [installer 3/4] WORKDIR /juice-shop
+#9 DONE 0.1s
+
+#10 [installer 4/4] RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"^4.0.0" &&     npm install --omit=dev --ignore-scripts &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     chown -R 65532 logs &&     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ &&     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ &&     rm -f ftp/legal.md i18n/*.json
+#10 ...
+
+#6 [stage-1 1/3] FROM gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+#6 extracting sha256:4f3e2567c309cb39897e44b416fc909a23072a814109d0acffd24cf89f1355c9 0.9s done
+#6 DONE 9.2s
+
+#11 [stage-1 2/3] WORKDIR /juice-shop
+#11 DONE 0.1s
+
+#10 [installer 4/4] RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"^4.0.0" &&     npm install --omit=dev --ignore-scripts &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     chown -R 65532 logs &&     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ &&     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ &&     rm -f ftp/legal.md i18n/*.json
+#10 8.932 npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+#10 9.540 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 11.84 
+#10 11.84 added 42 packages in 12s
+#10 11.84 
+#10 11.84 6 packages are looking for funding
+#10 11.84   run `npm fund` for details
+#10 11.85 npm notice
+#10 11.85 npm notice New major version of npm available! 11.19.1 -> 12.2.3
+#10 11.85 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+#10 11.85 npm notice To update run: npm install -g npm@12.2.3
+#10 11.85 npm notice
+#10 80.19 npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+#10 80.23 npm warn deprecated npmlog@6.0.2: This package is no longer supported.
+#10 80.30 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#10 80.32 npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+#10 80.43 npm warn deprecated are-we-there-yet@3.0.1: This package is no longer supported.
+#10 81.18 npm warn deprecated dottie@2.0.7: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+#10 82.13 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#10 82.24 npm warn deprecated gauge@4.0.4: This package is no longer supported.
+#10 82.72 npm warn deprecated jws@0.2.6: Security update: Versions below 3.0.0 are deprecated.
+#10 84.02 npm warn deprecated messageformat@2.3.0: Package renamed as '@messageformat/core', see messageformat.github.io for more details. 'messageformat@4' will eventually provide a polyfill for Intl.MessageFormat, once it's been defined by Unicode & ECMA.
+#10 84.83 npm warn deprecated jsonwebtoken@0.4.0: Critical vulnerability fix in v5.0.0. See https://auth0.com/blog/2015/03/31/critical-vulnerabilities-in-json-web-token-libraries/
+#10 84.88 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 85.05 npm warn deprecated notevil@1.3.3: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+#10 85.21 npm warn deprecated crypto-js@3.3.0: Active development of CryptoJS has been discontinued. This library is no longer maintained.
+#10 85.38 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 85.60 npm warn deprecated jsonwebtoken@0.1.0: Critical vulnerability fix in v5.0.0. See https://auth0.com/blog/2015/03/31/critical-vulnerabilities-in-json-web-token-libraries/
+#10 86.44 npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 86.60 npm warn deprecated prom-client@15.1.3: prom-client has been replaced by @prometheus-io/client
+#10 87.05 npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+#10 87.19 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#10 90.83 
+#10 90.83 added 713 packages, and audited 714 packages in 1m
+#10 90.83 
+#10 90.83 106 packages are looking for funding
+#10 90.83   run `npm fund` for details
+#10 90.85 
+#10 90.85 34 vulnerabilities (2 low, 9 moderate, 16 high, 7 critical)
+#10 90.85 
+#10 90.85 To address all issues possible (including breaking changes), run:
+#10 90.85   npm audit fix --force
+#10 90.85 
+#10 90.85 Some issues need review, and may require choosing
+#10 90.85 a different dependency.
+#10 90.85 
+#10 90.85 Run `npm audit` for details.
+#10 101.1 
+#10 101.1 removed 3 packages, changed 4 packages, and audited 711 packages in 10s
+#10 101.1 
+#10 101.1 106 packages are looking for funding
+#10 101.1   run `npm fund` for details
+#10 101.1 
+#10 101.1 34 vulnerabilities (2 low, 9 moderate, 16 high, 7 critical)
+#10 101.1 
+#10 101.1 To address all issues possible (including breaking changes), run:
+#10 101.1   npm audit fix --force
+#10 101.1 
+#10 101.1 Some issues need review, and may require choosing
+#10 101.1 a different dependency.
+#10 101.1 
+#10 101.1 Run `npm audit` for details.
+#10 101.2 
+#10 101.2 > juice-shop@20.3.0 sbom
+#10 101.2 > cyclonedx-npm --omit=dev --output-format=JSON --output-file=bom.json
+#10 101.2 
+#10 104.4 chgrp: cannot access 'frontend/dist/': No such file or directory
+#10 ERROR: process "/bin/sh -c npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@\"$CYCLONEDX_NPM_VERSION\" &&     npm install --omit=dev --ignore-scripts &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     chown -R 65532 logs &&     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ &&     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ &&     rm -f ftp/legal.md i18n/*.json" did not complete successfully: exit code: 1
+------
+ > [installer 4/4] RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"^4.0.0" &&     npm install --omit=dev --ignore-scripts &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     chown -R 65532 logs &&     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ &&     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ &&     rm -f ftp/legal.md i18n/*.json:
+101.1 
+101.1 Some issues need review, and may require choosing
+101.1 a different dependency.
+101.1 
+101.1 Run `npm audit` for details.
+101.2 
+101.2 > juice-shop@20.3.0 sbom
+101.2 > cyclonedx-npm --omit=dev --output-format=JSON --output-file=bom.json
+101.2 
+104.4 chgrp: cannot access 'frontend/dist/': No such file or directory
+------
+Dockerfile:17
+--------------------
+  16 |     ARG CYCLONEDX_NPM_VERSION='^4.0.0'
+  17 | >>> RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"$CYCLONEDX_NPM_VERSION" && \
+  18 | >>>     npm install --omit=dev --ignore-scripts && \
+  19 | >>>     npm dedupe --omit=dev && \
+  20 | >>>     npm run sbom && \
+  21 | >>>     rm -rf frontend/node_modules frontend/.angular frontend/src/assets && \
+  22 | >>>     mkdir -p logs && \
+  23 | >>>     chown -R 65532 logs && \
+  24 | >>>     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ && \
+  25 | >>>     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ && \
+  26 | >>>     rm -f ftp/legal.md i18n/*.json
+  27 |     
+--------------------
+ERROR: failed to build: failed to solve: process "/bin/sh -c npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@\"$CYCLONEDX_NPM_VERSION\" &&     npm install --omit=dev --ignore-scripts &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     chown -R 65532 logs &&     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ &&     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ &&     rm -f ftp/legal.md i18n/*.json" did not complete successfully: exit code: 1
+
+# RESULTADO: FALLÓ (ERROR: failed to build, ver arriba). Nota: una versión previa de esta línea decía "código de salida: 0" por un error del registro (capturaba el $? de echo, no del docker build).

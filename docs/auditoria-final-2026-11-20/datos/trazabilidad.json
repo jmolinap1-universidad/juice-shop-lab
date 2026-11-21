@@ -1,0 +1,44 @@
+{
+  "amenazas": {
+    "T01": {"elemento": "Login", "stride": "S, E"}, "T02": {"elemento": "Búsqueda", "stride": "I"}, "T03": {"elemento": "Autenticación (JWT)", "stride": "S"},
+    "T04": {"elemento": "Autenticación (bibliotecas)", "stride": "S"}, "T05": {"elemento": "SQL Users", "stride": "I"}, "T06": {"elemento": "API REST automática", "stride": "I, T"},
+    "T07": {"elemento": "API /api/Users", "stride": "E"}, "T08": {"elemento": "Reseñas (MarsDB)", "stride": "T"}, "T09": {"elemento": "B2B / perfil / captcha", "stride": "E"},
+    "T10": {"elemento": "Carga XML", "stride": "I"}, "T11": {"elemento": "Imagen por URL", "stride": "I, E"}, "T12": {"elemento": "Estáticos", "stride": "I"},
+    "T13": {"elemento": "Frontend", "stride": "T, I"}, "T14": {"elemento": "API (CORS)", "stride": "I"}, "T15": {"elemento": "Redirección", "stride": "S"},
+    "T16": {"elemento": "Login / reset", "stride": "S"}, "T17": {"elemento": "Métricas", "stride": "I"}, "T18": {"elemento": "Proceso Node", "stride": "D"},
+    "T19": {"elemento": "Registro", "stride": "R"}, "T20": {"elemento": "Cadena de suministro", "stride": "T"}
+  },
+  "casos": [
+    {"id": "A1", "nombre": "SQLi en el login (bypass de autenticación)", "amenaza": "T01", "clase": "E"},
+    {"id": "A2", "nombre": "SQLi UNION en búsqueda (volcado de Users)", "amenaza": "T02", "clase": "E"},
+    {"id": "A3", "nombre": "SQLi: enumeración del esquema", "amenaza": "T02", "clase": "E"},
+    {"id": "A4", "nombre": "Listado de directorios", "amenaza": "T12", "clase": "X"},
+    {"id": "A5", "nombre": "Exposición de documento interno (/ftp)", "amenaza": "T12", "clase": "X"},
+    {"id": "A6", "nombre": "/metrics sin autenticación", "amenaza": "T17", "clase": "X"},
+    {"id": "A7", "nombre": "Asignación masiva (role=admin)", "amenaza": "T07", "clase": "E"},
+    {"id": "A8", "nombre": "CORS permisivo", "amenaza": "T14", "clase": "C"},
+    {"id": "A9", "nombre": "Cabeceras de seguridad ausentes", "amenaza": "T13", "clase": "C"},
+    {"id": "A10", "nombre": "Fuerza bruta sin límite de intentos", "amenaza": "T16", "clase": "N"},
+    {"id": "A11", "nombre": "Clave PÚBLICA JWT servida", "amenaza": null, "clase": "I", "nota": "Informativo: servir una clave pública es aceptable por diseño. No hereda el DREAD de T03 (la clave PRIVADA embebida, hallazgo de caja blanca)."},
+    {"id": "A12", "nombre": "BOLA/IDOR entre dos cuentas", "amenaza": "T06", "clase": "E"}
+  ],
+  "clases": {"E": "Explotación demostrada", "X": "Exposición observada", "C": "Configuración insegura", "N": "Ausencia de control", "I": "Informativo (sin vulnerabilidad)"},
+  "capas": {
+    "1": "Datos", "2a": "Aplicación · Código", "2b": "Aplicación · Lógica de aplicación", "2c": "Aplicación · Implementación (dependencias, secretos, integración)",
+    "2d": "Aplicación · Perímetro de la aplicación", "3": "Host / contenedor", "4": "Red interna", "5": "Perímetro cloud / red", "6": "Seguridad física",
+    "7": "Políticas, procedimientos y concientización"
+  },
+  "riesgo_capa": {
+    "R01": ["2a", "2d"], "R02": ["2a", "1"], "R03": ["2c", "1"], "R04": ["2c", "7"], "R05": ["1", "2a"], "R06": ["2b", "1"], "R07": ["2b", "2d"], "R08": ["2a", "1"],
+    "R09": ["2a", "3"], "R10": ["2a", "3"], "R11": ["2b", "4"], "R12": ["2d", "1"], "R13": ["2a", "2d"], "R14": ["2d", "2c"], "R15": ["2b", null], "R16": ["2d", "2b"],
+    "R17": ["2d", "3"], "R18": ["3", "2a"], "R19": ["7", "3"], "R20": ["2c", "7"], "R21": ["5", "7"], "R22": ["2c", "3"], "R23": ["7", "1"], "R24": ["3", "4"]
+  },
+  "capa_6_nota": "No hay riesgos registrados en la capa física: el laboratorio corre en una estación personal (HW-01) sin datos reales. Los controles físicos de un despliegue real (centro de datos del proveedor cloud) serían responsabilidad compartida y solo están en el DISEÑO de la Fase 2.",
+  "escenarios": [
+    {"clave": "base", "titulo": "Vulnerable", "carpeta": "evidence/fase-6/validacion-2026-11-10/01-linea-base-vulnerable", "descripcion": "imagen oficial v20.3.0 sin controles (riesgo inherente)."},
+    {"clave": "vuln_def", "titulo": "Vulnerable + WAF/RASP", "carpeta": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem", "descripcion": "imagen oficial detrás de WAF + RASP + SIEM (Fase 6; el código sigue vulnerable)."},
+    {"clave": "corr", "titulo": "Corregida sin WAF", "carpeta": "evidence/cierre-2026-11-20/03-corregida-sin-waf", "descripcion": "variante con los parches 02, 05-08 y v2 (01, 03, 04, 09), sin WAF ni RASP: mide solo la corrección del código."},
+    {"clave": "corr_rasp", "titulo": "Corregida + RASP sin WAF", "carpeta": "evidence/cierre-2026-11-20/05-corregida-rasp-sin-waf", "descripcion": "variante corregida con RASP, atacada dentro de la red Docker saltándose el WAF."},
+    {"clave": "corr_def", "titulo": "Corregida + WAF/RASP", "carpeta": "evidence/cierre-2026-11-20/04-corregida-con-waf", "descripcion": "variante corregida con la defensa completa (WAF + RASP + SIEM), por 127.0.0.1:8088."}
+  ]
+}

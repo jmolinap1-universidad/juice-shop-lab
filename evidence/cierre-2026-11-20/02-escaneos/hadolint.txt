@@ -1,0 +1,15 @@
+# Hadolint (hadolint/hadolint:v2.15.1) — 2026-11-21T00:12:20-06:00
+app/Dockerfile: 11 avisos
+    -:5 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:6 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:7 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:8 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:9 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:10 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:11 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:12 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:13 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:20 DL3059 info: Multiple consecutive `RUN` instructions. Consider consolidation.
+    -:22 DL3006 warning: Always tag the version of an image explicitly
+app-hardened/Dockerfile: 0 avisos
+deploy/hardened/Dockerfile.rasp: 0 avisos

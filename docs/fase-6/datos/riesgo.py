@@ -20,10 +20,12 @@ from matplotlib.patches import Patch  # noqa: E402
 
 ROOT = sys.argv[1] if len(sys.argv) > 1 else "."
 F6 = os.path.join(ROOT, "docs", "fase-6")
-DATA = os.path.join(F6, "datos", "riesgos.json")
-OUT_JSON = os.path.join(F6, "datos", "riesgos-calculados.json")
-OUT_VAL = os.path.join(F6, "datos", "validacion-consistencia.txt")
-IMG = os.path.join(F6, "img")
+# Opcional (hito A): riesgo.py <raíz> <registro.json> <carpeta-salida> calcula otro registro sin tocar las salidas de la Fase 6.
+DATA = os.path.join(ROOT, sys.argv[2]) if len(sys.argv) > 2 else os.path.join(F6, "datos", "riesgos.json")
+SAL = os.path.join(ROOT, sys.argv[3]) if len(sys.argv) > 3 else None
+OUT_JSON = os.path.join(SAL, "riesgos-calculados.json") if SAL else os.path.join(F6, "datos", "riesgos-calculados.json")
+OUT_VAL = os.path.join(SAL, "validacion-consistencia.txt") if SAL else os.path.join(F6, "datos", "validacion-consistencia.txt")
+IMG = os.path.join(SAL, "img") if SAL else os.path.join(F6, "img")
 os.makedirs(IMG, exist_ok=True)
 
 NIVELES = [("Bajo", 1, 4, "#2e9e4f"), ("Medio", 5, 9, "#f2c230"), ("Alto", 10, 16, "#f07f1e"), ("Crítico", 20, 25, "#d7263d")]

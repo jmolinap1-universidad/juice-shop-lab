@@ -1,0 +1,45 @@
+# Variante CORREGIDA de Juice Shop (hito A): código de app/ v20.3.0 con los parches 02, 05-08 y las
+# correcciones v2 01, 03, 04 y 09. Sirve para probar la remediación de causa raíz SIN WAF ni RASP.
+# Aislamiento: SIN puertos publicados; solo accesible desde la red interna "corregida" (pruebas con
+# security/ops/*). Clave JWT efímera: security/ops/generar-clave-jwt.sh (deploy/corregido/secrets/, ignorado).
+name: juice-corregida
+services:
+  app:
+    image: juice-corregida:local
+    container_name: juice-corregida
+    environment:
+      NODE_ENV: production
+      JWT_PRIVATE_KEY_FILE: /run/secrets/jwt_private_key
+    secrets: [jwt_private_key]
+    user: "65532:0"
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+      - /juice-shop/logs:rw,nosuid,size=32m
+    volumes:
+      - corr-data:/juice-shop/data
+      - corr-ftp:/juice-shop/ftp
+      - corr-wellknown:/juice-shop/.well-known
+      - corr-dist:/juice-shop/frontend/dist
+      - corr-i18n:/juice-shop/i18n
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 200
+    mem_limit: 1g
+    cpus: "1.0"
+    networks: [corregida]
+
+secrets:
+  jwt_private_key:
+    file: ./secrets/jwt_private_key.pem
+
+networks:
+  corregida:
+    driver: bridge
+
+volumes:
+  corr-data:
+  corr-ftp:
+  corr-wellknown:
+  corr-dist:
+  corr-i18n:

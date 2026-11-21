@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Access-Control-Allow-Origin: http://localhost:3000
+Vary: Origin, Accept-Encoding
+Access-Control-Allow-Credentials: true
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+Feature-Policy: payment 'self'
+X-Recruiting: /#/jobs
+Accept-Ranges: bytes
+Cache-Control: public, max-age=0
+Last-Modified: Sat, 21 Nov 2026 06:19:05 GMT
+ETag: W/"2700-1a1fcc22ab4"
+Content-Type: text/html; charset=UTF-8
+Content-Length: 9984
+Date: Sat, 21 Nov 2026 06:27:06 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+

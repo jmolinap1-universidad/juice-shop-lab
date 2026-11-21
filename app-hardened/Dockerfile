@@ -2,7 +2,10 @@
 # Mejoras verificables sobre app/Dockerfile (Hadolint antes: 11 avisos):
 #  - Imágenes base fijadas por DIGEST (no solo etiqueta): DL3006 e integridad de la cadena de suministro.
 #  - Instrucciones RUN consolidadas en una sola capa: DL3059 y menor superficie.
-#  - npm con versión fija y `--ignore-scripts` en producción (reduce ejecución de scripts de terceros).
+#  - npm con versión fija. CORRECCIÓN 2026-11-21 (hito A): la versión anterior usaba `--ignore-scripts` y NO
+#    construía (Juice Shop compila frontend y servidor en `postinstall`; ver
+#    evidence/cierre-2026-11-20/01-build/build-dockerfile-fase5-sin-cambios.log). Los scripts se ejecutan solo en
+#    la etapa de compilación; la imagen final (distroless) no ejecuta npm ni sus scripts.
 #  - HEALTHCHECK para orquestación y detección de fallos.
 #  - Usuario no root explícito (65532) y WORKDIR dedicado (ya presente en el original, se conserva).
 # NOTA: las CVE de dependencias de la aplicación (crypto-js, lodash, marsdb, etc.) NO se corrigen aquí:
@@ -15,7 +18,7 @@ COPY . /juice-shop
 WORKDIR /juice-shop
 ARG CYCLONEDX_NPM_VERSION='^4.0.0'
 RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"$CYCLONEDX_NPM_VERSION" && \
-    npm install --omit=dev --ignore-scripts && \
+    npm install --omit=dev && \
     npm dedupe --omit=dev && \
     npm run sbom && \
     rm -rf frontend/node_modules frontend/.angular frontend/src/assets && \

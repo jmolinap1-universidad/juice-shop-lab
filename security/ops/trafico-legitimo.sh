@@ -7,7 +7,7 @@
 set -u
 B="$1"; OUT="$2"
 case "$(printf '%s' "$B" | sed -E 's#https?://##; s#[:/].*##')" in
-  127.0.0.1|localhost|juice-hardened) : ;;
+  127.0.0.1|localhost|juice-hardened|juice-corregida) : ;;
   *) echo "RECHAZADO: objetivo fuera del laboratorio"; exit 2 ;;
 esac
 TS=$(date +%s); PW='Passw0rd!123'

@@ -6,6 +6,9 @@
 # - AIKIDO_BLOCK=true bloquea; AIKIDO_BLOCK=false solo detecta y registra (modo monitoreo).
 # - No modifica el código de Juice Shop: se carga con NODE_OPTIONS=--require.
 
+# Imagen base: la oficial auditada (por defecto) o la variante corregida del hito A (BASE_IMAGE=juice-corregida:local).
+ARG BASE_IMAGE=bkimminich/juice-shop:v20.3.0@sha256:cea5a4af4aacee498c491491af0408934ec81d004035c0a02ef3e54395e3bf27
+
 # Etapa 1: obtener el agente (sin scripts de instalación, versión exacta)
 FROM node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9 AS rasp
 WORKDIR /rasp
@@ -13,7 +16,8 @@ RUN npm init -y >/dev/null \
  && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
 
 # Etapa 2: imagen de ejecución (distroless de Juice Shop, sin shell ni root)
-FROM bkimminich/juice-shop:v20.3.0@sha256:cea5a4af4aacee498c491491af0408934ec81d004035c0a02ef3e54395e3bf27
+# hadolint ignore=DL3006
+FROM ${BASE_IMAGE}
 COPY --from=rasp --chown=65532:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
 # Integración del bloqueo con la capa de datos (R22): convierte el bloqueo en error controlado HTTP 403
 COPY --chown=65532:0 rasp/rasp-guard.js /juice-shop/rasp/rasp-guard.js

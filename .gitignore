@@ -26,3 +26,7 @@ docs/fase-6/entregable/term/*.html
 docs/fase-6/entregable/build/pdf.txt
 !docs/fase-6/entregable/term/arquitectura-v2.html
 docs/fase-6/entregable/build/v1.txt
+
+# Hito A: espacio de construcción de la variante corregida (código exportado de app/; no se versiona)
+app-hardened/build/
+deploy/corregido/secrets/
