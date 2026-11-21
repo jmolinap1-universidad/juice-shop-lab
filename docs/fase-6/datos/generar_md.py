@@ -7,7 +7,11 @@ import sys
 
 ROOT = sys.argv[1] if len(sys.argv) > 1 else "."
 F6 = os.path.join(ROOT, "docs", "fase-6")
-d = json.load(open(os.path.join(F6, "datos", "riesgos-calculados.json"), encoding="utf-8"))
+# Opcional (cierre Fase 6): generar_md.py <raíz> <calculados.json> <salida.md> "<título>" para otra fotografía del riesgo.
+ENTRADA = os.path.join(ROOT, sys.argv[2]) if len(sys.argv) > 2 else os.path.join(F6, "datos", "riesgos-calculados.json")
+SALIDA = os.path.join(ROOT, sys.argv[3]) if len(sys.argv) > 3 else os.path.join(F6, "tratamiento-riesgo.md")
+TITULO = sys.argv[4] if len(sys.argv) > 4 else "Fase 6 – Tratamiento formal del riesgo"
+d = json.load(open(ENTRADA, encoding="utf-8"))
 R = d["riesgos"]
 M = d["metodo"]
 VERIF = {"probado": "Probado", "inspeccionado": "Inspeccionado (configurado, no ejercitado)", "sin_verificar": "Sin verificar", "no_efectivo": "NO efectivo (probado)"}
@@ -21,7 +25,7 @@ DEFS = [
 ]
 L = []
 w = L.append
-w("# Fase 6 – Tratamiento formal del riesgo")
+w("# " + TITULO)
 w("")
 w("> **Documento generado** por `docs/fase-6/datos/generar_md.py` (tras `riesgo.py`, que valida los datos). No editar")
 w("> las tablas a mano: modificar `datos/riesgos.json` y ejecutar `make risk`. Versión de datos: " + str(d.get("version")) + ".")
@@ -128,7 +132,7 @@ w("  contención): reducen la probabilidad de los vectores probados, no eliminan
 w("- **R06 (BOLA)** sigue crítico: la lectura cruzada continúa con HTTP 200 a través del WAF. La alerta del SIEM es una")
 w("  heurística con falsos positivos demostrados, no una verificación de propietario.")
 w("- **R21** es Bajo solo porque la nube **no está desplegada** (evitación probada); eso no valida la seguridad de la infraestructura.")
-open(os.path.join(F6, "tratamiento-riesgo.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
+open(SALIDA, "w", encoding="utf-8").write("\n".join(L) + "\n")
 
 # Comprobación cruzada documento <-> JSON
 md = "\n".join(L)

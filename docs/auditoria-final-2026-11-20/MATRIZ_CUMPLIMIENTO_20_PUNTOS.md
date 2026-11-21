@@ -1,5 +1,9 @@
 # Matriz de cumplimiento de la rúbrica (5 componentes × 4 puntos)
 
+> **Actualización 2026-11-21 (cierre de la Fase 6):** los componentes 3 y 4 tienen evidencia más reciente en
+> `docs/fase-6/CIERRE_FINAL_FASE6.md` (BOLA corregido en 5 tipos de objeto, familias del WAF probadas, SIEM con 9 reglas,
+> residual vigente 1C/11A/9M/3B). Esta matriz se conserva como fotografía del hito A.
+
 **Fecha:** 2026-11-21 · **Rama:** `cierre/hito-a-local` · **Alcance de esta revisión:** hito A (local, sin costo, sin
 publicar nada). Las partes B (Seenode, solo lectura) y C (despliegue cloud autorizado) **no se han iniciado**.
 

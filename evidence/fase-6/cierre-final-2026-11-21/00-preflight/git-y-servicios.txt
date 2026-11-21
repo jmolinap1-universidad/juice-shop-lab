@@ -1,0 +1,12 @@
+# git
+9173cd9a087fac1df22b95e7cc79a688fd39188d
+cc0837463b006bd72d49a39d83c1b77776595eb7
+9173cd9a087fac1df22b95e7cc79a688fd39188d
+f189f521266f42c6bd05884468292000cee852ed
+# servicios
+loki
+socket-proxy
+alloy
+grafana
+juice-shop
+waf

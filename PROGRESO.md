@@ -77,15 +77,28 @@ Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y
   - WAF: tabla instalado / observado / probado; A11 (clave pública) no es vulnerabilidad; 920350 = ruido cuantificado.
   - Documento institucional: instrucciones de sincronización y borrador de validación (no sustituye el entregable).
 
+- 2026-11-21 **Hito A (local)** (`docs/auditoria-final-2026-11-20/`, rama `cierre/hito-a-local`): variante corregida
+  compilada (parches v2 01/03/04/09 + 02, 05-08), regresión 16/16 y 15/15, residual 2C/11A/8M/3B.
+- 2026-11-21 **Cierre definitivo de la Fase 6** (`docs/fase-6/CIERRE_FINAL_FASE6.md`, rama `cierre/fase6-definitiva`):
+  - Configuración vigente separada e inequívoca: `make corregida-build` (construcción verificada contra el diff auditado)
+    y `make ops-corregido-up` (proyecto `juice-corregida-defensa`); `make ops-up` queda como HISTÓRICO.
+  - Parche 10: BOLA en artículos de cesta, direcciones y opiniones (0/10 accesos ajenos; 7/7 operaciones del propietario).
+  - WAF: XSS/LFI/SQLi probados; falsos positivos medidos y corregidos (7/35 → 0/35 llamadas legítimas de la interfaz).
+  - RASP: monitoreo y bloqueo por separado sobre la variante corregida, 0 reinicios.
+  - SIEM: 9 reglas (8 de ataque en firing con disparadores representativos), alerta de ingesta ausente probada, tokens
+    redactados antes de Loki, descubrimiento de contenedores 5 s, captura real del panel.
+  - Riesgo vigente (324 comprobaciones): 1 crítico (R20) / 11 altos / 9 medios / 3 bajos. Histórico intacto (4/12/7/1).
+
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 
 ## Pendientes diferidos (NO en esta entrega de Fases 4-5)
-- **Fase 6 (vigentes):** parches 01-08 diseñados sin desplegar (R03, R06, R20 y R23 siguen críticos); bloqueos del RASP
-  en sinks distintos de sqlite3 sin probar; reglas CRS de XSS/RCE/LFI sin probar; SIEM sin notificaciones,
-  autenticación ni alta disponibilidad; carátula institucional (logo UMG) a cargo del equipo.
+- **Fase 6 (vigentes desde 2026-11-21):** ver `docs/fase-6/PLAN_PENDIENTES_POST_CIERRE.md`. Principales: dependencias
+  con CVE (R20, único crítico); purga autorizada de tokens antiguos en Loki; BOLA en objetos no auditados; XXE/NoSQL/SSRF
+  sin probar; RASP fuera de sqlite3; SIEM sin notificaciones ni autenticación. (Supera la lista del 2026-11-10: los
+  parches 01-08 ya están compilados y probados.)
 - Despliegue cloud AWS (`terraform apply`, EC2/ECS/ALB/WAFv2/RDS/CDN/API Gateway): **pospuesto para evitar
   costos** (solo validación estática Checkov + plan offline). BD administrada (SQLite, no RDS). SIEM/monitoreo
   cloud (el SIEM local de la Fase 6 es de un solo nodo).
-- Recompilar `app-hardened` con los 8 parches (incl. 08 BOLA) y medir residual sin WAF; actualizar dependencias con CVE.
+- ~~Recompilar `app-hardened` con los 8 parches y medir residual sin WAF~~ (hecho el 2026-11-21); actualizar dependencias con CVE (pendiente).
 - Equipo: DFD en Threat Dragon, confirmación IDs ASVS 5.0.0, capturas manuales con Burp, logo UMG en portada.

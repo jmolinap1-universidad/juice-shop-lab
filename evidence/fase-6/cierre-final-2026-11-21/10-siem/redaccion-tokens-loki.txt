@@ -1,0 +1,4 @@
+# Verificación de la redacción en Loki (líneas desde 2026-11-21T08:35:46-06:00)
+waf_audit con 'Bearer eyJ' (token visible): 0
+waf_audit con [REDACTADO]:                 2
+cualquier fuente con 'eyJ…' de 3 partes:   0

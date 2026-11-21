@@ -1,0 +1,7 @@
+GET  /_ping                 -> 200
+GET  /containers/json       -> 200
+GET  /info (INFO=0)         -> 403
+GET  /images/json (IMAGES=0)-> 403
+GET  /volumes (VOLUMES=0)   -> 403
+POST /containers/create {}  -> 403
+Alloy: user=473:473 montajes=C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\siem\config.alloy->/etc/alloy/config.alloy C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\logs-corregido->/var/log/waf /var/lib/docker/volumes/juice-corregida-defensa_alloy-state/_data->/var/lib/alloy/data 

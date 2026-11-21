@@ -1,0 +1,9 @@
+WAF_InyeccionSQL_Bloqueada               inactive  alertas=0
+WAF_ParcheVirtual_Activado               inactive  alertas=0
+Login_FuerzaBruta_RateLimit              inactive  alertas=0
+Acceso_Rutas_Sensibles_Denegado          inactive  alertas=0
+API_Enumeracion_Objetos_PosibleBOLA      firing    alertas=1
+API_BOLA_AccesoAjenoDenegado             inactive  alertas=0
+Ingesta_WAF_Ausente                      inactive  alertas=0
+RASP_Ataque_Detectado                    firing    alertas=1
+App_Errores_5xx                          inactive  alertas=0

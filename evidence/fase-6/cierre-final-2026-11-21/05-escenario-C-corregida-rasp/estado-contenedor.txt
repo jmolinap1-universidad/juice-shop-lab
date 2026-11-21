@@ -1,0 +1,2 @@
+antes: RestartCount=0 health=healthy imagen=sha256:5ac6c8ae446845cfed6ae25744a248a6a9d4886c0e35f41f9cadd3307e7b106d
+después: RestartCount=0 health=healthy

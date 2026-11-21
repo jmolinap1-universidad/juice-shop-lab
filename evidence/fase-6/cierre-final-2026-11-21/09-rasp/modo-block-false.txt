@@ -1,0 +1,15 @@
+# AIKIDO_BLOCK=false — 2026-11-21T08:21:22-06:00 — directo a http://juice-hardened:3000 (sin WAF)
+antes: RestartCount=0 salud=healthy imagen=juice-corregida-rasp:local
+inyeccion 1: 401 0.048730s
+legitima  1: 200 0.027956s
+inyeccion 2: 401 0.033153s
+legitima  2: 200 0.059580s
+inyeccion 3: 401 0.123625s
+legitima  3: 200 0.067347s
+inyeccion 4: 401 0.028808s
+legitima  4: 200 0.063117s
+inyeccion 5: 401 0.029744s
+legitima  5: 200 0.046172s
+después: RestartCount=0 salud=healthy
+Líneas del RASP desde 2026-11-21T14:21:22Z:
+      5 Zen has detected an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="<red interna>"

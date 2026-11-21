@@ -1,0 +1,6 @@
+juice-hardened user=65532:0 read_only=true cap_drop=[ALL] cap_add=[] sec_opt=[no-new-privileges:true] pids=200 mem=1073741824 mounts=/juice-shop/.well-known(rw) /juice-shop/data(rw) /juice-shop/ftp(rw) /juice-shop/i18n(rw) /juice-shop/frontend/dist(rw) /run/secrets/jwt_private_key(ro) 
+juice-waf user=nginx read_only=false cap_drop=[ALL] cap_add=[CAP_CHOWN CAP_NET_BIND_SERVICE CAP_SETGID CAP_SETUID] sec_opt=[no-new-privileges:true] pids=<nil> mem=0 mounts=/var/log/modsec(rw) /etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf(ro) /etc/nginx/templates/conf.d/default.conf.template(ro) 
+siem-loki user=10001 read_only=false cap_drop=[ALL] cap_add=[] sec_opt=[no-new-privileges:true] pids=<nil> mem=1073741824 mounts=/loki(rw) /etc/loki/loki.yaml(ro) /etc/loki/rules(ro) 
+siem-alloy user=473:473 read_only=false cap_drop=[ALL] cap_add=[] sec_opt=[no-new-privileges:true] pids=<nil> mem=536870912 mounts=/etc/alloy/config.alloy(ro) /var/log/waf(ro) /var/lib/alloy/data(rw) 
+siem-grafana user=472 read_only=false cap_drop=[ALL] cap_add=[] sec_opt=[no-new-privileges:true] pids=<nil> mem=536870912 mounts=/etc/grafana/provisioning(ro) /var/lib/grafana(rw) /var/lib/grafana/dashboards(ro) 
+siem-socket-proxy user=root read_only=false cap_drop=[] cap_add=[] sec_opt=[no-new-privileges:true] pids=<nil> mem=134217728 mounts=/var/run/docker.sock(ro) 

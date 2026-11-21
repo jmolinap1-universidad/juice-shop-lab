@@ -1,0 +1,3 @@
+Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="::ffff:172.23.0.4"
+rasp-guard: bloqueo del RASP en sqlite3.all entregado como error controlado (HTTP 403)
+error 403 POST /rest/user/login: Solicitud bloqueada por la protección en tiempo de ejecución (RASP)

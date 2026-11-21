@@ -1,0 +1,23 @@
+# Construcción de la variante corregida — 2026-11-21T07:54:16-06:00
+app/ = f189f521266f42c6bd05884468292000cee852ed (v20.3.0), sin cambios
+exportado app/ (LF) a app-hardened/build/orig y src
+ok  parche 02-sqli-search -> routes/search.ts
+ok  parche 05-eval-userprofile -> routes/userProfile.ts
+ok  parche 06-asignacion-masiva-registro -> server.ts
+ok  parche 07-cors-restringido -> server.ts
+ok  parche 08-bola-cesta-propietario -> routes/basket.ts
+ok  lib/insecurity.ts
+ok  models/user.ts
+ok  routes/login.ts
+ok  routes/changePassword.ts
+ok  routes/2fa.ts (2 comparaciones)
+ok  server.ts
+Correcciones v2 aplicadas.
+ok  server.ts (parche 10: BasketItems GET/PUT/DELETE y lista, Addresss PUT, Feedbacks DELETE)
+ok  fuente = diff auditado (app-hardened/patches/v2/correcciones-fase6.patch), 9 archivos cambiados; variante corregida-fase6
+docker build juice-corregida:local ...
+sha256:855a427fa664a4cc9466738e579e74079734e4633d5b7d5194ecac52c8423173
+imagen juice-corregida:local = sha256:855a427fa664a4cc9466738e579e74079734e4633d5b7d5194ecac52c8423173
+sha256:5ac6c8ae446845cfed6ae25744a248a6a9d4886c0e35f41f9cadd3307e7b106d
+imagen juice-corregida-rasp:local = sha256:5ac6c8ae446845cfed6ae25744a248a6a9d4886c0e35f41f9cadd3307e7b106d
+RESULTADO: ÉXITO

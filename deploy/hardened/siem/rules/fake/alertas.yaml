@@ -29,11 +29,29 @@ groups:
         annotations:
           summary: "Intentos de acceso a rutas sensibles bloqueadas (listados, /metrics, claves)"
 
+      # INDICADOR DE INVESTIGACIÓN, no prueba de BOLA: dos usuarios legítimos que leen SUS cestas también la activan
+      # (falso positivo demostrado en evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/ y en el cierre final).
       - alert: API_Enumeracion_Objetos_PosibleBOLA
         expr: count(sum by (uri) (count_over_time({job="waf_access", status="200"} | json | uri=~"/rest/basket/[0-9]+" [5m]))) >= 2
+        labels: {severity: info, tipo: indicador-investigacion, owasp: "A01:2025 / API1:2023", riesgo: "R06", fuente: api-monitoring}
+        annotations:
+          summary: "Varias cestas distintas leídas en 5 min. Indicador de investigación (falsos positivos con varios usuarios legítimos); no confirma BOLA"
+
+      # Señal de ALTA CONFIANZA (cierre Fase 6): con los parches 08 y 10 la app responde 403 cuando una cuenta pide un
+      # objeto que no es suyo. El uso legítimo de la interfaz no produce estos 403 (recorrido-frontend: 35/35 sin 403).
+      - alert: API_BOLA_AccesoAjenoDenegado
+        expr: sum(count_over_time({job="waf_access", status="403"} | json | uri=~"/(rest/basket|api/BasketItems|api/Addresss|api/Cards|api/Feedbacks)/[0-9]+" [5m])) > 0
         labels: {severity: high, owasp: "A01:2025 / API1:2023", riesgo: "R06", fuente: api-monitoring}
         annotations:
-          summary: "Acceso a varias cestas distintas en 5 min (patrón de enumeración / BOLA)"
+          summary: "Intento de acceso a un objeto de otra cuenta denegado (403) en cestas, artículos, direcciones, tarjetas u opiniones"
+
+      # Pérdida de ingesta (R19/R24): el latido del WAF (healthcheck cada 30 s, override corregido) deja de llegar a Loki.
+      - alert: Ingesta_WAF_Ausente
+        expr: absent_over_time({job="waf_access"}[2m])
+        for: 1m
+        labels: {severity: high, owasp: "A09:2025", riesgo: "R19,R24", fuente: siem}
+        annotations:
+          summary: "No llegan registros de acceso del WAF a Loki desde hace más de 2 min (WAF, Alloy o Loki caídos)"
 
       - alert: RASP_Ataque_Detectado
         expr: sum(count_over_time({job="docker", container="juice-hardened"} |~ "^Zen has (blocked|detected)" [5m])) > 0

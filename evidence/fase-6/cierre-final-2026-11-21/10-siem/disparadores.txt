@@ -1,0 +1,10 @@
+# Disparadores representativos por regla — 2026-11-21T08:27:40-06:00 — vía WAF http://127.0.0.1:8088 (salvo RASP: directo a la app en la red interna)
+SQLi vía WAF (942):          403
+Registro con role (100001):  403
+Ruta sensible /ftp:          403
+Ruta sensible /metrics:      403
+Fuerza bruta (8 logins):     401 401 401 401 429 429 429 429 
+BOLA cruzado (B lee cesta de A vía WAF): 403
+RASP (inyección directa a la app, sin WAF): 403
+5xx controlados (opinión con UserId inexistente, inserción rechazada): 500 500 500 500 500 500 
+Cuerpo de ejemplo (sin traza): {"message":"internal error","errors":["SQLITE_CONSTRAINT: FOREIGN KEY 

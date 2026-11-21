@@ -17,6 +17,17 @@ loki.source.file "waf_audit" {
 }
 
 loki.process "waf_audit" {
+  // Cierre Fase 6 (A09:2025): ModSecurity guarda las CABECERAS de la petición en el audit log, incluido
+  // "Authorization: Bearer <JWT>" y cookies de sesión; llegaban sin filtrar a Loki y al panel de Grafana.
+  // Se redactan ANTES de enviar a Loki (el archivo crudo del WAF queda solo en el host, ignorado por git).
+  stage.replace {
+    expression = "\"(?i:authorization|cookie|set-cookie)\":\"([^\"]*)\""
+    replace    = "[REDACTADO]"
+  }
+  stage.replace {
+    expression = "(eyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,})"
+    replace    = "[JWT-REDACTADO]"
+  }
   stage.json {
     expressions = { status = "transaction.response.http_code" }
   }
@@ -37,6 +48,10 @@ loki.source.file "waf_access" {
 }
 
 loki.process "waf_access" {
+  stage.replace {
+    expression = "(eyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,})"
+    replace    = "[JWT-REDACTADO]"
+  }
   stage.json {
     expressions = { status = "status", method = "method" }
   }
@@ -51,6 +66,9 @@ loki.process "waf_access" {
 // docker.sock ni corre como root (riesgo R24).
 discovery.docker "contenedores" {
   host = "tcp://socket-proxy:2375"
+  // Cierre Fase 6: al recrear un contenedor se perdían las líneas emitidas antes del siguiente descubrimiento
+  // (60 s por defecto). Con 5 s el hueco se reduce (evidence/fase-6/cierre-final-2026-11-21/10-siem/).
+  refresh_interval = "5s"
 }
 
 discovery.relabel "contenedores" {
@@ -73,6 +91,14 @@ loki.source.docker "contenedores" {
   host       = "tcp://socket-proxy:2375"
   targets    = discovery.relabel.contenedores.output
   labels     = {"job" = "docker", "fuente" = "runtime"}
+  forward_to = [loki.process.runtime.receiver]
+}
+
+loki.process "runtime" {
+  stage.replace {
+    expression = "(eyJ[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,}\\.[A-Za-z0-9_-]{8,})"
+    replace    = "[JWT-REDACTADO]"
+  }
   forward_to = [loki.write.local.receiver]
 }
 

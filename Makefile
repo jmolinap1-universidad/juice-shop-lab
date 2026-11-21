@@ -4,7 +4,7 @@ LAB_URL := http://127.0.0.1:3000
 
 HARD := deploy/hardened/docker-compose.yml
 
-.PHONY: lab-up lab-down hard-up hard-down scan attack report ops-up ops-down risk ops-validar
+.PHONY: lab-up lab-down hard-up hard-down scan attack report ops-up ops-down risk risk-vigente ops-validar corregida-build ops-corregido-up ops-corregido-ps ops-corregido-down
 
 lab-up:     ## Laboratorio vulnerable solo en 127.0.0.1:3000
 	docker compose -f $(LAB) up -d
@@ -29,7 +29,24 @@ attack:     ## Casos de ataque automatizados (Fase 4) contra el lab local; cada 
 report:     ## Regenera el manifiesto de evidencias
 	bash scripts/manifest.sh
 
-ops-up:     ## Fase 6: endurecido + RASP + SIEM (Grafana 127.0.0.1:3001). Si 8080 está ocupado: make ops-up WAF_PORT=8088
+# --- Fase 6 VIGENTE: variante corregida (hito A) + WAF + RASP + SIEM (proyecto juice-corregida-defensa) ---
+corregida-build: ## Construye juice-corregida(-rasp):local desde app/ fijado, verificando cada parche contra el diff auditado
+	bash scripts/construir-corregida.sh
+
+ops-corregido-up: ## VIGENTE: corregida + WAF + RASP + SIEM. WAF http://127.0.0.1:8080 (o WAF_PORT=8088), Grafana :3001
+	WAF_PORT=$(or $(WAF_PORT),8080) bash scripts/ops-corregido.sh up
+
+ops-corregido-ps: ## Estado, salud, reinicios, imagen y variante de cada contenedor
+	bash scripts/ops-corregido.sh ps
+
+ops-corregido-down: ## Detiene el stack vigente SIN borrar volúmenes
+	bash scripts/ops-corregido.sh down
+
+# --- Fase 6 HISTÓRICO (2026-11-10): imagen OFICIAL vulnerable detrás de WAF + RASP + SIEM (residual v2) ---
+ops-up:     ## HISTÓRICO: imagen oficial + WAF + RASP + SIEM (no es la configuración vigente). WAF_PORT=8088 si 8080 está ocupado
+	@if [ -n "$$(docker ps -q --filter label=com.docker.compose.project=juice-corregida-defensa)" ]; then \
+		echo "RECHAZADO: el stack VIGENTE (ops-corregido) está activo; deténgalo con 'make ops-corregido-down'."; exit 1; fi
+	@echo "AVISO: stack HISTÓRICO con la imagen OFICIAL vulnerable (residual v2). El vigente es 'make ops-corregido-up'."
 	cd deploy/hardened && WAF_PORT=$(or $(WAF_PORT),8080) docker compose -f docker-compose.yml -f docker-compose.ops.yml up -d --build
 
 ops-down:
@@ -38,6 +55,10 @@ ops-down:
 risk:       ## Fase 6: valida el registro (falla si hay reducciones sin control probado), heatmaps y tratamiento-riesgo.md
 	MSYS_NO_PATHCONV=1 docker run --rm -v "$(CURDIR)":/r python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b \
 		sh -c 'pip install -q --no-cache-dir --root-user-action=ignore matplotlib==3.9.2 && python -I /r/docs/fase-6/datos/riesgo.py /r && python -I /r/docs/fase-6/datos/generar_md.py /r'
+
+risk-vigente: ## Fase 6 VIGENTE (cierre): registro de la variante corregida + defensa; valida, heatmaps y tabla en docs/fase-6/riesgo-vigente/
+	MSYS_NO_PATHCONV=1 docker run --rm -v "$(CURDIR)":/r python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b \
+		sh -c 'pip install -q --no-cache-dir --root-user-action=ignore matplotlib==3.9.2 && python -I /r/docs/fase-6/datos/construir_riesgos_vigente.py /r && python -I /r/docs/fase-6/datos/riesgo.py /r docs/fase-6/datos/riesgos-vigente.json docs/fase-6/riesgo-vigente && python -I /r/docs/fase-6/datos/generar_md.py /r docs/fase-6/riesgo-vigente/riesgos-calculados.json docs/fase-6/riesgo-vigente/tratamiento-riesgo-vigente.md "Fase 6 – Tratamiento formal del riesgo (configuración VIGENTE: variante corregida + defensa, cierre 2026-11-21)"'
 
 ops-validar: ## Fase 6: escenarios del RASP sin WAF (R22) con registro HTTP y disponibilidad (requiere make ops-up)
 	bash security/ops/escenario-rasp.sh "$(CURDIR)/evidence/fase-6/validacion-$$(date +%F)/rasp-monitoreo" false

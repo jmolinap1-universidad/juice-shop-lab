@@ -1,7 +1,14 @@
-# Hito A: defensa completa sobre la VARIANTE CORREGIDA (tercer archivo de Compose, junto a docker-compose.yml
-# y docker-compose.ops.yml). Sustituye la imagen oficial vulnerable por juice-corregida:local + RASP y monta la
-# clave JWT efímera como secreto. Uso:
-#   docker compose -f docker-compose.yml -f docker-compose.ops.yml -f docker-compose.corregido.yml up -d --build
+# Hito A / cierre de la Fase 6: defensa completa sobre la VARIANTE CORREGIDA (tercer archivo de Compose, junto a
+# docker-compose.yml y docker-compose.ops.yml). Uso recomendado: `make ops-corregido-up` (ver Makefile).
+#   docker compose -f docker-compose.yml -f docker-compose.ops.yml -f docker-compose.corregido.yml up -d
+# - Sustituye la imagen oficial vulnerable por juice-corregida-rasp:local (construida con scripts/construir-corregida.sh).
+# - Monta la clave JWT efímera como secreto; sin ella la aplicación NO arranca (fail-closed).
+# - Proyecto, volúmenes y logs del WAF SEPARADOS del stack histórico (`make ops-up`, imagen oficial): antes del
+#   cierre de la Fase 6 ambos compartían el proyecto juice-hardened, sus volúmenes sembrados y ./logs.
+# - Los nombres de contenedor (juice-hardened, juice-waf, siem-*) se conservan porque el SIEM los usa: por eso
+#   solo puede correr uno de los dos stacks a la vez (make ops-corregido-up lo comprueba).
+name: juice-corregida-defensa
+
 services:
   juice-shop:
     build:
@@ -13,6 +20,30 @@ services:
     environment:
       JWT_PRIVATE_KEY_FILE: /run/secrets/jwt_private_key
     secrets: [jwt_private_key]
+    labels:
+      siem.variante: "corregida"
+
+  waf:
+    environment:
+      # Falso positivo hallado en el cierre de la Fase 6 (evidence/fase-6/cierre-final-2026-11-21/07-waf/): con la lista
+      # por defecto del CRS (GET HEAD POST OPTIONS), la regla 911100 + 920350 bloqueaban (puntuación 8 ≥ 5) los PUT/DELETE
+      # LEGÍTIMOS del propietario (cantidad y borrado de artículos de la cesta, direcciones, tarjetas). La autorización
+      # de esos métodos la impone ahora el código (parche 10), no el WAF.
+      ALLOWED_METHODS: "GET HEAD POST OPTIONS PUT PATCH DELETE"
+    # Latido del SIEM: /healthz tiene access_log off; este chequeo atraviesa WAF → app y deja una línea en el access log
+    # cada 30 s. La regla Ingesta_WAF_Ausente avisa si deja de llegar a Loki (WAF, Alloy o Loki caídos).
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf -A siem-heartbeat -H 'Host: localhost' http://localhost:8080/rest/admin/application-version >/dev/null || exit 1"]
+    volumes:
+      - ./logs-corregido:/var/log/modsec:rw
+      # Exclusiones acotadas de falsos positivos medidos (932260 en /rest/user/whoami)
+      - ./waf/rules/98-exclusiones-fase6.conf:/etc/modsecurity.d/owasp-crs/rules/REQUEST-998-EXCLUSIONES-FASE6.conf:ro
+    labels:
+      siem.variante: "corregida"
+
+  alloy:
+    volumes:
+      - ./logs-corregido:/var/log/waf:ro
 
 secrets:
   jwt_private_key:

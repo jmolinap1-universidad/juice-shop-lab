@@ -45,7 +45,8 @@ reg() {
   printf '| %s | %s | %s | %s | **%s** | %s |\n' "$1" "$2" "$4" "$3" "$5" "$6" >> "$SUM"
   printf '[%s/%s] %-34s %s\n' "$5" "$4" "$1 $2" "$6"
 }
-save() { cat > "$OUT/$1"; }
+# Al guardar evidencia se redacta cualquier JWT emitido por el laboratorio (p. ej. el token obtenido en A1).
+save() { sed -E 's/(eyJ[A-Za-z0-9_-]{6})[A-Za-z0-9_-]*\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+/\1...[JWT-REDACTADO]/g' > "$OUT/$1"; }
 
 echo "# Casos de ataque Fase 4 — objetivo $TARGET ($TAG)" >> "$SUM"
 echo "" >> "$SUM"

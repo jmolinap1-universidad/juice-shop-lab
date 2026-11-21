@@ -1,0 +1,19 @@
+# Prueba de la alerta de pérdida de ingesta — se detiene SOLO el colector (siem-alloy); no se borra nada
+2026-11-21T08:30:03-06:00 estado inicial: "state":"inactive"
+2026-11-21T08:30:04-06:00 siem-alloy detenido
+2026-11-21T08:30:19-06:00 "state":"inactive"
+2026-11-21T08:30:34-06:00 "state":"inactive"
+2026-11-21T08:30:49-06:00 "state":"inactive"
+2026-11-21T08:31:05-06:00 "state":"inactive"
+2026-11-21T08:31:20-06:00 "state":"inactive"
+2026-11-21T08:31:35-06:00 "state":"inactive"
+2026-11-21T08:31:50-06:00 "state":"inactive"
+2026-11-21T08:32:05-06:00 "state":"pending"
+2026-11-21T08:32:21-06:00 "state":"pending"
+2026-11-21T08:32:36-06:00 "state":"pending"
+2026-11-21T08:32:51-06:00 "state":"pending"
+2026-11-21T08:33:06-06:00 "state":"firing"
+2026-11-21T08:33:07-06:00 siem-alloy iniciado
+2026-11-21T08:33:22-06:00 "state":"firing"
+2026-11-21T08:33:37-06:00 "state":"inactive"
+Líneas del access log escritas durante la parada (14:30:10-14:33:09 UTC): archivo=6, Loki=6

@@ -11,3 +11,7 @@
 | D-07 | 2026-11-03 | Herramientas solo vía Docker con versión fija | No hay Node/Python locales; mismo comportamiento local y en CI. |
 | D-08 | 2026-11-03 | Terraform con `offline_plan` (sin credenciales) | Evidencia de `plan` sin manejar claves AWS ni generar costos (D-05). |
 | D-09 | 2026-11-03 | Sin API Gateway en Fase 2 | Juice Shop es monolito REST detrás de ALB+WAFv2; API Gateway duplicaría el perímetro sin beneficio. |
+| D-10 | 2026-11-21 | Stack vigente de la Fase 6 separado del histórico (`make ops-corregido-up`, proyecto `juice-corregida-defensa`, logs propios) | El residual 2C/11A… solo vale con el código corregido; ambos compartían proyecto, volúmenes y logs y podían confundirse en la exposición. |
+| D-11 | 2026-11-21 | Falsos positivos del WAF se corrigen con exclusiones ACOTADAS (una regla, una ruta, un método) y `ALLOWED_METHODS`, sin bajar el umbral ni la paranoia | El CRS bloqueaba PUT/DELETE legítimos y `/rest/user/whoami`; la autorización de esos métodos la impone el código (parche 10). |
+| D-12 | 2026-11-21 | Redactar `Authorization`, cookies y JWT en Alloy antes de Loki | El audit log de ModSecurity guarda las cabeceras de la petición; el SIEM no debe almacenar credenciales de sesión. |
+| D-13 | 2026-11-21 | Tres fotografías del riesgo sin mezclar: histórica (v2), hito A y vigente; cada una con su configuración | Evita atribuir a la imagen oficial reducciones que solo existen con el código corregido. |

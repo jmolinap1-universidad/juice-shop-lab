@@ -1,0 +1,16 @@
+# AIKIDO_BLOCK=true — 2026-11-21T08:21:37-06:00 — directo a http://juice-hardened:3000 (sin WAF)
+antes: RestartCount=0 salud=healthy imagen=juice-corregida-rasp:local
+inyeccion 1: 403 0.050537s
+legitima  1: 200 0.036214s
+inyeccion 2: 403 0.017318s
+legitima  2: 200 0.170089s
+inyeccion 3: 403 0.018648s
+legitima  3: 200 0.073155s
+inyeccion 4: 403 0.016713s
+legitima  4: 200 0.074685s
+inyeccion 5: 403 0.015523s
+legitima  5: 200 0.039768s
+después: RestartCount=0 salud=healthy
+Líneas del RASP desde 2026-11-21T14:21:36Z:
+      5 Zen has blocked an SQL injection: kind="sql_injection" operation="sqlite3.all(...)" source="body.email" ip="<red interna>"
+      5 rasp-guard: bloqueo del RASP en sqlite3.all entregado como error controlado (HTTP 403)

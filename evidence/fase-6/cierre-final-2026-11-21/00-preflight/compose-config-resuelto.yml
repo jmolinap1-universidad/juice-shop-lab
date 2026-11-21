@@ -1,0 +1,310 @@
+name: juice-corregida-defensa
+services:
+  alloy:
+    restart: unless-stopped
+    container_name: siem-alloy
+    cap_drop:
+      - ALL
+    command:
+      - run
+      - --server.http.listen-addr=0.0.0.0:12345
+      - --storage.path=/var/lib/alloy/data
+      - --disable-reporting
+      - /etc/alloy/config.alloy
+    image: grafana/alloy:v1.10.2@sha256:bcf27f18c4402869af112fb39e35e1db3804a404686f4caa20bdf77814219223
+    mem_limit: "536870912"
+    networks:
+      siem: null
+      socketproxy: null
+    security_opt:
+      - no-new-privileges:true
+    user: 473:473
+    volumes:
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\siem\config.alloy
+        target: /etc/alloy/config.alloy
+        read_only: true
+        bind: {}
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\logs-corregido
+        target: /var/log/waf
+        read_only: true
+        bind: {}
+      - type: volume
+        source: alloy-state
+        target: /var/lib/alloy/data
+        volume: {}
+    depends_on:
+      loki:
+        condition: service_started
+        required: true
+      socket-proxy:
+        condition: service_started
+        required: true
+  grafana:
+    restart: unless-stopped
+    container_name: siem-grafana
+    cap_drop:
+      - ALL
+    environment:
+      GF_ANALYTICS_CHECK_FOR_PLUGIN_UPDATES: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Viewer
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: /var/lib/grafana/dashboards/seguridad.json
+      GF_NEWS_NEWS_FEED_ENABLED: "false"
+    image: grafana/grafana:12.1.1@sha256:a1701c2180249361737a99a01bc770db39381640e4d631825d38ff4535efa47d
+    mem_limit: "536870912"
+    networks:
+      siem: null
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\siem\grafana\provisioning
+        target: /etc/grafana/provisioning
+        read_only: true
+        bind: {}
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\siem\grafana\dashboards
+        target: /var/lib/grafana/dashboards
+        read_only: true
+        bind: {}
+      - type: volume
+        source: grafana-data
+        target: /var/lib/grafana
+        volume: {}
+    depends_on:
+      loki:
+        condition: service_started
+        required: true
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 3000
+        published: "3001"
+        protocol: tcp
+  juice-shop:
+    restart: unless-stopped
+    container_name: juice-hardened
+    cap_drop:
+      - ALL
+    cpus: 1
+    environment:
+      AIKIDO_BLOCK: "true"
+      AIKIDO_DEBUG: "true"
+      JWT_PRIVATE_KEY_FILE: /run/secrets/jwt_private_key
+      NODE_ENV: production
+      NODE_OPTIONS: --require @aikidosec/firewall --require /juice-shop/rasp/rasp-guard.js
+    image: juice-corregida-rasp:local
+    labels:
+      siem.fuente: app+rasp
+      siem.variante: corregida
+    mem_limit: "1073741824"
+    networks:
+      interna: null
+    pids_limit: 200
+    read_only: true
+    secrets:
+      - source: jwt_private_key
+        target: /run/secrets/jwt_private_key
+    security_opt:
+      - no-new-privileges:true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+      - /juice-shop/logs:rw,nosuid,size=32m
+    user: '65532:0'
+    volumes:
+      - type: volume
+        source: juice-data
+        target: /juice-shop/data
+        volume: {}
+      - type: volume
+        source: juice-ftp
+        target: /juice-shop/ftp
+        volume: {}
+      - type: volume
+        source: juice-wellknown
+        target: /juice-shop/.well-known
+        volume: {}
+      - type: volume
+        source: juice-dist
+        target: /juice-shop/frontend/dist
+        volume: {}
+      - type: volume
+        source: juice-i18n
+        target: /juice-shop/i18n
+        volume: {}
+    build:
+      context: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened
+      dockerfile: Dockerfile.rasp
+      args:
+        BASE_IMAGE: juice-corregida:local
+    expose:
+      - "3000"
+    healthcheck:
+      test:
+        - CMD
+        - /nodejs/bin/node
+        - -e
+        - fetch('http://127.0.0.1:3000/rest/admin/application-version').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))
+      timeout: 5s
+      interval: 30s
+      retries: 3
+      start_period: 1m0s
+  loki:
+    restart: unless-stopped
+    container_name: siem-loki
+    cap_drop:
+      - ALL
+    command:
+      - -config.file=/etc/loki/loki.yaml
+    image: grafana/loki:3.5.5@sha256:31628519045e7f28692a7ae73b4a3fd293dccb425585ed5d16ceea3b5c9592e6
+    mem_limit: "1073741824"
+    networks:
+      siem: null
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\siem\loki.yaml
+        target: /etc/loki/loki.yaml
+        read_only: true
+        bind: {}
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\siem\rules
+        target: /etc/loki/rules
+        read_only: true
+        bind: {}
+      - type: volume
+        source: loki-data
+        target: /loki
+        volume: {}
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 3100
+        published: "3100"
+        protocol: tcp
+  socket-proxy:
+    restart: unless-stopped
+    container_name: siem-socket-proxy
+    environment:
+      CONTAINERS: "1"
+      EVENTS: "1"
+      EXEC: "0"
+      IMAGES: "0"
+      INFO: "0"
+      NETWORKS: "1"
+      PING: "1"
+      POST: "0"
+      VERSION: "1"
+      VOLUMES: "0"
+    image: tecnativa/docker-socket-proxy:v0.4.1@sha256:3400c429c5f9e1b21d62130fb93b16e2e772d4fb7695bd52fc2b743800b9fe9e
+    mem_limit: "134217728"
+    networks:
+      socketproxy: null
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+        read_only: true
+        bind: {}
+  waf:
+    restart: unless-stopped
+    container_name: juice-waf
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+      - NET_BIND_SERVICE
+    cap_drop:
+      - ALL
+    environment:
+      ANOMALY_INBOUND: "5"
+      ANOMALY_OUTBOUND: "4"
+      BACKEND: http://juice-shop:3000
+      BLOCKING_PARANOIA: "1"
+      MODSEC_AUDIT_ENGINE: RelevantOnly
+      MODSEC_AUDIT_LOG: /var/log/modsec/audit.log
+      MODSEC_AUDIT_LOG_FORMAT: JSON
+      MODSEC_RULE_ENGINE: 'On'
+      PARANOIA: "1"
+      SERVER_TOKENS: 'off'
+    image: owasp/modsecurity-crs:4.25.2-nginx-202610180210-lts
+    labels:
+      siem.fuente: waf
+      siem.variante: corregida
+    networks:
+      interna: null
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\logs-corregido
+        target: /var/log/modsec
+        bind: {}
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\waf\default.conf.template
+        target: /etc/nginx/templates/conf.d/default.conf.template
+        read_only: true
+        bind: {}
+      - type: bind
+        source: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\hardened\waf\rules\99-virtual-patches.conf
+        target: /etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf
+        read_only: true
+        bind: {}
+    depends_on:
+      juice-shop:
+        condition: service_healthy
+        required: true
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - curl -sf -A healthcheck http://localhost:8080/healthz || exit 1
+      timeout: 5s
+      interval: 30s
+      retries: 3
+      start_period: 20s
+    ports:
+      - mode: ingress
+        host_ip: 127.0.0.1
+        target: 8080
+        published: "8088"
+        protocol: tcp
+networks:
+  interna:
+    name: juice-corregida-defensa_interna
+    driver: bridge
+  siem:
+    name: juice-corregida-defensa_siem
+    driver: bridge
+  socketproxy:
+    name: juice-corregida-defensa_socketproxy
+    driver: bridge
+    internal: true
+volumes:
+  alloy-state:
+    name: juice-corregida-defensa_alloy-state
+  grafana-data:
+    name: juice-corregida-defensa_grafana-data
+  juice-data:
+    name: juice-corregida-defensa_juice-data
+  juice-dist:
+    name: juice-corregida-defensa_juice-dist
+  juice-ftp:
+    name: juice-corregida-defensa_juice-ftp
+  juice-i18n:
+    name: juice-corregida-defensa_juice-i18n
+  juice-wellknown:
+    name: juice-corregida-defensa_juice-wellknown
+  loki-data:
+    name: juice-corregida-defensa_loki-data
+secrets:
+  jwt_private_key:
+    name: juice-corregida-defensa_jwt_private_key
+    file: C:\Users\<usuario>\Desktop\Proyecto Seg Aplicacion\deploy\corregido\secrets\jwt_private_key.pem

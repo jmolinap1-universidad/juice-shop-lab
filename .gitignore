@@ -30,3 +30,6 @@ docs/fase-6/entregable/build/v1.txt
 # Hito A: espacio de construcción de la variante corregida (código exportado de app/; no se versiona)
 app-hardened/build/
 deploy/corregido/secrets/
+
+# Cierre Fase 6: logs vivos del WAF del stack corregido (la evidencia se copia a evidence/ con hash)
+deploy/hardened/logs-corregido/

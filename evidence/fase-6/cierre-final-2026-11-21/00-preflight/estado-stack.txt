@@ -1,0 +1,13 @@
+juice-hardened | running | salud=healthy | reinicios=0 | juice-corregida-rasp:local | proyecto=juice-corregida-defensa | variante=corregida
+juice-waf | running | salud=healthy | reinicios=0 | owasp/modsecurity-crs:4.25.2-nginx-202610180210-lts | proyecto=juice-corregida-defensa | variante=corregida
+siem-loki | running | salud=n/a | reinicios=0 | grafana/loki:3.5.5@sha256:31628519045e7f28692a7ae73b4a3fd293dccb425585ed5d16ceea3b5c9592e6 | proyecto=juice-corregida-defensa | variante=
+siem-alloy | running | salud=n/a | reinicios=0 | grafana/alloy:v1.10.2@sha256:bcf27f18c4402869af112fb39e35e1db3804a404686f4caa20bdf77814219223 | proyecto=juice-corregida-defensa | variante=
+siem-grafana | running | salud=n/a | reinicios=0 | grafana/grafana:12.1.1@sha256:a1701c2180249361737a99a01bc770db39381640e4d631825d38ff4535efa47d | proyecto=juice-corregida-defensa | variante=
+siem-socket-proxy | running | salud=n/a | reinicios=0 | tecnativa/docker-socket-proxy:v0.4.1@sha256:3400c429c5f9e1b21d62130fb93b16e2e772d4fb7695bd52fc2b743800b9fe9e | proyecto=juice-corregida-defensa | variante=
+Puertos publicados (deben ser solo 127.0.0.1):
+juice-waf: 127.0.0.1:8088->8080/tcp
+siem-grafana: 127.0.0.1:3001->3000/tcp
+siem-alloy: 
+siem-loki: 127.0.0.1:3100->3100/tcp
+juice-hardened: 3000/tcp
+siem-socket-proxy: 2375/tcp

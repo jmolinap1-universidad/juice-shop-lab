@@ -1,0 +1,20 @@
+# Hallazgo: pérdida de ingesta al recrear el contenedor (antes de ajustar refresh_interval)
+Prueba: rasp-modos-corregido.sh (2 recreaciones; docker logs: 5 'detected' en modo monitoreo + 5 'blocked' y 5 'rasp-guard' en modo bloqueo).
+En Loki (ventana 30 min): detected=0, blocked=1, rasp-guard=2.
+Log de Alloy:
+ts=2026-11-21T14:21:59.645369282Z level=error msg="error inspecting Docker container" target=8088480b52945afa4b0e5a7ef9f80964eee3b9a06f4a8b42a69f154a18d1d2d6 component_path=/ component_id=loki.source.
+ts=2026-11-21T14:22:04.635897887Z level=error msg="error inspecting Docker container" target=8088480b52945afa4b0e5a7ef9f80964eee3b9a06f4a8b42a69f154a18d1d2d6 component_path=/ component_id=loki.source.
+
+## Diagnóstico (marcas de tiempo en Loki, sin duplicados: cada marca aparece una vez)
+- Contenedor en modo monitoreo (1.ª corrida, 14:21:22-14:21:30 UTC): se eliminó antes del siguiente descubrimiento de Alloy
+  (intervalo por defecto 60 s) → sus 5 líneas "Zen has detected" se PERDIERON definitivamente.
+- Contenedor en modo bloqueo (1.ª corrida, 14:21:37): siguió vivo hasta 14:23; al reiniciar Alloy lo leyó desde el inicio y
+  sus 5 líneas "Zen has blocked" llegaron con retraso (recuperadas, no duplicadas).
+## Corrección aplicada
+`deploy/hardened/siem/config.alloy`: `discovery.docker { refresh_interval = "5s" }`.
+## Verificación (2.ª corrida, tras el ajuste; evidence/.../09-rasp/tras-ajuste-ingesta/)
+- docker logs: 5 detected + 5 blocked + 5 rasp-guard. Loki: detected 5/5; blocked 5/5 de esta corrida (+5 recuperadas de la 1.ª).
+## Limitación residual
+El hueco no es cero: un contenedor que vive menos de ~5 s o que se recrea varias veces seguidas puede perder líneas.
+Mitigación de producción: driver de logs de Docker hacia el colector (p. ej. syslog/fluentd) o ingesta desde archivo
+persistente, además de la alerta de ausencia de ingesta (abajo).
