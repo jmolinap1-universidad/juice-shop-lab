@@ -1,0 +1,23 @@
+# Purga autorizada de líneas con JWT en Loki (autorización del usuario en chat, 2026-11-23: "borra los registros viejos")
+# Modo filter-and-delete: se borran solo las líneas que cumplen el filtro; el resto se conserva. Conteos con métricas LogQL.
+
+== Volumen vigente juice-corregida-defensa_loki-data (siem-loki) ==
+ANTES: 11-22:133 TOTAL=133
+Petición de borrado: POST /loki/api/v1/delete query={job=~"waf_audit|waf_access|docker"} |~ "eyJ[A-Za-z0-9_-]{8,}[.]" start=1793491200 end=1795494260 → HTTP 204
+[{"request_id":"c5b62966","start_time":1793491200,"end_time":1795494260,"query":"{job=~\"waf_audit|waf_access|docker\"} |~ \"eyJ[A-Za-z0-9_-]{8,}[.]\"","status":"received","created_at":1795494260.757}]
+Estado de la petición: processed (2026-11-23T22:28:02-06:00)
+DESPUÉS: TOTAL=133
+Líneas redactadas conservadas (control): 3501
+Métrica del compactor antes del reinicio: loki_compactor_deleted_lines{user="fake"} 133; peticiones pendientes 0
+DESPUÉS (Loki reiniciado para vaciar cachés en memoria, 2026-11-23T22:29:20-06:00): líneas con JWT = 0
+Control: líneas de auditoría redactadas conservadas = 3501
+
+== Volumen histórico juice-hardened_loki-data (Fase 6, imagen oficial; Loki temporal en red Docker interna, sin puertos) ==
+ANTES (2026-11-23T22:32:23-06:00): líneas con JWT = 19 (todas en job=waf_audit); líneas totales = 1057
+Petición de borrado: consulta {job=~".+"} |~ "eyJ[A-Za-z0-9_-]{8,}[.]", desde 2026-11-01 → HTTP 204
+Petición 58b8a730: processed; loki_compactor_deleted_lines{user="fake"} 209 (métrica acumulada del compactor sobre los fragmentos reescritos, no un conteo de líneas con token)
+DESPUÉS (Loki temporal reiniciado, 2026-11-23T22:37:09-06:00): líneas con JWT = 0; líneas totales = 1166
+Segundo reinicio (2026-11-23T22:38:47-06:00): líneas con JWT = 0; totales por job estables: docker 698+58, waf_access 140+79, waf_audit 125+66 = 1166.
+Nota: el total ANTES (1057) era menor porque el segmento WAL del 21-nov (wal/00000021) aún no estaba volcado al almacén y Loki no consulta
+el ingester fuera de las últimas 3 h; tras el primer reinicio se volcó y el total se estabilizó en 1166. El conteo de JWT es 0 con todos los datos visibles.
+waf_audit del 12-nov: 140 → 125 líneas (15 con token borradas); 21/22-nov: 4 con token borradas. Sin borrar volúmenes: Loki temporal y red temporal eliminados.

@@ -1,0 +1,114 @@
+# Plantilla nginx del contenedor CLOUD (DigitalOcean App Platform). Parte de deploy/hardened/waf/default.conf.template
+# (mismas cabeceras, rutas bloqueadas, límite de intentos y CRS) y añade:
+#  - ACCESO RESTRINGIDO (regla del proyecto: la versión endurecida solo con acceso restringido). App Platform no
+#    filtra por IP, así que se usa una puerta propia: /__acceso exige autenticación básica (usuarios en el secreto
+#    BASIC_AUTH_HTPASSWD, que configura el equipo) y entrega una cookie de sesión aleatoria generada en cada arranque.
+#    Sin esa cookie todo redirige a /__acceso. No se usa auth_basic en todo el sitio porque la API de Juice Shop ya
+#    envía su propio "Authorization: Bearer" y ambos esquemas chocarían.
+#  - IP real del cliente desde la cabecera do-connecting-ip (la pone el borde de DigitalOcean); el límite de intentos
+#    se aplica por cliente y no por el proxy.
+#  - Registros a stdout (los recoge App Platform), sin cabeceras ni cuerpos.
+#  - /healthz comprueba la app de verdad (auth_request a la API), no solo nginx.
+
+server_tokens ${SERVER_TOKENS};
+more_set_headers 'Server: waf';
+
+limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
+limit_req_status 429;
+
+log_format siem_json escape=json '{"time":"$time_iso8601","remote_addr":"$remote_addr",'
+    '"method":"$request_method","uri":"$uri","args":"$args","status":"$status",'
+    '"bytes":"$body_bytes_sent","rt":"$request_time","ua":"$http_user_agent",'
+    '"request_id":"$request_id","fuente":"waf_access","entorno":"cloud"}';
+
+# La clave del map de acceso (64 caracteres) no cabe en la cubeta por defecto (64) y nginx no arranca. Debe ir ANTES
+# del primer `map`: el primer bloque fija el valor por defecto y una declaración posterior se rechaza como duplicada.
+map_hash_bucket_size 128;
+
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    '' close;
+}
+
+# Cookie de acceso válida (valor aleatorio de 256 bits generado por iniciar.sh en cada arranque)
+map $cookie_lab_acceso $acceso_valido {
+    "${ACCESO_COOKIE}" 1;
+    default 0;
+}
+# Rutas que no exigen la cookie: la puerta de acceso y el chequeo de salud de la plataforma
+map "$acceso_valido:$uri" $redirigir_acceso {
+    "~^1:" 0;
+    "0:/__acceso" 0;
+    "0:/healthz" 0;
+    default 1;
+}
+
+server {
+    listen ${PORT} default_server;
+    server_name _;
+    client_max_body_size 1m;
+    access_log /dev/stdout siem_json;
+    # Redirecciones relativas: detrás del balanceador nginx no conoce el esquema (https) ni el puerto públicos
+    absolute_redirect off;
+
+    more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'";
+    more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
+    more_set_headers "X-Content-Type-Options: nosniff";
+    more_set_headers "X-Frame-Options: DENY";
+    more_set_headers "Referrer-Policy: no-referrer";
+    more_set_headers "Cross-Origin-Opener-Policy: same-origin";
+    more_set_headers "Cross-Origin-Embedder-Policy: require-corp";
+    more_set_headers "Permissions-Policy: geolocation=(), microphone=(), camera=()";
+    more_set_headers "X-Robots-Tag: noindex, nofollow";
+
+    proxy_hide_header Access-Control-Allow-Origin;
+    proxy_hide_header Access-Control-Allow-Credentials;
+    proxy_hide_header Feature-Policy;
+
+    if ($redirigir_acceso) {
+        return 302 /__acceso;
+    }
+
+    # Puerta de acceso: la autenticación básica se evalúa en la fase de acceso y el archivo estático se sirve después,
+    # solo si fue correcta (un `return` aquí se ejecutaría ANTES de autenticar).
+    location = /__acceso {
+        limit_req zone=login burst=3 nodelay;
+        auth_basic "Laboratorio MASI-UMG - acceso restringido";
+        auth_basic_user_file /etc/nginx/htpasswd;
+        add_header Set-Cookie "lab_acceso=${ACCESO_COOKIE}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=28800" always;
+        add_header Cache-Control "no-store" always;
+        default_type text/html;
+        alias /etc/nginx/acceso.html;
+    }
+
+    location = /healthz {
+        access_log off;
+        auth_request /__app_viva;
+        default_type text/plain;
+        alias /etc/nginx/ok.txt;
+    }
+    location = /__app_viva {
+        internal;
+        proxy_pass ${BACKEND}/rest/admin/application-version;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+    }
+
+    location ~* ^/(ftp|encryptionkeys|support/logs|\.well-known/csaf) { deny all; return 403; }
+    location = /metrics { deny all; return 403; }
+    location ^~ /metrics/ { deny all; return 403; }
+
+    location = /rest/user/login {
+        limit_req zone=login burst=3 nodelay;
+        include includes/proxy_backend.conf;
+    }
+
+    location / {
+        include includes/proxy_backend.conf;
+    }
+
+    error_page 500 502 503 504 /50x.html;
+    location = /50x.html {
+        root /usr/share/nginx/html;
+    }
+}

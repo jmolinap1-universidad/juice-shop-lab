@@ -90,7 +90,7 @@ fila "Artículo de cesta #$IID" "DELETE (borrar)" "$c" "artículos en la cesta d
 # --- Opiniones (Feedbacks): GET público por diseño (carrusel); se prueba el borrado ---
 # Como el formulario real (contact.component.ts), la opinión lleva el UserId de la sesión (obtenido de whoami)
 # (whoami lee la sesión de la cookie 'token', como en el navegador)
-UIDA=$(campo "$(curl -s --max-time 20 -H "Cookie: token=$TA" "$B/rest/user/whoami")" id)
+UIDA=$(campo "$(curl -s --max-time 20 -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" "$B/rest/user/whoami")" id)
 cap=$(curl -s --max-time 20 "$B/rest/captcha/"); cid=$(campo "$cap" captchaId); ans=$(campo "$cap" answer)
 r=$(req POST /api/Feedbacks "$TA" '{"comment":"Opinion de prueba A '"$TS"'","rating":3,"UserId":'"${UIDA:-0}"',"captchaId":'"${cid:-0}"',"captcha":"'"$ans"'"}')
 FID=$(campo "$(body "$r")" id)

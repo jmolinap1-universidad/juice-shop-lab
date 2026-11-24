@@ -1,0 +1,46 @@
+# Blueprint de Render — despliegue cloud del cierre técnico (2026-11-23), capa GRATUITA, sin tarjeta.
+# DigitalOcean se descartó: exige método de pago y App Platform cobra los contenedores (ver DECISIONES.md, D-18).
+# 1 servicio web (plan free: 512 MB, 0,1 vCPU; se suspende tras 15 min sin tráfico) con WAF + Juice Shop corregido + RASP,
+# construido desde deploy/cloud/Dockerfile (la fuente se verifica contra el diff auditado), y 1 PostgreSQL free (vence a
+# los 30 días de creada). Secretos (sync: false): el EQUIPO los introduce al crear el Blueprint; nunca se escriben aquí.
+# La imagen vulnerable histórica NO se despliega en la nube (solo en 127.0.0.1).
+services:
+  - type: web
+    name: juice-lab-masi-staging
+    runtime: docker
+    plan: free
+    region: virginia
+    repo: https://github.com/jmolinap1-universidad/juice-shop-lab
+    branch: cierre/tecnico-web-seenode
+    dockerfilePath: ./deploy/cloud/Dockerfile
+    dockerContext: .
+    healthCheckPath: /healthz
+    autoDeployTrigger: "off"
+    envVars:
+      - key: JWT_PRIVATE_KEY_B64  # gitleaks:allow (solo el nombre; el valor lo introduce el equipo en el panel)
+        sync: false
+      - key: BASIC_AUTH_HTPASSWD
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: juice-lab-db
+          property: connectionString
+      # Red privada de Render: TLS opcional con certificado autofirmado (no admite verify-ca/verify-full).
+      # Se exige TLS, pero sin verificar el certificado (riesgo residual documentado).
+      - key: DATABASE_SSL_VERIFY
+        value: "false"
+      # IP real: última dirección de X-Forwarded-For (la añade el balanceador de Render); sin recursión para que un
+      # X-Forwarded-For enviado por el cliente no permita saltarse el límite de intentos.
+      - key: REAL_IP_HEADER
+        value: X-Forwarded-For
+      - key: REAL_IP_RECURSIVE
+        value: "off"
+databases:
+  - name: juice-lab-db
+    plan: free
+    region: virginia
+    postgresMajorVersion: "17"
+    databaseName: juice
+    user: juice
+    # Lista vacía = sin acceso externo: solo el servicio web por la red privada
+    ipAllowList: []

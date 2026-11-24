@@ -1,0 +1,11 @@
+# Solo para construcciones con la RAÍZ del repositorio como contexto (deploy/cloud/Dockerfile, App Platform).
+# Lista blanca: entra únicamente lo que la imagen cloud necesita (sin evidencias, documentos, app/ ni build/).
+*
+!app-hardened/patches/
+!app-hardened/aplicar_v2.py
+!app-hardened/aplicar_fase6.py
+!app-hardened/aplicar_cierre_tecnico.py
+!deploy/cloud/
+!deploy/hardened/rasp/rasp-guard.js
+!deploy/hardened/waf/rules/98-exclusiones-fase6.conf
+!deploy/hardened/waf/rules/99-virtual-patches.conf

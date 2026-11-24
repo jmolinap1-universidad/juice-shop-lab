@@ -1,0 +1,49 @@
+# Especificación de DigitalOcean App Platform — cierre técnico (2026-11-23), opción A en DigitalOcean.
+# 1 servicio (WAF + Juice Shop corregido + RASP en un contenedor de 512 MB) + 1 PostgreSQL de desarrollo.
+# Construido desde ESTE repositorio con deploy/cloud/Dockerfile (la fuente se verifica contra el diff auditado).
+# Secretos: los valores de JWT_PRIVATE_KEY_B64 y BASIC_AUTH_HTPASSWD los introduce el EQUIPO en el panel (tipo SECRET);
+# nunca se escriben aquí. La imagen vulnerable histórica NO se despliega en la nube (solo en 127.0.0.1).
+name: juice-lab-masi
+region: nyc
+services:
+  - name: web
+    github:
+      repo: jmolinap1-universidad/juice-shop-lab
+      branch: cierre/tecnico-web-seenode
+      deploy_on_push: false
+    source_dir: /
+    dockerfile_path: deploy/cloud/Dockerfile
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    health_check:
+      http_path: /healthz
+      initial_delay_seconds: 90
+      period_seconds: 30
+      timeout_seconds: 5
+      failure_threshold: 5
+    envs:
+      - key: JWT_PRIVATE_KEY_B64  # gitleaks:allow (solo el nombre; el valor lo introduce el equipo en el panel)
+        scope: RUN_TIME
+        type: SECRET
+      - key: BASIC_AUTH_HTPASSWD
+        scope: RUN_TIME
+        type: SECRET
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        value: ${db.DATABASE_URL}
+      - key: DATABASE_CA_CERT
+        scope: RUN_TIME
+        value: ${db.CA_CERT}
+ingress:
+  rules:
+    - component:
+        name: web
+      match:
+        path:
+          prefix: /
+databases:
+  - name: db
+    engine: PG
+    version: "17"
+    production: false

