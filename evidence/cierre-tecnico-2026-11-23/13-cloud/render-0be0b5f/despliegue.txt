@@ -1,0 +1,1 @@
+Despliegue 0be0b5f (dep-dc2jk0c0916s73aau0sg), base WAF 202611190211 + parches Debian + exclusiones del .dockerignore. Build en Render: ok fuente = diff auditado (8cdc9fbb…), 21 archivos; exclusiones: 18 rutas.

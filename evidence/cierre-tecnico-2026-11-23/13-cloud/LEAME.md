@@ -7,7 +7,9 @@ sin acceso externo) · región virginia. Imagen: `deploy/cloud/Dockerfile`, cons
 
 | Carpeta / archivo | Contenido | Resultado |
 |---|---|---|
-| `render/` | **Validación del despliegue real en Render** (2026-11-24, commit `39487a3`) | Ver tabla «Nube» |
+| `render-0be0b5f/` | **Validación de la versión FINAL desplegada** (commit `0be0b5f`: base WAF 202611190211 + parches Debian + exclusiones) | Puerta 28/28, regresión 15/15, recorrido 35/35, A1-A12/BOLA/T1-T10 sin vulnerables, TLS 1.2/1.3, logs sin secretos |
+| `render/` | Primera validación en Render (commit `39487a3`) | Ver tabla «Nube» |
+| `release-imagen-cloud/`, `escaneo-imagen-cloud/` | Puerta de release y Trivy de la imagen cloud | BLOQUEADA (75 HIGH + 1 CRITICAL sin corrección del SO base del WAF); antes de corregir: 3/135 y 1 secreto |
 | `render/tls.md` | Handshakes TLS reales (OpenSSL 3.5.7) | TLS 1.0/1.1 rechazadas; 1.2 y 1.3 aceptadas; certificado Google Trust Services (`*.onrender.com`); HTTP → 301 HTTPS; HSTS |
 | `render/higiene-logs.md` | Búsqueda de secretos en los logs de Render | 0 JWT, 0 cookies de acceso, 0 `Authorization` |
 | `render/siem/` | Eventos del WAF cloud cargados en el SIEM local (`entorno="cloud"`) | 7 bloqueos; panel de Grafana con el filtro `cloud` (captura) |

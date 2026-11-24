@@ -3,6 +3,9 @@
 **Estado:** desplegado y verificado. **URL (acceso restringido):** `https://juice-lab-masi-staging.onrender.com`.
 **Costo:** US$0 (plan free, sin tarjeta). **Evidencia:** `evidence/cierre-tecnico-2026-11-23/13-cloud/` (índice en su `LEAME.md`).
 **Código:** rama `cierre/tecnico-web-seenode`; Blueprint `render.yaml`; imagen `deploy/cloud/Dockerfile`.
+**Versión desplegada:** commit `0be0b5f` (base WAF 202611190211 + parches de Debian + exclusiones del `.dockerignore` de Juice Shop),
+revalidada completa en la nube: puerta 28/28, regresión 15/15, recorrido 35/35, A1-A12 / BOLA / T1-T10 sin vulnerables, TLS 1.2/1.3,
+logs sin secretos (`13-cloud/render-0be0b5f/`). La primera validación (commit `39487a3`) está en `13-cloud/render/`.
 
 ## 1. Por qué Render
 | Plataforma | Resultado | Motivo |

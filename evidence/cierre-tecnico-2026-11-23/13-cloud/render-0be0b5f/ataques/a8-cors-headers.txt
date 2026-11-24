@@ -1,0 +1,24 @@
+HTTP/1.1 200 OK
+Date: Tue, 24 Nov 2026 07:30:49 GMT
+Content-Type: application/json; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+cf-cache-status: DYNAMIC
+content-security-policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'
+cross-origin-embedder-policy: require-corp
+cross-origin-opener-policy: same-origin
+etag: W/"14-gR5H+kovk8yK+dg6IS6eqGtSSKc"
+permissions-policy: geolocation=(), microphone=(), camera=()
+referrer-policy: no-referrer
+rndr-id: 71cf35db-2bb6-4b3f
+Server: cloudflare
+strict-transport-security: max-age=31536000; includeSubDomains
+vary: Origin, Accept-Encoding
+vary: Accept-Encoding
+x-content-type-options: nosniff
+x-frame-options: DENY
+x-recruiting: /#/jobs
+x-render-origin-server: waf
+x-robots-tag: noindex, nofollow
+CF-RAY: a5f6b5e2ea4ba4fa-MIA
+alt-svc: h3=":443"; ma=86400
