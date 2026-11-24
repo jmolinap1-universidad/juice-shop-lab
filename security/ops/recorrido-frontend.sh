@@ -14,7 +14,7 @@ TS=$(date +%s); PW='Passw0rd!123'; EM="recorrido_${TS}@juice-sh.op"; J='Content-
 ok=0; waf=0; otro=0
 paso() { # descripcion metodo ruta esperado [datos]
   local d="${5:-}" args=() r c cuerpo cls
-  args=(-s --max-time 20 -X "$2" -w '\t%{http_code}' -H "Authorization: Bearer ${TK:-}" -H "Cookie: token=${TK:-}")
+  args=(-s --max-time 20 -X "$2" -w '\t%{http_code}' -H "Authorization: Bearer ${TK:-}" -H "Cookie: token=${TK:-}${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}")
   if [ -n "$d" ]; then args+=(-H "$J" --data "$d"); fi
   r="$(curl "${args[@]}" "$B$3" | tr '\r\n' '  ')"; c="${r##*$'\t'}"; cuerpo="${r%$'\t'*}"
   if printf '%s' "$cuerpo" | grep -q '<center>nginx</center>'; then cls="**BLOQUEO DEL WAF**"; waf=$((waf+1))

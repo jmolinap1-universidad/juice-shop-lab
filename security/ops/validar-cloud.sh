@@ -42,6 +42,9 @@ chk "Cookie falsificada" 302 "$(c -b 'lab_acceso=0000000000000000000000000000000
 chk "/healthz sin autenticación" 200 "$(c "$B/healthz")"
 chk "/__acceso sin credenciales" 401 "$(c "$B/__acceso")"
 chk "/__acceso con contraseña errónea" 401 "$(c -u 'prueba:incorrecta' "$B/__acceso")"
+# Un 401 NO debe entregar la cookie (fallo real hallado: add_header ... always la enviaba también en el 401)
+chk "401 sin credenciales no entrega cookie" 0 "$(curl -s -o /dev/null -D - "$B/__acceso" | grep -ci '^set-cookie: lab_acceso')"
+chk "401 con contraseña errónea no entrega cookie" 0 "$(curl -s -o /dev/null -D - -u 'prueba:incorrecta' "$B/__acceso" | grep -ci '^set-cookie: lab_acceso')"
 sleep 65
 codigos=""; for i in 1 2 3 4 5 6 7; do codigos="$codigos $(c -u "intruso$i:x" "$B/__acceso")"; done
 chk "7 intentos erróneos seguidos (límite 5/min, ráfaga 3)" ".*429.*" "$codigos"

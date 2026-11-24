@@ -75,7 +75,9 @@ server {
         limit_req zone=login burst=3 nodelay;
         auth_basic "Laboratorio MASI-UMG - acceso restringido";
         auth_basic_user_file /etc/nginx/htpasswd;
-        add_header Set-Cookie "lab_acceso=${ACCESO_COOKIE}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=28800" always;
+        # SIN `always`: así la cookie solo acompaña a respuestas 2xx/3xx (autenticación correcta). Con `always` también
+        # viajaba en el 401 y cualquiera entraba sin credenciales (hallado en la validación local del 2026-11-23).
+        add_header Set-Cookie "lab_acceso=${ACCESO_COOKIE}; Path=/; Secure; HttpOnly; SameSite=Lax; Max-Age=28800";
         add_header Cache-Control "no-store" always;
         default_type text/html;
         alias /etc/nginx/acceso.html;
