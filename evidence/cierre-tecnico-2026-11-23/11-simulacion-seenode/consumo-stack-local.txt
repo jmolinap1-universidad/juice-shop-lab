@@ -1,0 +1,2 @@
+Consumo en el stack local (sin límites estrictos): juice-hardened mem=166.4MiB / 1GiB cpu=0.72%
+juice-waf mem=93.26MiB / 15.57GiB cpu=0.00%

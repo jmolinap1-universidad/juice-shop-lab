@@ -1,0 +1,43 @@
+# Construcción de la variante corregida — 2026-11-23T18:55:47-06:00
+app/ = f189f521266f42c6bd05884468292000cee852ed (v20.3.0), sin cambios
+exportado app/ (LF) a app-hardened/build/orig y src
+ok  parche 02-sqli-search -> routes/search.ts
+ok  parche 05-eval-userprofile -> routes/userProfile.ts
+ok  parche 06-asignacion-masiva-registro -> server.ts
+ok  parche 07-cors-restringido -> server.ts
+ok  parche 08-bola-cesta-propietario -> routes/basket.ts
+ok  lib/insecurity.ts
+ok  models/user.ts
+ok  routes/login.ts
+ok  routes/changePassword.ts
+ok  routes/2fa.ts (2 comparaciones)
+ok  server.ts
+Correcciones v2 aplicadas.
+ok  server.ts (parche 10: BasketItems GET/PUT/DELETE y lista, Addresss PUT, Feedbacks DELETE)
+ok  package.json (9 cambios)
+ok  lib/insecurity.ts (4 cambios)
+ok  lib/utils.ts (4 cambios)
+ok  routes/showProductReviews.ts (2 cambios)
+ok  routes/trackOrder.ts (2 cambios)
+ok  routes/updateProductReviews.ts (3 cambios)
+ok  lib/xml.ts (2 cambios)
+ok  routes/profileImageUrlUpload.ts (2 cambios)
+ok  routes/recycles.ts (2 cambios)
+ok  server.ts (6 cambios)
+ok  package.json (1 cambios)
+ok  models/index.ts (2 cambios)
+ok  routes/login.ts (1 cambios)
+ok  routes/search.ts (1 cambios)
+ok  routes/search.ts (2 cambios)
+ok  routes/b2bOrder.ts (1 cambios)
+ok  routes/chat.ts (1 cambios)
+ok  frontend/src/app/search-result/search-result.component.ts (1 cambios)
+Parches 11 y 12 aplicados.
+AVISO: diff auditado reescrito en app-hardened/patches/v2/correcciones-cierre-tecnico.patch (revisar antes de commitear)
+ok  fuente = diff auditado (app-hardened/patches/v2/correcciones-cierre-tecnico.patch), 21 archivos cambiados; variante corregida-cierre-tecnico
+docker build juice-corregida:local ...
+sha256:4e8a8e98a17457b69d4079d7e020f7ed746b6969c894dda814c4b0bb49c261d6
+imagen juice-corregida:local = sha256:4e8a8e98a17457b69d4079d7e020f7ed746b6969c894dda814c4b0bb49c261d6
+sha256:1ebc195dccd90ad7628b8f88149b8699597febe7a833e4e748e003f88f92b815
+imagen juice-corregida-rasp:local = sha256:1ebc195dccd90ad7628b8f88149b8699597febe7a833e4e748e003f88f92b815
+RESULTADO: ÉXITO

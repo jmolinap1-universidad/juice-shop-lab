@@ -1,0 +1,1 @@
+Docker 29.9.2 · Docker Desktop · CPUs 8 · RAM 16718118912

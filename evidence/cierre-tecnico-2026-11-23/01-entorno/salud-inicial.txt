@@ -1,0 +1,16 @@
+juice-hardened | running | salud=healthy | reinicios=0 | variante=corregida
+juice-waf | running | salud=healthy | reinicios=0 | variante=corregida
+siem-loki | running | salud=n/a | reinicios=0 | variante=
+siem-alloy | running | salud=n/a | reinicios=0 | variante=
+siem-grafana | running | salud=n/a | reinicios=0 | variante=
+siem-socket-proxy | running | salud=n/a | reinicios=0 | variante=
+Loki /ready: Ingester not ready: waiting for 15s after being ready
+Grafana /api/health: {"database":"ok","version":"12.1.1","commit":"df5de8219b41d1e639e003bf5f3a85913761d167"}
+Grafana datasource Loki: "status":"OK"
+WAF -> app (busqueda): 200
+WAF ruta sensible /ftp: 403
+imagen app: juice-corregida-rasp:local corregida-fase6+rasp diff=ed0484d487a7cca8cd422f80cfbaba7f0d247420a81eff6621aae907538be9dc
+ingesta 10m {job="waf_audit"}: 4
+ingesta 10m {job="waf_access"}: 8
+ingesta 10m {job="docker",container="juice-hardened"}: 43
+reglas cargadas: 9

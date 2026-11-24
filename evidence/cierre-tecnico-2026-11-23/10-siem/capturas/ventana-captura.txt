@@ -1,0 +1,1 @@
+ventana: 1795482091 - 1795483291 (epoch s), entorno=local

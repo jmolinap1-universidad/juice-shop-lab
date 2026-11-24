@@ -1,0 +1,1402 @@
+{
+  "version": "2 (2026-11-10, auditoría de cierre)+cierre-fase6+cierre-tecnico",
+  "metodo": {
+    "escala": "Probabilidad (P) e Impacto (I) de 1 a 5; nivel = P x I: Bajo 1-4, Medio 5-9, Alto 10-16, Crítico 20-25",
+    "nota_normativa": "ISO/IEC 27005:2022 define el proceso (identificar, analizar, evaluar, tratar) y las opciones de tratamiento; NO prescribe una fórmula aritmética. La escala 1-5, la derivación desde DREAD y las pautas de reducción son una CONVENCIÓN PROPIA del equipo, documentada aquí.",
+    "inherente_dread": "P = ceil(media(R, E, Di) / 2); I = ceil(media(D, A) / 2), desde el DREAD de docs/fase-1 (orden D, R, E, A, Di).",
+    "inherente_cualitativa": "Riesgos sin DREAD (R21-R24): valoración del equipo con justificación escrita; R22 usa además la medición del escenario 2b.",
+    "residual": "Valor EXPLÍCITO por riesgo, con razonamiento de P y de I. El validador (riesgo.py) rechaza cualquier reducción no respaldada por un control con estado 'verificado' y verificación 'probado'.",
+    "pautas_reduccion": [
+      "P solo baja con controles preventivos, de eliminación o de evitación PROBADOS (prueba representativa con evidencia).",
+      "Pauta orientativa: una capa preventiva probada, P-2; dos capas independientes probadas, P-3; eliminación o evitación probada de toda la causa, P=1. Si el control cubre solo parte de las vías de ataque, la reducción es menor y se justifica.",
+      "I solo baja con contención o respuesta PROBADAS que demuestren menor consecuencia. La detección (SIEM, SCA, alertas) aporta visibilidad y NO reduce el impacto.",
+      "Controles configurados pero no ejercitados ('inspeccionado'), diseñados o propuestos NO reducen el residual: se informan como plan."
+    ],
+    "configuracion_hito_a": "Variante corregida (juice-corregida:local, parches 02, 05-08 y v2 01/03/04/09) + WAF + RASP + SIEM (deploy/hardened/docker-compose.corregido.yml). Delta aplicado por construir_riesgos_hito_a.py.",
+    "configuracion_vigente": "make ops-corregido-up: variante corregida (parches 01-10) + WAF ModSecurity/CRS (ALLOWED_METHODS con PUT/PATCH/DELETE y exclusión acotada 932260 en GET /rest/user/whoami) + RASP Aikido Zen + SIEM (redacción de tokens, alerta de ingesta). Delta aplicado por docs/fase-6/datos/construir_riesgos_vigente.py sobre el registro del hito A.",
+    "configuracion_cierre_tecnico": "Variante corregida-cierre-tecnico (parches 01-13, dependencias actualizadas, base distroless nueva) en el stack local vigente (make ops-corregido-up) con WAF, RASP, SIEM y notificación local. Delta: docs/fase-6/datos/construir_riesgos_cierre_tecnico.py."
+  },
+  "riesgos": [
+    {
+      "id": "R01",
+      "nombre": "Inyección SQL en el login (bypass de autenticación)",
+      "origen": "T01 / A1",
+      "owasp": "A05:2025",
+      "cwe": "CWE-89",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Legal",
+        "Financiero"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Ejecutado",
+      "responsable": "Operaciones de seguridad (WAF/RASP); Desarrollo backend (parche 01)",
+      "revision": "Repetir run.sh sin WAF tras cualquier cambio en routes/login.ts",
+      "pendiente": "Hacer de la variante corregida la imagen por defecto del despliegue (hoy es el override docker-compose.corregido.yml)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "WAF ModSecurity + CRS 942100/949110 (HTTP 403)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv"
+        },
+        {
+          "control": "RASP Aikido Zen + integración rasp-guard: bloqueo en sqlite3.all con HTTP 403",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv"
+        },
+        {
+          "control": "Alertas SIEM WAF_InyeccionSQL_Bloqueada y RASP_Ataque_Detectado",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json"
+        },
+        {
+          "control": "Parche 01 v2: consulta parametrizada + verificación scrypt (variante corregida); A1 sin token y HTTP 401 sin WAF ni RASP",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 5,
+      "I_inh": 5,
+      "S_inh": 25,
+      "N_inh": "Crítico",
+      "P_res": 1,
+      "I_res": 5,
+      "S_res": 5,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Causa eliminada y probada SIN WAF ni RASP (A1 → 401, sin token); WAF y RASP quedan como capas adicionales (el RASP bloqueó además el mismo payload, escenario 05): P=1.",
+      "razon_I": "Si una vía no probada prosperara, la consecuencia sería la misma (sesión de administrador). La corrección no reduce el impacto."
+    },
+    {
+      "id": "R02",
+      "nombre": "Inyección SQL UNION en búsqueda (extracción de tablas)",
+      "origen": "T02 / A2-A3",
+      "owasp": "A05:2025",
+      "cwe": "CWE-89",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Legal",
+        "Reputacional",
+        "Financiero"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Ejecutado",
+      "responsable": "Operaciones de seguridad (WAF/RASP); Desarrollo backend (parche 02)",
+      "revision": "Repetir run.sh sin WAF tras cualquier cambio en routes/search.ts",
+      "pendiente": "Corregir el aviso de tipos TS2339 (QueryTypes) del parche 02 y hacer de la variante la imagen por defecto",
+      "nota": "",
+      "controles": [
+        {
+          "control": "WAF ModSecurity + CRS 942xxx (HTTP 403)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv"
+        },
+        {
+          "control": "RASP Aikido Zen + rasp-guard: bloqueo en sqlite3.all (query.q) con HTTP 403",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv"
+        },
+        {
+          "control": "Alertas SIEM de inyección (WAF y RASP)",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json"
+        },
+        {
+          "control": "Parche 02: consulta parametrizada en la búsqueda (variante corregida); A2 y A3 sin datos sin WAF ni RASP y búsqueda legítima con resultados",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 5,
+      "I_inh": 5,
+      "S_inh": 25,
+      "N_inh": "Crítico",
+      "P_res": 1,
+      "I_res": 5,
+      "S_res": 5,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Causa eliminada y probada sin WAF ni RASP (A2/A3 mitigados; la búsqueda legítima devuelve productos): P=1.",
+      "razon_I": "La extracción de tablas tendría la misma consecuencia; la corrección no reduce el impacto."
+    },
+    {
+      "id": "R03",
+      "nombre": "Clave privada JWT embebida en el código (forja de tokens)",
+      "origen": "T03",
+      "owasp": "A04:2025",
+      "cwe": "CWE-798/321",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Legal",
+        "Financiero"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Transferir",
+      "decision_sec_estado": "Propuesta",
+      "responsable": "Desarrollo backend (parche 04); Arquitectura cloud (gestor de secretos)",
+      "revision": "En cada despliegue: generar una clave nueva (security/ops/generar-clave-jwt.sh) y comprobar el 401 con un token anterior",
+      "pendiente": "Gestor de secretos / KMS y rotación automática (transferencia propuesta)",
+      "nota": "El endpoint /encryptionkeys/jwt.pub sirve la clave PÚBLICA: no es una vulnerabilidad y su bloqueo no reduce este riesgo.",
+      "controles": [
+        {
+          "control": "Parche 04 v2: clave privada fuera del código, cargada de un secreto montado y rotada; un token firmado con la clave antigua recibe HTTP 401",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/regresion-funcional.md"
+        },
+        {
+          "control": "Arranque fail-closed: sin secreto la aplicación no inicia (código de salida 1)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/arranque-sin-secreto.txt"
+        },
+        {
+          "control": "Gestor de secretos / KMS del proveedor cloud (custodia compartida, no transfiere la responsabilidad)",
+          "tipo": "transferencia",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "infra/terraform/"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 5,
+      "S_inh": 20,
+      "N_inh": "Crítico",
+      "P_res": 2,
+      "I_res": 5,
+      "S_res": 10,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "La clave embebida ya no está en la imagen (Trivy: sin secreto private-key en insecurity.ts/.js) y los tokens de la clave antigua se rechazan: la causa se eliminó. No baja a 1 porque la clave nueva es un archivo en el host, sin gestor de secretos/KMS ni rotación automática.",
+      "razon_I": "Si la clave nueva se filtrara, forjar tokens tendría la misma consecuencia."
+    },
+    {
+      "id": "R04",
+      "nombre": "Bibliotecas JWT obsoletas (algoritmos débiles)",
+      "origen": "T04",
+      "owasp": "A03:2025",
+      "cwe": "CWE-347",
+      "tipo": "Software",
+      "impactos": [
+        "Reputacional",
+        "Financiero"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Dueño del riesgo: líder del proyecto (acepta); Desarrollo backend (actualización)",
+      "revision": "En cada construcción: puerta de release (Trivy) sin CVE de jsonwebtoken/jws",
+      "pendiente": "Ninguno en el código; vigilar nuevas versiones con la puerta de release",
+      "nota": "",
+      "controles": [
+        {
+          "control": "SCA en CI (npm audit, OSV, Grype) que identifica el componente",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-3/sca/"
+        },
+        {
+          "control": "Actualizar bibliotecas JWT y fijar algoritmos",
+          "tipo": "eliminacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"
+        },
+        {
+          "control": "Parche 11: express-jwt 8.5.1 + jsonwebtoken 9.0.3 + jws 4.0.1 con RS256 fijo; alg=none y confusión HS256 con la clave pública → 401; token legítimo → 200",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/04-despues-parches/jwt-algoritmos.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 3,
+      "I_inh": 5,
+      "S_inh": 15,
+      "N_inh": "Alto",
+      "P_res": 1,
+      "I_res": 5,
+      "S_res": 5,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Bibliotecas actualizadas y algoritmo fijado; los dos ataques de algoritmo probados se rechazan (401): causa eliminada.",
+      "razon_I": "Si se comprometiera la clave de firma, la consecuencia sería la misma; la corrección no reduce el impacto."
+    },
+    {
+      "id": "R05",
+      "nombre": "Contraseñas con MD5 sin sal",
+      "origen": "T05",
+      "owasp": "A04:2025",
+      "cwe": "CWE-916",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Legal",
+        "Reputacional"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Mitigar",
+      "decision_sec_estado": "Ejecutado parcialmente",
+      "responsable": "Desarrollo backend (parche 03)",
+      "revision": "Ejercitar el alta y la verificación de 2FA con la variante; en una base con datos reales, migrar hashes al iniciar sesión",
+      "pendiente": "Prueba de 2FA; migración progresiva si la base no se re-siembra",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Bloqueo de la vía de extracción por SQLi (WAF + RASP)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv"
+        },
+        {
+          "control": "Parche 03 v2: scrypt con sal aleatoria (sin dependencias nuevas); 27/27 usuarios con scrypt, login y cambio de contraseña probados",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/regresion-funcional.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 5,
+      "S_inh": 20,
+      "N_inh": "Crítico",
+      "P_res": 1,
+      "I_res": 5,
+      "S_res": 5,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "MD5 sin sal eliminado para todas las cuentas (27/27 scrypt en la base del contenedor); revertir un hash filtrado deja de ser trivial: P=1. La ruta 2FA usa la misma función pero no se ejercitó.",
+      "razon_I": "Sin contención probada; la convención no reduce I por el algoritmo."
+    },
+    {
+      "id": "R06",
+      "nombre": "BOLA/IDOR: lectura de recursos de otro usuario",
+      "origen": "T06 / A12",
+      "owasp": "A01:2025 (API1:2023)",
+      "cwe": "CWE-639",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Legal",
+        "Reputacional"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "Mitigar",
+      "decision_sec_estado": "Ejecutado parcialmente",
+      "responsable": "Desarrollo backend (parche 08); Monitoreo (heurística SIEM)",
+      "revision": "Ejecutar security/ops/bola-recursos.sh tras cualquier cambio de rutas o modelos",
+      "pendiente": "Auditar el resto de objetos de la API (Complaints, PrivacyRequests, Recycles, Memories, historial de pedidos)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "WAF: no bloquea la lectura cruzada (A12 HTTP 200 a través del WAF)",
+          "tipo": "preventivo",
+          "estado": "no_efectivo",
+          "verificacion": "no_efectivo",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/bola/resultado-bola.md"
+        },
+        {
+          "control": "Heurística SIEM API_Enumeracion_Objetos_PosibleBOLA (con falsos positivos demostrados)",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/alertas-tras-trafico-legitimo.json"
+        },
+        {
+          "control": "Parche 08: verificación de propietario en /rest/basket/:id (variante corregida); A12 → 403 y la cesta propia → 200",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/bola/resultado-bola.md"
+        },
+        {
+          "control": "Parche 10: verificación de propietario en artículos de cesta (GET/PUT/DELETE y lista), direcciones (PUT) y opiniones (DELETE); 0/10 accesos ajenos con éxito, 7/7 operaciones del propietario correctas",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/02-bola-recursos/despues-parche10-corregida-rasp-sin-waf.md"
+        },
+        {
+          "control": "Alerta SIEM API_BOLA_AccesoAjenoDenegado (403 a objetos ajenos; inactiva con tráfico legítimo, activa con el intento cruzado)",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/10-siem/reglas-tras-disparadores.txt"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 5,
+      "I_inh": 4,
+      "S_inh": 20,
+      "N_inh": "Crítico",
+      "P_res": 2,
+      "I_res": 4,
+      "S_res": 8,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Verificación de propietario probada en el código para cestas, artículos de cesta, direcciones, tarjetas y opiniones (0/10 accesos ajenos, sin WAF y con WAF): P-3 respecto del inherente. No llega a 1 porque no se auditaron todos los objetos de la API (Complaints, PrivacyRequests, Recycles, Memories, historial de pedidos).",
+      "razon_I": "Sin contención probada; las alertas aportan visibilidad y no reducen el impacto."
+    },
+    {
+      "id": "R07",
+      "nombre": "Asignación masiva de role=admin en el registro",
+      "origen": "T07 / A7",
+      "owasp": "A01:2025",
+      "cwe": "CWE-915",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Financiero"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Ejecutado",
+      "responsable": "Operaciones de seguridad (parche virtual); Desarrollo backend (parche 06)",
+      "revision": "Repetir A7 sin WAF tras cambios en el registro de usuarios",
+      "pendiente": "Hacer de la variante la imagen por defecto",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Parche virtual ModSecurity 100001 (HTTP 403)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv"
+        },
+        {
+          "control": "Alerta SIEM WAF_ParcheVirtual_Activado",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json"
+        },
+        {
+          "control": "Parche 06: lista blanca de campos en el registro (variante corregida); role=admin ignorado (role customer) sin WAF",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 4,
+      "S_inh": 16,
+      "N_inh": "Alto",
+      "P_res": 1,
+      "I_res": 4,
+      "S_res": 4,
+      "N_res": "Bajo",
+      "prioridad": "Baja",
+      "razon_P": "Causa eliminada y probada sin WAF (A7: role customer); el parche virtual del WAF queda como capa adicional: P=1.",
+      "razon_I": "Una cuenta de administrador creada por otra vía tendría la misma consecuencia."
+    },
+    {
+      "id": "R08",
+      "nombre": "Inyección NoSQL en reseñas (MarsDB)",
+      "origen": "T08",
+      "owasp": "A05:2025",
+      "cwe": "CWE-943",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Operacional"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Desarrollo backend",
+      "revision": "Al implementar la validación de operadores; incluir un caso en run.sh",
+      "pendiente": "marsdb sigue sin versión corregida (ver R20)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Rechazar operadores en filtros de MarsDB",
+          "tipo": "eliminacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"
+        },
+        {
+          "control": "Parche 12: reseñas y pedidos consultados por campo (sin $where), id sin operadores, sin actualización masiva; T1-T3 protegidos incluso con el modo seguro desactivado (la imagen oficial sí es vulnerable)",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/corregida/resultados.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 4,
+      "S_inh": 16,
+      "N_inh": "Alto",
+      "P_res": 1,
+      "I_res": 4,
+      "S_res": 4,
+      "N_res": "Bajo",
+      "prioridad": "Baja",
+      "razon_P": "Las tres vías probadas (lectura de reseñas, pedidos, actualización masiva) quedan cerradas en el código y no dependen de la detección de Docker.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R09",
+      "nombre": "Ejecución de código vía eval()/vm",
+      "origen": "T09",
+      "owasp": "A05:2025",
+      "cwe": "CWE-95",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Operacional",
+        "Reputacional",
+        "Financiero"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Planificado",
+      "decision_sec": "Mitigar",
+      "decision_sec_estado": "Ejecutado",
+      "responsable": "Desarrollo backend (parche 05); Operaciones (runtime)",
+      "revision": "Al ejecutar la variante fuera de Docker o con safetyMode disabled",
+      "pendiente": "Revisar b2bOrder y captcha (vm); prueba dinámica del parche 05 fuera de Docker",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Contención: FS raíz de solo lectura (escritura bloqueada con EROFS), usuario no root, cap_drop ALL",
+          "tipo": "contencion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-5/despues/runtime-hardening-inspect.txt"
+        },
+        {
+          "control": "Parche 05: eval() eliminado en routes/userProfile.ts (revisado en el diff). No ejercitable dinámicamente: Juice Shop desactiva esa rama en Docker (safetyMode auto, disabledEnv Docker)",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "app-hardened/patches/v2/correcciones-hito-a.patch"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 3,
+      "I_inh": 5,
+      "S_inh": 15,
+      "N_inh": "Alto",
+      "P_res": 3,
+      "I_res": 4,
+      "S_res": 12,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "No hay control preventivo probado sobre eval/vm (el RASP instrumenta node:vm, pero no se ejercitó).",
+      "razon_I": "La escritura en el FS raíz está bloqueada (EROFS, probado en la Fase 5): sin persistencia ni modificación de binarios, I-1. La lectura de datos sigue siendo posible."
+    },
+    {
+      "id": "R10",
+      "nombre": "XXE en la carga de XML",
+      "origen": "T10",
+      "owasp": "A02:2025",
+      "cwe": "CWE-611",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Legal",
+        "Operacional"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Desarrollo backend",
+      "revision": "Al endurecer el parser; añadir caso de prueba",
+      "pendiente": "Ninguno en el código",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Parser XML sin entidades externas ni DTD",
+          "tipo": "eliminacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "app-hardened/patches/README.md"
+        },
+        {
+          "control": "Parche 12: parser XML sin NOENT ni DTDLOAD y sin proveedores de archivos; con el modo seguro desactivado la imagen oficial resuelve /etc/hostname y la corregida no",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/xxe-dirigida.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 3,
+      "I_inh": 5,
+      "S_inh": 15,
+      "N_inh": "Alto",
+      "P_res": 1,
+      "I_res": 5,
+      "S_res": 5,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "La entidad externa ya no se resuelve (probado con el reto habilitado): causa eliminada.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R11",
+      "nombre": "SSRF en la imagen de perfil por URL",
+      "origen": "T11",
+      "owasp": "A01:2025",
+      "cwe": "CWE-918",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Operacional",
+        "Legal"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Planificado",
+      "responsable": "Desarrollo backend; Operaciones (filtrado de egreso)",
+      "revision": "Al implementar la lista blanca; probar con un destino interno del laboratorio",
+      "pendiente": "Restringir el egreso de la app (red interna sin salida) o fijar la IP validada en la descarga",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Lista blanca de destinos y filtrado de egreso",
+          "tipo": "preventivo",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "app-hardened/patches/README.md"
+        },
+        {
+          "control": "Parche 12: la URL de imagen se valida (http/https, resolución DNS solo a IP públicas, sin redirecciones); T5: la app ya no pide la URL interna (0 peticiones en el log del WAF)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/06-regresion/artefacto-final/sin-waf/pruebas/resultados.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 3,
+      "S_inh": 12,
+      "N_inh": "Alto",
+      "P_res": 2,
+      "I_res": 3,
+      "S_res": 6,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Una capa preventiva probada: P-2. No baja a 1: queda la ventana de rebinding DNS entre la validación y la descarga, y la red de la app no restringe el egreso.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R12",
+      "nombre": "Listado de directorios y archivos internos (/ftp, /support/logs, /encryptionkeys)",
+      "origen": "T12 / A4-A5",
+      "owasp": "A02:2025",
+      "cwe": "CWE-548/538",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Legal"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Evitar",
+      "decision_sec_estado": "Planificado",
+      "responsable": "Operaciones de seguridad (WAF); Desarrollo backend (retirar serve-index)",
+      "revision": "Al retirar serve-index: repetir A4-A5 sin WAF",
+      "pendiente": "Retirar los listados y los archivos internos del servidor web (Evitar)",
+      "nota": "En /encryptionkeys el problema es el LISTADO del directorio; la clave pública que contiene no es una vulnerabilidad.",
+      "controles": [
+        {
+          "control": "nginx deny de rutas sensibles (HTTP 403)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv"
+        },
+        {
+          "control": "Alerta SIEM Acceso_Rutas_Sensibles_Denegado",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json"
+        },
+        {
+          "control": "Retirar serve-index y archivos internos (Evitar)",
+          "tipo": "evitacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "app-hardened/patches/README.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 5,
+      "I_inh": 4,
+      "S_inh": 20,
+      "N_inh": "Crítico",
+      "P_res": 3,
+      "I_res": 4,
+      "S_res": 12,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "Una capa preventiva probada en el perímetro: P-2. Sin WAF los listados siguen expuestos (escenario 2d, A4-A5).",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R13",
+      "nombre": "XSS (CSP débil, sin codificación de salida)",
+      "origen": "T13",
+      "owasp": "A05:2025",
+      "cwe": "CWE-79",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Legal"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Planificado",
+      "responsable": "Operaciones de seguridad (CSP); Desarrollo frontend (codificación de salida)",
+      "revision": "Al añadir casos de XSS al arnés (reflejado y persistente)",
+      "pendiente": "Prueba en navegador de XSS DOM y almacenado por cada campo mostrado a otros usuarios",
+      "nota": "",
+      "controles": [
+        {
+          "control": "CSP (script-src 'self') y cabeceras en el WAF: presentes en la respuesta",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a9-security-headers.txt"
+        },
+        {
+          "control": "CRS 941 (XSS): 403 con dos vectores acotados (parámetro de búsqueda y cuerpo de una reseña); reglas 941100/941110/941160/941390 en el audit log",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/07-waf/familias-waf.md"
+        },
+        {
+          "control": "Codificación de salida en el frontend",
+          "tipo": "eliminacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"
+        },
+        {
+          "control": "Parche 12: búsqueda sin bypassSecurityTrustHtml (Angular sanea el término) y sanitize-html 2.18.2",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "app-hardened/patches/v2/correcciones-cierre-tecnico.patch"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 4,
+      "S_inh": 16,
+      "N_inh": "Alto",
+      "P_res": 3,
+      "I_res": 4,
+      "S_res": 12,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "Una capa preventiva probada (CRS 941), pero solo con dos vectores y sin codificación de salida en la aplicación: P-1 (cobertura parcial, menor que la pauta de P-2).",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R14",
+      "nombre": "CORS permisivo (ACAO *)",
+      "origen": "T14 / A8",
+      "owasp": "A02:2025",
+      "cwe": "CWE-942",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Ejecutado",
+      "responsable": "Operaciones de seguridad (WAF); Desarrollo backend (parche 07)",
+      "revision": "Repetir A8 sin WAF tras cambios en la configuración CORS",
+      "pendiente": "Hacer de la variante la imagen por defecto",
+      "nota": "",
+      "controles": [
+        {
+          "control": "WAF oculta Access-Control-Allow-Origin (comprobado con Origin externo)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a8-cors-headers.txt"
+        },
+        {
+          "control": "Parche 07: CORS con origen explícito (variante corregida); sin ACAO abierto con Origin externo y sin WAF",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 3,
+      "S_inh": 12,
+      "N_inh": "Alto",
+      "P_res": 1,
+      "I_res": 3,
+      "S_res": 3,
+      "N_res": "Bajo",
+      "prioridad": "Baja",
+      "razon_P": "Causa eliminada y probada sin WAF (A8 mitigado): P=1.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R15",
+      "nombre": "Redirección abierta (lista blanca evadible)",
+      "origen": "T15",
+      "owasp": "A01:2025",
+      "cwe": "CWE-601",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Planificado",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Desarrollo backend",
+      "revision": "Al corregir la comparación de destinos",
+      "pendiente": "Comparación exacta de destinos permitidos",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Comparación exacta de destinos permitidos",
+          "tipo": "eliminacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "docs/fase-1/fase1-modelado-amenazas.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 3,
+      "S_inh": 12,
+      "N_inh": "Alto",
+      "P_res": 4,
+      "I_res": 3,
+      "S_res": 12,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "Sin control probado.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R16",
+      "nombre": "Fuerza bruta en el login (sin limitación de intentos)",
+      "origen": "T16 / A10",
+      "owasp": "A07:2025",
+      "cwe": "CWE-307",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional",
+        "Operacional"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Operaciones de seguridad (WAF)",
+      "revision": "Si se publica detrás de un balanceador (revisar la IP de cliente usada por limit_req)",
+      "pendiente": "Limitación por cuenta además de por IP (ataques distribuidos no probados)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Rate limiting nginx 5/min por IP, ráfaga 3 (HTTP 429)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a10-bruteforce-login.txt"
+        },
+        {
+          "control": "Alerta SIEM Login_FuerzaBruta_RateLimit",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 5,
+      "I_inh": 3,
+      "S_inh": 15,
+      "N_inh": "Alto",
+      "P_res": 3,
+      "I_res": 3,
+      "S_res": 9,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Una capa preventiva probada desde una IP: P-2. Un ataque distribuido desde muchas IP no está cubierto.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R17",
+      "nombre": "/metrics expuesto sin autenticación",
+      "origen": "T17 / A6",
+      "owasp": "A02:2025",
+      "cwe": "CWE-200",
+      "tipo": "Seguridad",
+      "impactos": [
+        "Reputacional"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Evitar",
+      "decision_sec_estado": "Planificado",
+      "responsable": "Operaciones de seguridad (WAF); Monitoreo (red de métricas)",
+      "revision": "Al exponer métricas a un recolector: solo por red interna y con autenticación",
+      "pendiente": "Servir /metrics solo en la red de monitoreo (Evitar la exposición en la app)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "nginx deny /metrics + parche virtual 100002 (mismo componente WAF)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a6-metrics.txt"
+        },
+        {
+          "control": "Alerta SIEM Acceso_Rutas_Sensibles_Denegado",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 5,
+      "I_inh": 2,
+      "S_inh": 10,
+      "N_inh": "Alto",
+      "P_res": 3,
+      "I_res": 2,
+      "S_res": 6,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "El deny de nginx y el parche 100002 están en el MISMO componente (WAF): cuentan como una capa, P-2. Sin WAF, /metrics sigue abierto (2d, A6).",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R18",
+      "nombre": "Denegación de servicio por vm/ZIP (agotamiento de recursos)",
+      "origen": "T18",
+      "owasp": "A10:2025",
+      "cwe": "CWE-400",
+      "tipo": "Técnico",
+      "impactos": [
+        "Operacional",
+        "Financiero"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Operaciones (runtime)",
+      "revision": "Tras una prueba de carga controlada en el laboratorio",
+      "pendiente": "Prueba de carga controlada que demuestre el efecto de los límites",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Límites de pids (200), memoria (1 GiB) y CPU (1.0) configurados",
+          "tipo": "contencion",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "evidence/fase-5/despues/runtime-hardening-inspect.txt"
+        },
+        {
+          "control": "Parche 12: b2bOrder ya no evalúa las líneas de pedido como código (vm/notevil); el reto RCE queda sin vía de ejecución",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "app-hardened/patches/v2/correcciones-cierre-tecnico.patch"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 3,
+      "I_inh": 4,
+      "S_inh": 12,
+      "N_inh": "Alto",
+      "P_res": 3,
+      "I_res": 4,
+      "S_res": 12,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "Sin control preventivo probado.",
+      "razon_I": "Los límites están configurados (docker inspect) pero no se probó que absorban un ataque de disponibilidad."
+    },
+    {
+      "id": "R19",
+      "nombre": "Registro sin centralización ni alertas",
+      "origen": "T19",
+      "owasp": "A09:2025",
+      "cwe": "CWE-778",
+      "tipo": "Operacional",
+      "impactos": [
+        "Operacional",
+        "Legal"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "Eliminar",
+      "decision_sec_estado": "Planificado",
+      "responsable": "Monitoreo (SIEM)",
+      "revision": "Al añadir notificaciones y monitorear la propia ingesta",
+      "pendiente": "Notificación a personas (Alertmanager/correo), alta disponibilidad y driver de logs que no dependa del descubrimiento",
+      "nota": "",
+      "controles": [
+        {
+          "control": "SIEM: Alloy -> Loki -> Grafana; 3 fuentes ingestadas y 7 reglas (6 disparadas en las pruebas)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json"
+        },
+        {
+          "control": "Alerta Ingesta_WAF_Ausente: latido del WAF cada 30 s; con el colector detenido pasó a pending (2 min) y firing (+1 min); resuelta al reanudar, 6/6 líneas recuperadas",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/10-siem/alerta-ingesta-ausente.txt"
+        },
+        {
+          "control": "Descubrimiento de contenedores cada 5 s (antes 60 s): 5/5 detecciones del RASP llegan a Loki tras recrear la app",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/10-siem/hallazgo-perdida-ingesta.txt"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 3,
+      "I_inh": 4,
+      "S_inh": 12,
+      "N_inh": "Alto",
+      "P_res": 2,
+      "I_res": 4,
+      "S_res": 8,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "La centralización y la correlación están probadas: P-1 respecto de 3. No llega a 1: no hay notificación a personas, es de un solo nodo y se observó una interrupción de 11 minutos en la ingesta de contenedores durante la validación.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R20",
+      "nombre": "Dependencias con CVE críticas (cadena de suministro)",
+      "origen": "T20",
+      "owasp": "A03:2025",
+      "cwe": "CWE-1395",
+      "tipo": "Software",
+      "impactos": [
+        "Financiero",
+        "Reputacional",
+        "Legal"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "Aceptar",
+      "decision_sec_estado": "Aceptado temporalmente",
+      "responsable": "Dueño del riesgo: líder del proyecto (acepta); Desarrollo (actualización)",
+      "revision": "En cada construcción (puerta de release) y al vencer la excepción (2026-12-31)",
+      "pendiente": "Sustituir marsdb por un almacén mantenido (o por la BD relacional del parche 13)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "SCA en CI (npm audit, OSV, Grype, Trivy) en cada push",
+          "tipo": "detectivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-3/sca/"
+        },
+        {
+          "control": "Actualizar dependencias vulnerables",
+          "tipo": "eliminacion",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "docs/fase-5/fase5-contenedores-hardening.md"
+        },
+        {
+          "control": "Parches 11 y base distroless actualizada: Trivy CRITICAL 11→1 y HIGH 33→2 sobre la imagen en ejecución (misma base de datos de vulnerabilidades); el CRITICAL restante (marsdb) no tiene versión corregida",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/08-pipeline-release/puerta-release.md"
+        },
+        {
+          "control": "Puerta de release (scripts/pipeline-release.sh + security/release/politica-release.json): bloquea CRITICAL/HIGH sin excepción vigente; prueba negativa con la imagen oficial: BLOQUEADA (41 incumplimientos)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/08-pipeline-release/prueba-negativa-imagen-oficial/puerta-release.md"
+        }
+      ],
+      "aceptacion": {
+        "quien": "Líder del proyecto (rol de dueño del riesgo; el equipo asigna la persona)",
+        "motivo": "marsdb 0.6.11 (GHSA-5mrr-rgp6-x4gr) no tiene versión corregida; sustituirlo exige reescribir reseñas y pedidos. Las consultas $where se eliminaron del código.",
+        "condiciones": "Solo con la puerta de release vigente; excepción registrada en security/release/politica-release.json; sin datos reales.",
+        "vigencia": "Hasta 2026-12-31 (vence la excepción de la política)."
+      },
+      "justificacion_inherente": "",
+      "fuente_pi": "DREAD Fase 1",
+      "P_inh": 4,
+      "I_inh": 5,
+      "S_inh": 20,
+      "N_inh": "Crítico",
+      "P_res": 2,
+      "I_res": 5,
+      "S_res": 10,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "Queda un CRITICAL sin corrección y su vía conocida ($where) está eliminada; la puerta impide introducir nuevos CRITICAL/HIGH sin excepción: P-2.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R21",
+      "nombre": "Configuración insegura al desplegar la arquitectura cloud (AWS)",
+      "origen": "Fase 2",
+      "owasp": "A02:2025",
+      "cwe": "CWE-16",
+      "tipo": "Cloud",
+      "impactos": [
+        "Financiero",
+        "Operacional",
+        "Legal"
+      ],
+      "decision": "Evitar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Transferir",
+      "decision_sec_estado": "Propuesta",
+      "responsable": "Arquitectura cloud; Dueño del riesgo: líder del proyecto (aprobación de costos)",
+      "revision": "Antes de cualquier terraform apply: pruebas en ejecución además de Checkov",
+      "pendiente": "Si se despliega: validar la seguridad en ejecución (no solo estática) y revaluar este riesgo",
+      "nota": "El residual Bajo vale solo mientras no se despliegue; al desplegar, el riesgo vuelve a su valor inherente (12) hasta probar la seguridad en ejecución.",
+      "controles": [
+        {
+          "control": "No desplegar sin aprobación (sin terraform apply, sin .tfstate, sin credenciales AWS)",
+          "tipo": "evitacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/06-cloud-no-desplegado.txt"
+        },
+        {
+          "control": "Checkov sobre Terraform (144 passed / 0 failed): verificación ESTÁTICA",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "evidence/fase-2/checkov-final/"
+        },
+        {
+          "control": "Servicios gestionados (AWS WAFv2, KMS) y responsabilidad compartida",
+          "tipo": "transferencia",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "infra/terraform/"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "Si se desplegara: la mala configuración cloud es frecuente (P3) y expondría datos y costos (I4).",
+      "fuente_pi": "Cualitativa",
+      "P_inh": 3,
+      "I_inh": 4,
+      "S_inh": 12,
+      "N_inh": "Alto",
+      "P_res": 1,
+      "I_res": 4,
+      "S_res": 4,
+      "N_res": "Bajo",
+      "prioridad": "Baja",
+      "razon_P": "Evitación probada: no hay despliegue, así que el riesgo no puede materializarse HOY. Esto NO valida la seguridad de la infraestructura.",
+      "razon_I": "Sin cambio."
+    },
+    {
+      "id": "R22",
+      "nombre": "Bloqueo del RASP que deja peticiones colgadas o termina el proceso (auto-DoS)",
+      "origen": "Hallazgo Fase 6",
+      "owasp": "A10:2025",
+      "cwe": "CWE-248/755",
+      "tipo": "Técnico",
+      "impactos": [
+        "Operacional",
+        "Reputacional"
+      ],
+      "decision": "Eliminar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "",
+      "decision_sec_estado": "",
+      "responsable": "Operaciones de seguridad (integración del RASP)",
+      "revision": "Al ejercitar bloqueos en los sinks fs, http, child_process y vm",
+      "pendiente": "Probar el bloqueo en los demás sinks y extender rasp-guard si es necesario; respuesta 403 sin traza de pila",
+      "nota": "La respuesta 403 la genera el manejador de errores de Juice Shop, que muestra una traza de pila (comportamiento preexistente, A10).",
+      "controles": [
+        {
+          "control": "Integración rasp-guard: el bloqueo en sqlite3 se entrega como error controlado HTTP 403 (sin --unhandled-rejections=warn)",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/estado-contenedor.txt"
+        },
+        {
+          "control": "--unhandled-rejections=warn: evita la caída pero deja la petición sin respuesta (000 tras 20 s); descartado",
+          "tipo": "contencion",
+          "estado": "no_efectivo",
+          "verificacion": "no_efectivo",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/02c-rasp-bloqueo-warn/http.tsv"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "Medido en el escenario 2b: el primer bloqueo terminó el proceso (RestartCount 0->1; 5 de 6 sondeos sin respuesta). Cualquier intento de inyección lo provoca (P5); el servicio cae hasta el reinicio automático (I3).",
+      "fuente_pi": "Cualitativa",
+      "P_inh": 5,
+      "I_inh": 3,
+      "S_inh": 15,
+      "N_inh": "Alto",
+      "P_res": 2,
+      "I_res": 3,
+      "S_res": 6,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Corregido y probado para los sinks de sqlite3 (403 en 0,04-0,15 s; disponibilidad 41/41; RestartCount 0). No llega a 1: los bloqueos en fs, http, child_process y vm no se probaron.",
+      "razon_I": "En los sinks no probados la consecuencia podría seguir siendo una caída."
+    },
+    {
+      "id": "R23",
+      "nombre": "Exposición de datos personales (incumplimiento de protección de datos)",
+      "origen": "R01, R02, R06",
+      "owasp": "A01/A05:2025",
+      "cwe": "CWE-200",
+      "tipo": "Cumplimiento",
+      "impactos": [
+        "Legal",
+        "Reputacional",
+        "Financiero"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado parcialmente",
+      "decision_sec": "Transferir",
+      "decision_sec_estado": "Propuesta",
+      "responsable": "Dueño del riesgo: líder del proyecto; Desarrollo backend (R06)",
+      "revision": "Al cerrar R06 (BOLA) y antes de tratar datos reales",
+      "pendiente": "Auditar el resto de objetos de la API; póliza o cláusulas si hubiera datos reales",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Bloqueo de la extracción masiva por SQLi (WAF + RASP)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv"
+        },
+        {
+          "control": "Póliza de ciberriesgo / cláusulas contractuales (no transfiere la responsabilidad legal del titular)",
+          "tipo": "transferencia",
+          "estado": "propuesto",
+          "verificacion": "sin_verificar",
+          "evidencia": "docs/fase-6/tratamiento-riesgo.md"
+        },
+        {
+          "control": "Variante corregida: extracción por SQLi eliminada en el código (A2/A3 sin datos sin WAF ni RASP)",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/04-escenario-B-corregida/resumen-ataques.md"
+        },
+        {
+          "control": "Variante corregida: lectura y alteración de objetos ajenos eliminadas en 5 tipos de recurso (parches 08 y 10)",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/04-escenario-B-corregida/bola-recursos.md"
+        },
+        {
+          "control": "Redacción de Authorization, Cookie y JWT antes de Loki (0 tokens visibles tras el ajuste)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/10-siem/redaccion-tokens-loki.txt"
+        },
+        {
+          "control": "Parche 12: XXE, NoSQL y SSRF cerrados en el código (probados), además de SQLi y BOLA",
+          "tipo": "eliminacion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/corregida/resultados.md"
+        }
+      ],
+      "aceptacion": null,
+      "justificacion_inherente": "La extracción de correos y hashes por SQLi está demostrada (A2) y el BOLA expone recursos de otros usuarios (A12).",
+      "fuente_pi": "Cualitativa",
+      "P_inh": 5,
+      "I_inh": 5,
+      "S_inh": 25,
+      "N_inh": "Crítico",
+      "P_res": 2,
+      "I_res": 5,
+      "S_res": 10,
+      "N_res": "Alto",
+      "prioridad": "Alta",
+      "razon_P": "Las vías de extracción probadas (SQLi, BOLA en 5 objetos, NoSQL, XXE, SSRF) están cerradas en el código: P-1 adicional. No llega a 1: quedan objetos de la API sin auditar y la dependencia marsdb.",
+      "razon_I": "La consecuencia legal y reputacional no cambia; la transferencia solo está propuesta."
+    },
+    {
+      "id": "R24",
+      "nombre": "SIEM del laboratorio: privilegio sobre Docker, un solo nodo, Loki sin autenticación",
+      "origen": "Riesgo introducido por la Fase 6",
+      "owasp": "A09:2025",
+      "cwe": "CWE-250",
+      "tipo": "Operacional",
+      "impactos": [
+        "Operacional",
+        "Reputacional"
+      ],
+      "decision": "Mitigar",
+      "estado_tratamiento": "Ejecutado",
+      "decision_sec": "Aceptar",
+      "decision_sec_estado": "Aceptado temporalmente",
+      "responsable": "Monitoreo (SIEM); Dueño del riesgo: líder del proyecto (acepta un solo nodo)",
+      "revision": "Antes de cualquier uso fuera del laboratorio",
+      "pendiente": "Autenticación en Loki y Grafana sin acceso anónimo antes de cualquier despliegue fuera de 127.0.0.1; purgar de Loki las líneas anteriores a la redacción (requiere autorización: borra datos)",
+      "nota": "",
+      "controles": [
+        {
+          "control": "Proxy del socket de Docker de solo lectura (escrituras HTTP 403); Alloy sin root, sin socket, sin capacidades",
+          "tipo": "contencion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/validacion-2026-11-10/05-siem-seguridad/proxy-socket-api.txt"
+        },
+        {
+          "control": "Loki y Grafana publicados solo en 127.0.0.1",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "inspeccionado",
+          "evidencia": "deploy/hardened/docker-compose.ops.yml"
+        },
+        {
+          "control": "Redacción en Alloy de Authorization/Cookie/Set-Cookie y JWT en las tres fuentes antes de Loki (hallazgo: el audit log de ModSecurity guardaba el token de sesión)",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/fase-6/cierre-final-2026-11-21/10-siem/redaccion-tokens-loki.txt"
+        }
+      ],
+      "aceptacion": {
+        "quien": "Líder del proyecto (rol de dueño del riesgo; el equipo asigna la persona)",
+        "motivo": "Un SIEM de un solo nodo, sin autenticación en Loki, basta para demostrar la centralización y la correlación en el laboratorio.",
+        "condiciones": "Puertos solo en 127.0.0.1; proxy del socket de solo lectura; red del proxy interna; sin telemetría externa.",
+        "vigencia": "Solo en el laboratorio. No es una configuración apta para producción."
+      },
+      "justificacion_inherente": "Configuración inicial: Alloy como root con docker.sock montado ':ro', que NO limita la API. Comprometer Alloy equivalía a controlar Docker en el equipo (I5); no expone puertos (P2).",
+      "fuente_pi": "Cualitativa",
+      "P_inh": 2,
+      "I_inh": 5,
+      "S_inh": 10,
+      "N_inh": "Alto",
+      "P_res": 2,
+      "I_res": 3,
+      "S_res": 6,
+      "N_res": "Medio",
+      "prioridad": "Media",
+      "razon_P": "Sin cambio de exposición (no hay puertos nuevos).",
+      "razon_I": "Contención probada: comprometer Alloy ya solo permite LEER metadatos y logs de contenedores (crear, detener o ejecutar responde 403), I-2. El proxy sí mantiene el socket: es el componente de confianza."
+    }
+  ],
+  "distribucion": {
+    "niveles": [
+      "Bajo",
+      "Medio",
+      "Alto",
+      "Crítico"
+    ],
+    "inherente": [
+      0,
+      0,
+      16,
+      8
+    ],
+    "residual": [
+      4,
+      12,
+      8,
+      0
+    ]
+  }
+}

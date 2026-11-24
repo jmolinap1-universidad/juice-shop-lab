@@ -21,6 +21,11 @@ estado() {
   docker ps --filter label=com.docker.compose.project=juice-corregida-defensa --format '  {{.Names}}: {{.Ports}}'
 }
 
+docker info >/dev/null 2>&1 || {
+  echo "El motor de Docker no responde. Abra Docker Desktop y espere a que 'docker info' responda (tras reiniciar Windows no arranca solo)."
+  exit 1
+}
+
 case "${1:-}" in
   up)
     if [ -n "$(docker ps -q --filter label=com.docker.compose.project=juice-hardened)" ]; then

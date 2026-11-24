@@ -26,10 +26,16 @@ RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"$CYCLONEDX_NPM_VE
     chown -R 65532 logs && \
     chgrp -R 0 ftp/ frontend/dist/ logs/ data/ i18n/ && \
     chmod -R g=u ftp/ frontend/dist/ logs/ data/ i18n/ && \
-    rm -f ftp/legal.md i18n/*.json
+    rm -f ftp/legal.md i18n/*.json && \
+    rm -rf infrastructure && \
+    find frontend/src -name '*.spec.ts' -delete
+# Cierre técnico 2026-11-23: fuera de la imagen el ejemplo de Terraform (clave privada de muestra) y las pruebas unitarias
+# del frontend (dos JWT de prueba): Trivy los informaba como secretos; no se usan en ejecución.
 
 # ---- Imagen final mínima (distroless, sin shell ni gestor de paquetes) ----
-FROM gcr.io/distroless/nodejs24-debian13@sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+# Cierre técnico 2026-11-23: base actualizada (Node 24.22.2 → 24.22.3; corrige zlib1g CVE-2026-85091). Anterior:
+# sha256:03980f6fd2a3245fa06e371c36fd33528ebbc676a1d0f84e3e21d95cd291b807
+FROM gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390
 ARG BUILD_DATE
 ARG VCS_REF
 LABEL org.opencontainers.image.title="OWASP Juice Shop (endurecido)" \

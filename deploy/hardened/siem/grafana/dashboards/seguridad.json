@@ -1,6 +1,6 @@
 {
   "uid": "siem-juice",
-  "title": "SIEM - Juice Shop endurecido (Fase 6)",
+  "title": "SIEM - Juice Shop endurecido",
   "tags": [
     "seguridad",
     "waf",
@@ -16,12 +16,27 @@
   },
   "panels": [
     {
+      "id": 13,
+      "type": "text",
+      "title": "",
+      "gridPos": {
+        "x": 0,
+        "y": 0,
+        "w": 24,
+        "h": 3
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**Entorno seleccionado:** `$entorno` (todas las líneas llevan la etiqueta `entorno`; el laboratorio es `local`). **Stack local vigente:** `juice-corregida-defensa` (variante corregida, `make ops-corregido-up`). **Fuentes:** auditoría y accesos del WAF, app + RASP, notificaciones de Alertmanager. Las cabeceras `Authorization`/`Cookie` y los JWT se redactan en Alloy antes de Loki."
+      }
+    },
+    {
       "id": 1,
       "type": "stat",
       "title": "Peticiones bloqueadas por el WAF (403)",
       "gridPos": {
         "x": 0,
-        "y": 0,
+        "y": 3,
         "w": 6,
         "h": 4
       },
@@ -49,7 +64,7 @@
         {
           "refId": "A",
           "queryType": "instant",
-          "expr": "sum(count_over_time({job=\"waf_access\", status=\"403\"}[$__range]))"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_access\", status=\"403\"}[$__range]))"
         }
       ]
     },
@@ -59,7 +74,7 @@
       "title": "Inyección SQL bloqueada (CRS 942xxx)",
       "gridPos": {
         "x": 6,
-        "y": 0,
+        "y": 3,
         "w": 6,
         "h": 4
       },
@@ -87,7 +102,7 @@
         {
           "refId": "A",
           "queryType": "instant",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"942\" [$__range]))"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"942\" [$__range]))"
         }
       ]
     },
@@ -97,7 +112,7 @@
       "title": "Login frenado por rate limit (429)",
       "gridPos": {
         "x": 12,
-        "y": 0,
+        "y": 3,
         "w": 6,
         "h": 4
       },
@@ -125,7 +140,7 @@
         {
           "refId": "A",
           "queryType": "instant",
-          "expr": "sum(count_over_time({job=\"waf_access\", status=\"429\"}[$__range]))"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_access\", status=\"429\"}[$__range]))"
         }
       ]
     },
@@ -135,7 +150,7 @@
       "title": "Detecciones del RASP (Aikido Zen)",
       "gridPos": {
         "x": 18,
-        "y": 0,
+        "y": 3,
         "w": 6,
         "h": 4
       },
@@ -163,7 +178,7 @@
         {
           "refId": "A",
           "queryType": "instant",
-          "expr": "sum(count_over_time({job=\"docker\", container=\"juice-hardened\"} |~ \"^Zen has (blocked|detected)\" [$__range]))"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"docker\", container=\"juice-hardened\"} |~ \"^Zen has (blocked|detected)\" [$__range]))"
         }
       ]
     },
@@ -173,7 +188,7 @@
       "title": "Reglas del WAF activadas por familia (OWASP Top 10:2025)",
       "gridPos": {
         "x": 0,
-        "y": 4,
+        "y": 7,
         "w": 12,
         "h": 9
       },
@@ -195,49 +210,49 @@
           "refId": "A",
           "queryType": "instant",
           "legendFormat": "942 SQLi (A05)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"942\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"942\" [$__range])) or vector(0)"
         },
         {
           "refId": "B",
           "queryType": "instant",
           "legendFormat": "941 XSS (A05)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"941\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"941\" [$__range])) or vector(0)"
         },
         {
           "refId": "C",
           "queryType": "instant",
           "legendFormat": "932 RCE / comandos (A05)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"932\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"932\" [$__range])) or vector(0)"
         },
         {
           "refId": "D",
           "queryType": "instant",
           "legendFormat": "930/931 LFI-RFI (A01)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"93[01]\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"93[01]\" [$__range])) or vector(0)"
         },
         {
           "refId": "E",
           "queryType": "instant",
           "legendFormat": "920/921 Protocolo (A02/A10)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"92[01]\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"92[01]\" [$__range])) or vector(0)"
         },
         {
           "refId": "F",
           "queryType": "instant",
           "legendFormat": "913 Escáneres (A02)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"913\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |= \"\\\"ruleId\\\":\\\"913\" [$__range])) or vector(0)"
         },
         {
           "refId": "G",
           "queryType": "instant",
           "legendFormat": "95x Fuga de datos en respuesta (A02/A04)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"95[0-9]\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"95[0-9]\" [$__range])) or vector(0)"
         },
         {
           "refId": "H",
           "queryType": "instant",
           "legendFormat": "1000xx Parches virtuales (A01/A02)",
-          "expr": "sum(count_over_time({job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"1000\" [$__range])) or vector(0)"
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_audit\"} |~ \"\\\"ruleId\\\":\\\"1000\" [$__range])) or vector(0)"
         }
       ],
       "fieldConfig": {
@@ -348,7 +363,7 @@
       "title": "Respuestas del WAF por código HTTP (por minuto)",
       "gridPos": {
         "x": 12,
-        "y": 4,
+        "y": 7,
         "w": 12,
         "h": 9
       },
@@ -360,7 +375,7 @@
         {
           "refId": "A",
           "legendFormat": "{{status}}",
-          "expr": "sum by (status) (count_over_time({job=\"waf_access\"}[1m]))"
+          "expr": "sum by (status) (count_over_time({entorno=~\"$entorno\", job=\"waf_access\"}[1m]))"
         }
       ]
     },
@@ -370,7 +385,7 @@
       "title": "Cestas distintas accedidas en 5 min (monitoreo BOLA)",
       "gridPos": {
         "x": 0,
-        "y": 13,
+        "y": 16,
         "w": 8,
         "h": 4
       },
@@ -406,7 +421,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "count(sum by (uri) (count_over_time({job=\"waf_access\", status=\"200\"} | json | uri=~\"/rest/basket/[0-9]+\" [5m])))"
+          "expr": "count(sum by (uri) (count_over_time({entorno=~\"$entorno\", job=\"waf_access\", status=\"200\"} | json | uri=~\"/rest/basket/[0-9]+\" [5m])))"
         }
       ]
     },
@@ -416,7 +431,7 @@
       "title": "Eventos del RASP (stdout de la aplicación)",
       "gridPos": {
         "x": 8,
-        "y": 13,
+        "y": 16,
         "w": 16,
         "h": 8
       },
@@ -432,7 +447,7 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "{job=\"docker\", container=\"juice-hardened\"} |~ \"^Zen has (blocked|detected)\""
+          "expr": "{entorno=~\"$entorno\", job=\"docker\", container=\"juice-hardened\"} |~ \"^Zen has (blocked|detected)\""
         }
       ]
     },
@@ -442,7 +457,7 @@
       "title": "Auditoría del WAF (transacciones bloqueadas)",
       "gridPos": {
         "x": 0,
-        "y": 21,
+        "y": 24,
         "w": 24,
         "h": 8
       },
@@ -458,9 +473,112 @@
       "targets": [
         {
           "refId": "A",
-          "expr": "{job=\"waf_audit\", status=\"403\"}"
+          "expr": "{entorno=~\"$entorno\", job=\"waf_audit\", status=\"403\"}"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "type": "stat",
+      "title": "Latido de ingesta del WAF (últimos 2 min)",
+      "gridPos": {
+        "x": 0,
+        "y": 32,
+        "w": 8,
+        "h": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "description": "Healthcheck del WAF cada 30 s que atraviesa WAF y app. Si llega a 0, la regla Ingesta_WAF_Ausente se activa.",
+      "options": {
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "colorMode": "background"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "green",
+                "value": 2
+              }
+            ]
+          },
+          "noValue": "0 (sin ingesta)"
+        }
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "queryType": "instant",
+          "expr": "sum(count_over_time({entorno=~\"$entorno\", job=\"waf_access\"} |= \"siem-heartbeat\" [2m]))"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "type": "logs",
+      "title": "Notificaciones de alerta (Alertmanager → receptor local)",
+      "gridPos": {
+        "x": 8,
+        "y": 32,
+        "w": 16,
+        "h": 8
+      },
+      "datasource": {
+        "type": "loki",
+        "uid": "loki-lab"
+      },
+      "options": {
+        "showTime": true,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "expr": "{entorno=~\"$entorno\", container=\"siem-notificador\"} |= \"NOTIFICACION\""
         }
       ]
     }
-  ]
+  ],
+  "templating": {
+    "list": [
+      {
+        "name": "entorno",
+        "label": "Entorno",
+        "type": "query",
+        "datasource": {
+          "type": "loki",
+          "uid": "loki-lab"
+        },
+        "query": {
+          "label": "entorno",
+          "refId": "LokiVariableQueryEditor-VariableQuery",
+          "stream": "",
+          "type": 1
+        },
+        "definition": "label_values(entorno)",
+        "refresh": 2,
+        "includeAll": true,
+        "allValue": ".*",
+        "current": {
+          "text": "All",
+          "value": "$__all"
+        },
+        "multi": false
+      }
+    ]
+  }
 }

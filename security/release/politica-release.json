@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "fecha": "2026-11-23",
+  "alcance": "Política de RELEASE de la variante corregida (juice-corregida-rasp). El laboratorio vulnerable usa la política de INFORME de .github/workflows/devsecops.yml (escanea la imagen oficial y nunca bloquea).",
+  "criterio": "Se bloquea si: hay secretos; Hadolint informa avisos; Semgrep (reglas propias) informa un ERROR no exceptuado; Trivy informa una vulnerabilidad CRITICAL o HIGH no exceptuada; una excepción venció o su paquete ya tiene versión corregida.",
+  "secretos_permitidos": 0,
+  "hadolint_avisos_permitidos": 0,
+  "severidades_bloqueantes": ["CRITICAL", "HIGH"],
+  "excepciones_vulnerabilidades": [
+    {"id": "GHSA-5mrr-rgp6-x4gr", "paquete": "marsdb", "motivo": "Sin versión corregida publicada. Almacén en memoria de reseñas y pedidos de Juice Shop; las consultas $where se eliminaron del código (parche 12). Riesgo R20, aceptación temporal.", "responsable": "Desarrollo backend", "vence": "2026-12-31"},
+    {"id": "CVE-2026-107494", "paquete": "libssl3t64", "motivo": "Sin corrección en Debian 13 para la imagen base distroless vigente. Revisar en cada actualización de la base.", "responsable": "Operaciones", "vence": "2026-12-31"},
+    {"id": "CVE-2026-124709", "paquete": "libssl3t64", "motivo": "Sin corrección en Debian 13 para la imagen base distroless vigente. Revisar en cada actualización de la base.", "responsable": "Operaciones", "vence": "2026-12-31"}
+  ],
+  "excepciones_semgrep": [
+    {"regla": "nosql-where-concatenado", "ruta": "data/static/codefixes/", "motivo": "Material didáctico de los retos de código de Juice Shop; no se ejecuta.", "responsable": "Seguridad", "vence": "2027-06-30"},
+    {"regla": "sequelize-raw-query-template-literal", "ruta": "data/static/codefixes/", "motivo": "Material didáctico de los retos de código de Juice Shop; no se ejecuta.", "responsable": "Seguridad", "vence": "2027-06-30"},
+    {"regla": "weak-password-hash-md5", "ruta": "lib/insecurity.ts", "motivo": "hash() MD5 se conserva para identificadores de pedido, Gravatar y B2B; las contraseñas usan scrypt (parche 03 v2).", "responsable": "Desarrollo backend", "vence": "2027-06-30"},
+    {"regla": "weak-password-hash-md5", "ruta": "scripts/package.mjs", "motivo": "Script de empaquetado del proyecto original; no forma parte de la imagen en ejecución.", "responsable": "Desarrollo backend", "vence": "2027-06-30"},
+    {"regla": "node-eval-user-input", "ruta": "lib/xml.ts", "motivo": "vm ejecuta una cadena de código FIJA; el XML se pasa como variable. Entidades externas desactivadas (parche 12).", "responsable": "Seguridad", "vence": "2027-06-30"},
+    {"regla": "node-eval-user-input", "ruta": "routes/captcha.ts", "motivo": "Evalúa una expresión que genera el propio servidor con números aleatorios; no contiene datos del usuario.", "responsable": "Desarrollo backend", "vence": "2027-06-30"},
+    {"regla": "node-eval-user-input", "ruta": "routes/fileUpload.ts", "motivo": "vm ejecuta una cadena FIJA (yaml.load sobre una variable); ruta desactivada con safetyMode enabled (respuesta 410).", "responsable": "Seguridad", "vence": "2027-06-30"}
+  ]
+}

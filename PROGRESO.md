@@ -89,6 +89,14 @@ Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y
     redactados antes de Loki, descubrimiento de contenedores 5 s, captura real del panel.
   - Riesgo vigente (324 comprobaciones): 1 crítico (R20) / 11 altos / 9 medios / 3 bajos. Histórico intacto (4/12/7/1).
 
+- 2026-11-23 **Cierre técnico (local) y preparación cloud** (`docs/cierre-tecnico/`, rama `cierre/tecnico-web-seenode`):
+  - Diagnóstico: la caída de Docker en la exposición fue el apagado de Windows (no el RASP); el script de arranque lo comprueba.
+  - Parches 11-13: dependencias (CRITICAL 11→1, HIGH 33→2), JWT (alg none/HS256 → 401), NoSQL, XXE, SSRF, CSRF, 5xx,
+    quejas, reciclajes, b2bOrder; PostgreSQL opcional probado (datos en la BD, 145 MiB pico con límites Basic).
+  - Puerta de release (APTA; la imagen oficial queda BLOQUEADA); ZAP 0 FAIL; validación del artefacto sin/con WAF sin fallos.
+  - SIEM: Alertmanager + notificación local (33 s), etiqueta `entorno`, panel actualizado. Riesgo: 0C/8A/12M/4B (350 comprobaciones).
+  - Seenode: documentación verificada; **sin conectar ni desplegar** (decisiones pendientes en `PLAN_DESPLIEGUE_SEENODE.md`).
+
 ## Problemas / bloqueos
 - (Resuelto 2026-11-03) push a GitHub completado tras el inicio de sesión del equipo.
 

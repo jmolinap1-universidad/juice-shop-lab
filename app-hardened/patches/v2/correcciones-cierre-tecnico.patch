@@ -1,0 +1,696 @@
+--- a/lib/insecurity.ts
++++ b/lib/insecurity.ts
+@@ -7,7 +7,7 @@
+ import crypto from 'node:crypto'
+ import { type Request, type Response, type NextFunction } from 'express'
+ import { type UserModel } from '@juice-shop/models/user'
+-import expressJwt from 'express-jwt'
++import { expressjwt } from 'express-jwt'
+ import jwt from 'jsonwebtoken'
+ import jws from 'jws'
+ import sanitizeHtmlLib from 'sanitize-html'
+@@ -17,8 +17,16 @@
+ // @ts-expect-error FIXME no typescript definitions for z85 :(
+ import * as z85 from 'z85'
+ 
+-export const publicKey = fs ? fs.readFileSync('encryptionkeys/jwt.pub', 'utf8') : 'placeholder-public-key'
+-const privateKey = '[REDACTADO: clave privada de prueba de Juice Shop; no se versiona]'
++// Parche 04 v2 (ASVS V13.3.1): la clave privada NO esta en el codigo ni en un directorio servido por la app.
++// Se lee de un secreto montado (JWT_PRIVATE_KEY_FILE) o de JWT_PRIVATE_KEY; si falta, la aplicacion no arranca.
++const privateKey = (() => {
++  const archivo = process.env.JWT_PRIVATE_KEY_FILE
++  const clave = archivo ? fs.readFileSync(archivo, 'utf8') : process.env.JWT_PRIVATE_KEY
++  if (!clave?.includes('PRIVATE KEY')) throw new Error('JWT_PRIVATE_KEY_FILE o JWT_PRIVATE_KEY no configurada: se aborta el arranque')
++  return clave
++})()
++// La clave publica de verificacion se deriva del par rotado (el archivo historico jwt.pub ya no se usa para verificar).
++export const publicKey = crypto.createPublicKey(privateKey).export({ type: 'spki', format: 'pem' }).toString()
+ 
+ interface ResponseWithUser {
+   status?: string
+@@ -39,6 +47,19 @@
+ }
+ 
+ export const hash = (data: string) => crypto.createHash('md5').update(data).digest('hex')
++// Parche 03 v2 (ASVS V11.4.2): contrasenas con KDF resistente y sal (scrypt nativo de Node, sin dependencias nuevas).
++// `hash` (MD5) se conserva SOLO para usos que no son contrasenas (ids de pedido, Gravatar, B2B).
++export const hashPassword = (clear: string) => {
++  const sal = crypto.randomBytes(16)
++  return `scrypt:${sal.toString('hex')}:${crypto.scryptSync(clear, sal, 64).toString('hex')}`
++}
++export const verifyPassword = (clear: string, stored?: string) => {
++  const [alg, salHex, hashHex] = String(stored ?? '').split(':')
++  if (alg !== 'scrypt' || !salHex || !hashHex) return false
++  const esperado = Buffer.from(hashHex, 'hex')
++  const calculado = crypto.scryptSync(clear, Buffer.from(salHex, 'hex'), esperado.length)
++  return calculado.length === esperado.length && crypto.timingSafeEqual(calculado, esperado)
++}
+ export const hmac = (data: string) => crypto.createHmac('sha256', 'pa4qacea4VK9t9nGv7yZtwmj').update(data).digest('hex')
+ 
+ export const cutOffPoisonNullByte = (str: string) => {
+@@ -49,10 +70,11 @@
+   return str
+ }
+ 
+-export const isAuthorized = () => expressJwt(({ secret: publicKey }) as any)
+-export const denyAll = () => expressJwt({ secret: '' + Math.random() } as any)
++// Parche 11: express-jwt 8 exige fijar el algoritmo (sin 'none' ni confusión RS/HS)
++export const isAuthorized = () => expressjwt({ secret: publicKey, algorithms: ['RS256'] })
++export const denyAll = () => expressjwt({ secret: '' + Math.random(), algorithms: ['HS256'] })
+ export const authorize = (user = {}) => jwt.sign(user, privateKey, { expiresIn: '6h', algorithm: 'RS256' })
+-export const verify = (token: string) => token ? (jws.verify as ((token: string, secret: string) => boolean))(token, publicKey) : false
++export const verify = (token: string) => { try { return token ? jws.verify(token, 'RS256', publicKey) : false } catch { return false } }
+ export const decode = (token: string) => { return jws.decode(token)?.payload }
+ 
+ export const sanitizeHtml = (html: string) => sanitizeHtmlLib(html)
+--- a/models/user.ts
++++ b/models/user.ts
+@@ -70,7 +70,7 @@
+       password: {
+         type: DataTypes.STRING,
+         set (clearTextPassword: string) {
+-          this.setDataValue('password', security.hash(clearTextPassword)) // vuln-code-snippet vuln-line weakPasswordChallenge
++          this.setDataValue('password', security.hashPassword(clearTextPassword)) // vuln-code-snippet vuln-line weakPasswordChallenge
+         }
+       }, // vuln-code-snippet end weakPasswordChallenge
+       role: {
+--- a/routes/login.ts
++++ b/routes/login.ts
+@@ -31,8 +31,9 @@
+ 
+   return (req: Request, res: Response, next: NextFunction) => {
+     verifyPreLoginChallenges(req) // vuln-code-snippet hide-line
+-    models.sequelize.query(`SELECT * FROM Users WHERE email = '${req.body.email || ''}' AND password = '${security.hash(req.body.password || '')}' AND deletedAt IS NULL`, { model: UserModel, plain: true }) // vuln-code-snippet vuln-line loginAdminChallenge loginBenderChallenge loginJimChallenge
+-      .then((authenticatedUser) => { // vuln-code-snippet neutral-line loginAdminChallenge loginBenderChallenge loginJimChallenge
++    models.sequelize.query('SELECT * FROM "Users" WHERE email = :email AND "deletedAt" IS NULL', { replacements: { email: req.body.email || '' }, model: UserModel, plain: true }) // parche 01 v2: consulta parametrizada // vuln-code-snippet vuln-line loginAdminChallenge loginBenderChallenge loginJimChallenge
++      .then((candidato) => { // parche 03 v2: la contrasena se verifica con scrypt en la aplicacion, no por igualdad en SQL
++        const authenticatedUser = candidato && security.verifyPassword(req.body.password || '', (candidato as UserModel).password) ? candidato : null // vuln-code-snippet neutral-line loginAdminChallenge loginBenderChallenge loginJimChallenge
+         const user = utils.queryResultToJson(authenticatedUser)
+         if (user.data?.id && user.data.totpSecret !== '') {
+           res.status(401).json({
+--- a/routes/changePassword.ts
++++ b/routes/changePassword.ts
+@@ -36,7 +36,7 @@
+       return
+     }
+ 
+-    if (currentPassword && security.hash(currentPassword) !== loggedInUser.data.password) {
++    if (currentPassword && !security.verifyPassword(currentPassword, loggedInUser.data.password)) {
+       res.status(401).send(res.__('Current password is not correct.'))
+       return
+     }
+--- a/routes/2fa.ts
++++ b/routes/2fa.ts
+@@ -104,7 +104,7 @@
+ 
+     const { password, setupToken, initialToken } = req.body
+ 
+-    if (user.password !== security.hash(password)) {
++    if (!security.verifyPassword(password, user.password)) {
+       throw new Error('Password doesnt match stored password')
+     }
+ 
+@@ -149,7 +149,7 @@
+ 
+     const { password } = req.body
+ 
+-    if (user.password !== security.hash(password)) {
++    if (!security.verifyPassword(password, user.password)) {
+       throw new Error('Password doesnt match stored password')
+     }
+ 
+--- a/server.ts
++++ b/server.ts
+@@ -116,7 +116,7 @@
+ import { createProductReviews } from './routes/createProductReviews'
+ import { getWalletBalance, addWalletBalance } from './routes/wallet'
+ import { retrieveAppConfiguration } from './routes/appConfiguration'
+-import { updateProductReviews } from './routes/updateProductReviews'
++import { updateProductReviews, resenaPropia } from './routes/updateProductReviews'
+ import { servePrivacyPolicyProof } from './routes/privacyPolicyProof'
+ import { profileImageUrlUpload } from './routes/profileImageUrlUpload'
+ import { profileImageFileUpload } from './routes/profileImageFileUpload'
+@@ -181,7 +181,7 @@
+ 
+   /* Bludgeon solution for possible CORS problems: Allow everything! */
+   app.options('*', cors())
+-  app.use(cors())
++  app.use(cors({ origin: config.get('server.baseUrl') || false, credentials: true })) // ASVS V3.4.2: origen explicito, no comodin
+ 
+   /* Security middleware */
+   app.use(helmet.noSniff())
+@@ -315,6 +315,19 @@
+ 
+   app.use(express.static(path.resolve('frontend/dist/frontend'), { setHeaders: setStaticFileHeaders }))
+   app.use(cookieParser('kekse'))
++  /* Parche 12 (CSRF): perfil, imagen y borrado de datos se autentican con la cookie 'token'. Una petición que cambia
++     estado con Origin/Referer de otro sitio se rechaza. Se compara el nombre de host (el WAF reenvía Host sin puerto). */
++  app.use((req: Request, res: Response, next: NextFunction) => {
++    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) { next(); return }
++    const origen = req.headers.origin ?? req.headers.referer
++    if (origen) {
++      let hostOrigen = ''
++      try { hostOrigen = new URL(origen).hostname } catch { hostOrigen = '' }
++      const hostPropio = String(req.headers.host ?? '').replace(/:\d+$/, '')
++      if (hostOrigen !== hostPropio) { res.status(403).json({ status: 'error', message: 'Origen no permitido' }); return }
++    }
++    next()
++  })
+   // vuln-code-snippet end directoryListingChallenge accessLogDisclosureChallenge
+ 
+   /* Serve vendor dependencies locally instead of from CDN */
+@@ -387,6 +400,43 @@
+   app.use('/api/BasketItems/:id', security.isAuthorized())
+   /* Feedbacks: GET allowed for feedback carousel, POST allowed in order to provide feedback without being logged in */
+   app.use('/api/Feedbacks/:id', security.isAuthorized())
++  /* Parche 10 (cierre Fase 6): control de acceso a nivel de objeto (BOLA/IDOR, CWE-639 / OWASP API1:2023) en
++     articulos de cesta, direcciones y opiniones. Hallado con security/ops/bola-recursos.sh en la variante corregida. */
++  const objetoAjeno = (res: Response) => res.status(403).json({ status: 'error', message: 'No autorizado para este recurso' })
++  const articuloDeCestaPropia = () => async (req: Request, res: Response, next: NextFunction) => {
++    try {
++      const usuario = security.authenticatedUsers.from(req)
++      const item = await BasketItemModel.findOne({ where: { id: req.params.id } })
++      const cambiaDeCesta = req.body?.BasketId !== undefined && Number(req.body.BasketId) !== Number(usuario?.bid)
++      if (!usuario?.bid || !item || Number(item.BasketId) !== Number(usuario.bid) || cambiaDeCesta) { objetoAjeno(res); return }
++      next()
++    } catch (error) { next(error) }
++  }
++  app.get('/api/BasketItems/:id', articuloDeCestaPropia())
++  app.put('/api/BasketItems/:id', articuloDeCestaPropia())
++  app.delete('/api/BasketItems/:id', articuloDeCestaPropia())
++  app.get('/api/BasketItems', (req: Request, res: Response, next: NextFunction) => {
++    const usuario = security.authenticatedUsers.from(req)
++    if (usuario?.data?.role !== 'admin') { objetoAjeno(res); return }
++    next()
++  })
++  app.put('/api/Addresss/:id', async (req: Request, res: Response, next: NextFunction) => {
++    try {
++      const usuario = security.authenticatedUsers.from(req)
++      const propia = usuario ? await AddressModel.findOne({ where: { id: req.params.id, UserId: usuario.data.id } }) : null
++      if (!propia) { objetoAjeno(res); return }
++      next()
++    } catch (error) { next(error) }
++  })
++  app.delete('/api/Feedbacks/:id', async (req: Request, res: Response, next: NextFunction) => {
++    try {
++      const usuario = security.authenticatedUsers.from(req)
++      if (usuario?.data?.role === 'admin') { next(); return }
++      const propia = usuario ? await FeedbackModel.findOne({ where: { id: req.params.id, UserId: usuario.data.id } }) : null
++      if (!propia) { objetoAjeno(res); return }
++      next()
++    } catch (error) { next(error) }
++  })
+   /* Users: Only POST is allowed in order to register a new user */
+   app.get('/api/Users', security.isAuthorized())
+   app.route('/api/Users/:id')
+@@ -406,14 +456,18 @@
+     .get(security.denyAll())
+     .delete(security.denyAll())
+   /* Complaints: POST and GET allowed when logged in only */
+-  app.get('/api/Complaints', security.isAuthorized())
++  app.get('/api/Complaints', security.isAuthorized(), (req: Request, res: Response, next: NextFunction) => {
++    // Parche 12: la lista de quejas de todas las cuentas solo para administración
++    if (security.authenticatedUsers.from(req)?.data?.role !== 'admin') { res.status(403).json({ status: 'error', message: 'No autorizado para este recurso' }); return }
++    next()
++  })
+   app.post('/api/Complaints', security.isAuthorized())
+   app.use('/api/Complaints/:id', security.denyAll())
+   /* Recycles: POST and GET allowed when logged in only */
+   app.get('/api/Recycles', recycles.blockRecycleItems())
+   app.post('/api/Recycles', security.isAuthorized())
+   /* Challenge evaluation before finale takes over */
+-  app.get('/api/Recycles/:id', recycles.getRecycleItem())
++  app.get('/api/Recycles/:id', security.isAuthorized(), recycles.getRecycleItem())
+   app.put('/api/Recycles/:id', security.denyAll())
+   app.delete('/api/Recycles/:id', security.denyAll())
+   /* SecurityQuestions: Only GET list of questions allowed. */
+@@ -434,6 +488,8 @@
+   app.post('/api/Feedbacks', verify.captchaBypassChallenge())
+   /* User registration challenge verifications before finale takes over */
+   app.post('/api/Users', (req: Request, res: Response, next: NextFunction) => {
++    // ASVS V8.2.2: impedir asignacion masiva de campos privilegiados en el registro
++    for (const campo of ['role', 'isActive', 'deluxeToken', 'id']) { delete req.body[campo] }
+     if (req.body.email !== undefined && req.body.password !== undefined && req.body.passwordRepeat !== undefined) {
+       if (req.body.email.length !== 0 && req.body.password.length !== 0) {
+         req.body.email = req.body.email.trim()
+@@ -506,6 +562,12 @@
+ 
+   // vuln-code-snippet start registerAdminChallenge
+   /* Generated API endpoints */
++  /* Parche 12: las respuestas 5xx de la capa REST genérica (finale) no exponen mensajes internos de la base de datos */
++  app.use('/api', (req: Request, res: Response, next: NextFunction) => {
++    const json = res.json.bind(res)
++    res.json = (cuerpo?: any) => res.statusCode >= 500 ? json({ status: 'error', message: 'Internal server error' }) : json(cuerpo)
++    next()
++  })
+   finale.initialize({ app, sequelize: seq })
+ 
+   const autoModels = [
+@@ -659,7 +721,7 @@
+   /* NoSQL API endpoints */
+   app.get('/rest/products/:id/reviews', showProductReviews())
+   app.put('/rest/products/:id/reviews', utils.asyncHandler(createProductReviews()))
+-  app.patch('/rest/products/reviews', security.isAuthorized(), updateProductReviews())
++  app.patch('/rest/products/reviews', security.isAuthorized(), resenaPropia(), updateProductReviews())
+   app.post('/rest/products/reviews', security.isAuthorized(), utils.asyncHandler(likeProductReviews()))
+ 
+   /* Chat API endpoint */
+@@ -707,7 +769,13 @@
+ 
+   /* Error Handling */
+   app.use(verify.errorHandlingChallenge())
+-  app.use(errorhandler())
++  // Parche 09 (A10:2025): errores sanitizados; sin trazas de pila ni detalles internos hacia el cliente.
++  app.use((err: Error & { status?: number, statusCode?: number }, req: Request, res: Response, next: NextFunction) => {
++    if (res.headersSent) { next(err); return }
++    const status = err.status ?? err.statusCode ?? (res.statusCode >= 400 ? res.statusCode : 500)
++    console.error(`error ${status} ${req.method} ${req.path}: ${err.message}`)
++    res.status(status).json({ status: 'error', message: status === 403 ? 'Forbidden' : status < 500 ? 'Bad request' : 'Internal server error' })
++  })
+ }
+ 
+ // Function called first to ensure that all the i18n files are reloaded successfully before other linked operations.
+--- a/routes/search.ts
++++ b/routes/search.ts
+@@ -20,7 +20,7 @@
+   return (req: Request, res: Response, next: NextFunction) => {
+     let criteria: any = req.query.q === 'undefined' ? '' : req.query.q ?? ''
+     criteria = (criteria.length <= 200) ? criteria : criteria.substring(0, 200)
+-    models.sequelize.query(`SELECT * FROM Products WHERE ((name LIKE '%${criteria}%' OR description LIKE '%${criteria}%') AND deletedAt IS NULL) ORDER BY name`) // vuln-code-snippet vuln-line unionSqlInjectionChallenge dbSchemaChallenge
++    models.sequelize.query('SELECT * FROM "Products" WHERE ((LOWER(name) LIKE LOWER(:q) OR LOWER(description) LIKE LOWER(:q)) AND "deletedAt" IS NULL) ORDER BY name', { replacements: { q: `%${criteria}%` }, type: models.sequelize.QueryTypes.SELECT }).then((products) => [products]) // vuln-code-snippet vuln-line unionSqlInjectionChallenge dbSchemaChallenge
+       .then(([products]: any) => {
+         const dataString = JSON.stringify(products)
+         if (challengeUtils.notSolved(challenges.unionSqlInjectionChallenge)) { // vuln-code-snippet hide-start
+@@ -42,7 +42,7 @@
+             next(error)
+           })
+         }
+-        if (challengeUtils.notSolved(challenges.dbSchemaChallenge)) {
++        if (challengeUtils.notSolved(challenges.dbSchemaChallenge) && models.sequelize.getDialect() === 'sqlite') { // Parche 13
+           let solved = true
+           void models.sequelize.query('SELECT sql FROM sqlite_master').then(([data]: any) => {
+             const tableDefinitions = utils.queryResultToJson(data)
+@@ -59,7 +59,7 @@
+                 challengeUtils.solve(challenges.dbSchemaChallenge)
+               }
+             }
+-          })
++          }).catch(() => {}) // Parche 13: un error de la consulta auxiliar nunca termina el proceso
+         } // vuln-code-snippet hide-end
+         for (let i = 0; i < products.length; i++) {
+           products[i].name = req.__(products[i].name)
+--- a/routes/userProfile.ts
++++ b/routes/userProfile.ts
+@@ -62,7 +62,7 @@
+           if (!code) {
+             throw new Error('Username is null')
+           }
+-          username = eval(code) // eslint-disable-line no-eval
++          username = code // ASVS V1.3.2: sin ejecucion dinamica de codigo (se elimina eval)
+         } catch (err) {
+           username = '\\' + username
+         }
+--- a/routes/basket.ts
++++ b/routes/basket.ts
+@@ -16,6 +16,13 @@
+   return async (req: Request, res: Response, next: NextFunction) => {
+     try {
+       const id = req.params.id
++      // Control de acceso a nivel de objeto (BOLA/IDOR, CWE-639 / OWASP API1:2023):
++      // solo el propietario autenticado puede leer su cesta; cualquier otro id se rechaza.
++      const requester = security.authenticatedUsers.from(req)
++      if (!requester?.bid || requester.bid != parseInt(id, 10)) { // eslint-disable-line eqeqeq
++        res.status(403).json({ status: 'error', message: 'No autorizado para acceder a esta cesta' })
++        return
++      }
+       const basket = await BasketModel.findOne({ where: { id }, include: [{ model: ProductModel, paranoid: false, as: 'Products' }] })
+       /* jshint eqeqeq:false */
+       challengeUtils.solveIf(challenges.basketAccessChallenge, () => {
+--- a/package.json
++++ b/package.json
+@@ -104,12 +104,11 @@
+     "cookie-parser": "^1.4.7",
+     "cookieconsent": "^3.1.1",
+     "cors": "^2.8.5",
+-    "download": "^8.0.0",
+     "errorhandler": "^1.5.1",
+     "ethers": "^6.16.0",
+     "express": "^4.22.1",
+     "express-ipfilter": "^1.3.2",
+-    "express-jwt": "0.1.3",
++    "express-jwt": "^8.4.1",
+     "express-rate-limit": "^7.5.1",
+     "express-robots-txt": "^0.5.0",
+     "express-security.txt": "^2.0.0",
+@@ -126,7 +125,8 @@
+     "html-entities": "^1.4.0",
+     "i18n": "^0.11.1",
+     "js-yaml": "^3.14.0",
+-    "jsonwebtoken": "0.4.0",
++    "jsonwebtoken": "^9.0.2",
++    "jws": "^4.0.0",
+     "libxml2-wasm": "^0.7.1",
+     "marsdb": "^0.6.11",
+     "material-icons": "^1.13.14",
+@@ -137,13 +137,15 @@
+     "on-finished": "^2.3.0",
+     "otplib": "^13.4.0",
+     "pdfkit": "^0.11.0",
++    "pg": "^8.13.1",
++    "pg-hstore": "^2.3.4",
+     "portscanner": "^2.2.0",
+     "prom-client": "^15.1.3",
+     "proxy-agent": "^8.0.2",
+     "pug": "^3.0.3",
+     "replace": "^1.2.2",
+     "sanitize-filename": "^1.6.3",
+-    "sanitize-html": "1.4.2",
++    "sanitize-html": "^2.13.1",
+     "semver": "^7.6.3",
+     "sequelize": "^6.37.3",
+     "serve-index": "^1.9.1",
+@@ -167,17 +169,15 @@
+     "@types/cors": "^2.8.19",
+     "@types/cross-spawn": "^6.0.6",
+     "@types/diff": "^7.0.1",
+-    "@types/download": "^8.0.5",
+     "@types/errorhandler": "^1.5.3",
+     "@types/exif": "^0.6.5",
+     "@types/express": "^4.17.25",
+-    "@types/express-jwt": "^6.0.4",
+     "@types/fs-extra": "^9.0.13",
+     "@types/glob": "^7.2.0",
+     "@types/graceful-fs": "^4.1.9",
+     "@types/i18n": "^0.12.0",
+     "@types/js-yaml": "^3.12.10",
+-    "@types/jsonwebtoken": "^8.5.9",
++    "@types/jsonwebtoken": "^9.0.7",
+     "@types/jws": "^3.2.10",
+     "@types/lodash": "^4.17.14",
+     "@types/morgan": "^1.9.9",
+@@ -187,7 +187,7 @@
+     "@types/pdfkit": "^0.10.6",
+     "@types/portscanner": "^2.1.4",
+     "@types/pug": "^2.0.10",
+-    "@types/sanitize-html": "^1.27.2",
++    "@types/sanitize-html": "^2.13.0",
+     "@types/semver": "^7.5.8",
+     "@types/sequelize": "^4.28.20",
+     "@types/serve-index": "^1.9.4",
+@@ -208,6 +208,11 @@
+     "typescript": "^6.0.3",
+     "typescript-eslint": "^8.57.1"
+   },
++  "overrides": {
++    "crypto-js": "^4.2.0",
++    "tar": "^7.5.19",
++    "minimatch@^3": "^3.1.4"
++  },
+   "engines": {
+     "node": "22 - 26"
+   },
+--- a/lib/utils.ts
++++ b/lib/utils.ts
+@@ -7,8 +7,6 @@
+ import fs from 'node:fs'
+ import logger from './logger'
+ import config from 'config'
+-import download from 'download'
+-import { ProxyAgent } from 'proxy-agent'
+ import crypto from 'node:crypto'
+ import clarinet from 'clarinet'
+ import type { Challenge } from '@juice-shop/data/types'
+@@ -20,7 +18,6 @@
+ export { default as isWindows } from './is-windows'
+ 
+ const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC']
+-const proxyAgent = new ProxyAgent()
+ 
+ export const queryResultToJson = <T>(
+   data: T,
+@@ -110,10 +107,15 @@
+ export const downloadToFile = async (
+   url: string,
+   dest: string,
+-  downloadData: (url: string, options: download.DownloadOptions) => Promise<Buffer> = download
++  // Parche 11: fetch nativo en lugar de `download` (retira decompress, CVE crítico sin corrección)
++  downloadData: (url: string) => Promise<Buffer> = async (direccion: string) => {
++    const respuesta = await fetch(direccion)
++    if (!respuesta.ok) throw new Error('HTTP ' + respuesta.status)
++    return Buffer.from(await respuesta.arrayBuffer())
++  }
+ ) => {
+   try {
+-    const data = await downloadData(url, { agent: proxyAgent })
++    const data = await downloadData(url)
+     fs.writeFileSync(dest, data)
+     return true
+   } catch (err) {
+--- a/lib/xml.ts
++++ b/lib/xml.ts
+@@ -19,7 +19,8 @@
+       // Grants the WASM sandbox host filesystem access so external entities
+       // like file:///etc/passwd resolve - required for the XXE challenges.
+       const { xmlRegisterFsInputProviders } = await dynamicImport('libxml2-wasm/lib/nodejs.mjs')
+-      xmlRegisterFsInputProviders()
++      // Parche 12: sin proveedores de archivos: las entidades externas no se resuelven (XXE)
++      void xmlRegisterFsInputProviders
+       return libxml2
+     })()
+   }
+@@ -32,7 +33,7 @@
+ // "Script execution timed out" error instead of hanging the process.
+ export async function parseXmlString (data: string, timeoutMs = 2000): Promise<string> {
+   const libxml2 = await loadLibxml2()
+-  const option = libxml2.ParseOption.XML_PARSE_NOENT | libxml2.ParseOption.XML_PARSE_DTDLOAD | libxml2.ParseOption.XML_PARSE_NOBLANKS | libxml2.ParseOption.XML_PARSE_NOCDATA
++  const option = libxml2.ParseOption.XML_PARSE_NOBLANKS | libxml2.ParseOption.XML_PARSE_NOCDATA
+   const sandbox = { libxml2, data, option }
+   vm.createContext(sandbox)
+   const xmlDoc = vm.runInContext('libxml2.XmlDocument.fromString(data, { option })', sandbox, { timeout: timeoutMs })
+--- a/routes/showProductReviews.ts
++++ b/routes/showProductReviews.ts
+@@ -28,12 +28,13 @@
+ export function showProductReviews () {
+   return (req: Request, res: Response, next: NextFunction) => {
+     // Truncate id to avoid unintentional RCE
+-    const id = !utils.isChallengeEnabled(challenges.noSqlCommandChallenge) ? Number(req.params.id) : utils.trunc(req.params.id, 40)
++    // Parche 12: id numérico siempre, sin depender de la detección de Docker; consulta por campo, no por $where
++    const id = Number(req.params.id)
+ 
+     // Measure how long the query takes, to check if there was a nosql dos attack
+     const t0 = new Date().getTime()
+ 
+-    db.reviewsCollection.find({ $where: 'this.product == ' + id }).then((reviews: Review[]) => {
++    db.reviewsCollection.find({ product: { $in: Number.isInteger(id) ? [id, String(id)] : [] } }).then((reviews: Review[]) => {
+       const t1 = new Date().getTime()
+       challengeUtils.solveIf(challenges.noSqlCommandChallenge, () => { return (t1 - t0) > 2000 })
+       const user = security.authenticatedUsers.from(req)
+--- a/routes/trackOrder.ts
++++ b/routes/trackOrder.ts
+@@ -12,10 +12,11 @@
+ export function trackOrder () {
+   return (req: Request, res: Response) => {
+     // Truncate id to avoid unintentional RCE
+-    const id = !utils.isChallengeEnabled(challenges.reflectedXssChallenge) ? String(req.params.id).replace(/[^\w-]+/g, '') : utils.trunc(req.params.id, 60)
++    // Parche 12: id saneado siempre; consulta por campo, no por $where
++    const id = String(req.params.id).replace(/[^\w-]+/g, '')
+ 
+     challengeUtils.solveIf(challenges.reflectedXssChallenge, () => { return id.includes('<iframe src="javascript:alert(`xss`)">') })
+-    db.ordersCollection.find({ $where: `this.orderId === '${id}'` }).then((order: any) => {
++    db.ordersCollection.find({ orderId: id }).then((order: any) => {
+       const result = utils.queryResultToJson(order)
+       challengeUtils.solveIf(challenges.noSqlOrdersChallenge, () => { return result.data.length > 1 })
+       if (result.data[0] === undefined) {
+--- a/routes/updateProductReviews.ts
++++ b/routes/updateProductReviews.ts
+@@ -10,6 +10,27 @@
+ import * as security from '../lib/insecurity'
+ import * as db from '../data/mongodb'
+ 
++// Parche 12: solo la cuenta autora puede editar su reseña; el id debe ser texto (sin operadores NoSQL)
++export function resenaPropia () {
++  return async (req: Request, res: Response, next: NextFunction) => {
++    const user = security.authenticatedUsers.from(req)
++    if (!user || typeof req.body?.id !== 'string' || typeof req.body?.message !== 'string') {
++      res.status(400).json({ status: 'error', message: 'Bad request' })
++      return
++    }
++    try {
++      const review = await db.reviewsCollection.findOne({ _id: req.body.id })
++      if (!review || review.author !== user.data.email) {
++        res.status(403).json({ status: 'error', message: 'No autorizado para este recurso' })
++        return
++      }
++      next()
++    } catch {
++      res.status(500).json({ status: 'error', message: 'Internal server error' })
++    }
++  }
++}
++
+ // vuln-code-snippet start noSqlReviewsChallenge forgedReviewChallenge
+ export function updateProductReviews () {
+   return (req: Request, res: Response, next: NextFunction) => {
+@@ -17,14 +38,14 @@
+     db.reviewsCollection.update( // vuln-code-snippet neutral-line forgedReviewChallenge
+       { _id: req.body.id }, // vuln-code-snippet vuln-line noSqlReviewsChallenge forgedReviewChallenge
+       { $set: { message: req.body.message } },
+-      { multi: true } // vuln-code-snippet vuln-line noSqlReviewsChallenge
++      { multi: false } // Parche 12: nunca actualización masiva
+     ).then(
+       (result: { modified: number, original: Array<{ author: any }> }) => {
+         challengeUtils.solveIf(challenges.noSqlReviewsChallenge, () => { return result.modified > 1 }) // vuln-code-snippet hide-line
+         challengeUtils.solveIf(challenges.forgedReviewChallenge, () => { return user?.data && result.original[0] && result.original[0].author !== user.data.email && result.modified === 1 }) // vuln-code-snippet hide-line
+         res.json(result)
+       }, (err: unknown) => {
+-        res.status(500).json(err)
++        res.status(500).json({ status: 'error', message: 'Internal server error' })
+       })
+   }
+ }
+--- a/routes/profileImageUrlUpload.ts
++++ b/routes/profileImageUrlUpload.ts
+@@ -11,6 +11,29 @@
+ import * as security from '../lib/insecurity'
+ import { UserModel } from '../models/user'
+ import * as utils from '../lib/utils'
++import dns from 'node:dns/promises'
++import net from 'node:net'
++
++// Parche 12 (SSRF): solo http/https hacia direcciones públicas; se resuelve el nombre y se rechazan rangos internos.
++const esIpInterna = (ip: string): boolean => {
++  if (net.isIPv4(ip)) {
++    const [a, b] = ip.split('.').map(Number)
++    return a === 10 || a === 127 || a === 0 || (a === 169 && b === 254) || (a === 172 && b >= 16 && b <= 31) ||
++      (a === 192 && b === 168) || (a === 100 && b >= 64 && b <= 127)
++  }
++  const v = ip.toLowerCase()
++  return v === '::1' || v === '::' || v.startsWith('fc') || v.startsWith('fd') || v.startsWith('fe80') || v.startsWith('::ffff:')
++}
++async function urlExternaPermitida (url: string): Promise<boolean> {
++  try {
++    const destino = new URL(url)
++    if (!['http:', 'https:'].includes(destino.protocol)) return false
++    const direcciones = await dns.lookup(destino.hostname, { all: true })
++    return direcciones.length > 0 && direcciones.every(d => !esIpInterna(d.address))
++  } catch {
++    return false
++  }
++}
+ import logger from '../lib/logger'
+ 
+ export function profileImageUrlUpload () {
+@@ -21,7 +44,11 @@
+       const loggedInUser = security.authenticatedUsers.get(req.cookies.token)
+       if (loggedInUser) {
+         try {
+-          const response = await fetch(url)
++          if (!(await urlExternaPermitida(url))) {
++            res.status(400).json({ status: 'error', message: 'URL de imagen no permitida' })
++            return
++          }
++          const response = await fetch(url, { redirect: 'error' })
+           if (!response.ok || !response.body) {
+             throw new Error('url returned a non-OK status code or an empty body')
+           }
+--- a/routes/recycles.ts
++++ b/routes/recycles.ts
+@@ -7,11 +7,19 @@
+ import { RecycleModel } from '../models/recycle'
+ 
+ import * as utils from '../lib/utils'
++import * as security from '../lib/insecurity'
+ 
+ export const getRecycleItem = () => (req: Request, res: Response) => {
++  // Parche 12: id numérico (sin JSON.parse ni lotes) y solo los reciclajes de la propia cuenta
++  const usuario = security.authenticatedUsers.from(req)
++  const id = Number(req.params.id)
++  if (!usuario || !Number.isInteger(id)) {
++    res.status(401).json({ status: 'error', message: 'No autorizado' })
++    return
++  }
+   RecycleModel.findAll({
+     where: {
+-      id: JSON.parse(req.params.id)
++      id, UserId: usuario.data.id
+     }
+   }).then((Recycle) => {
+     return res.send(utils.queryResultToJson(Recycle))
+--- a/frontend/src/app/search-result/search-result.component.ts
++++ b/frontend/src/app/search-result/search-result.component.ts
+@@ -143,7 +143,7 @@
+         this.io.socket().emit('verifyLocalXssChallenge', queryParam)
+       }) // vuln-code-snippet hide-end
+       this.dataSource.filter = queryParam.toLowerCase()
+-      this.searchValue = this.sanitizer.bypassSecurityTrustHtml(queryParam) // vuln-code-snippet vuln-line localXssChallenge xssBonusChallenge
++      this.searchValue = queryParam // Parche 12 (DOM XSS): sin bypass, Angular sanea el texto en [innerHTML] // vuln-code-snippet vuln-line localXssChallenge xssBonusChallenge
+       if (this.gridDataSourceSubscription) {
+         this.gridDataSourceSubscription.unsubscribe()
+       }
+--- a/routes/b2bOrder.ts
++++ b/routes/b2bOrder.ts
+@@ -20,7 +20,8 @@
+       try {
+         const sandbox = { safeEval, orderLinesData }
+         vm.createContext(sandbox)
+-        vm.runInContext('safeEval(orderLinesData)', sandbox, { timeout: 2000 })
++        void sandbox
++        JSON.parse(String(orderLinesData)) // Parche 12: datos, no código (sin safeEval)
+         res.json({ cid: body.cid, orderNo: uniqueOrderNumber(), paymentDue: dateTwoWeeksFromNow() })
+       } catch (err) {
+         if (utils.getErrorMessage(err).match(/Script execution timed out.*/) != null) {
+--- a/routes/chat.ts
++++ b/routes/chat.ts
+@@ -146,7 +146,7 @@
+         }),
+         execute: async ({ id }) => {
+           const productId = Number(id)
+-          return await db.reviewsCollection.find({ $where: 'this.product == ' + productId }) as Review[]
++          return await db.reviewsCollection.find({ product: { $in: Number.isInteger(productId) ? [productId, String(productId)] : [] } }) as Review[] // Parche 12: sin $where
+         }
+       }),
+ 
+--- a/models/index.ts
++++ b/models/index.ts
+@@ -25,11 +25,40 @@
+ import { SecurityQuestionModelInit } from './securityQuestion'
+ import { UserModelInit } from './user'
+ import { WalletModelInit } from './wallet'
+-import { Sequelize, Transaction } from 'sequelize'
++import { Sequelize, Transaction, DataTypes } from 'sequelize'
+ 
+ let sequelize = createSequelize()
+ 
+ function createSequelize (options?: { inMemory?: boolean }) {
++  // Parche 13 (cierre técnico): con DATABASE_URL se usa PostgreSQL (BD administrada); sin ella, SQLite local.
++  if (process.env.DATABASE_URL && !options?.inMemory) {
++    const ssl = process.env.DATABASE_SSL === 'false' ? {} : { ssl: { require: true, rejectUnauthorized: process.env.DATABASE_SSL_VERIFY !== 'false' } }
++    return new Sequelize(process.env.DATABASE_URL, {
++      dialect: 'postgres',
++      dialectOptions: ssl,
++      logging: false,
++      // SQLite no limita la longitud de STRING y PostgreSQL sí (VARCHAR 255): en PostgreSQL se guardan como TEXT.
++      // Challenge.key es un ENUM con valores aparte, que Sequelize no crea como tipo en PostgreSQL: se guarda como TEXT
++      // (la aplicación valida las claves de reto por su cuenta).
++      hooks: {
++        beforeDefine: (atributos: any) => {
++          for (const k of Object.keys(atributos)) {
++            const a = atributos[k]
++            const clave = a?.type?.key ?? a?.key
++            if (k === 'cardNum' || k === 'mobileNum') {
++              // Tarjeta (16 dígitos) y teléfono (10): SQLite guarda enteros de 64 bits; INTEGER de PostgreSQL es de 32
++              if (a?.type) a.type = DataTypes.BIGINT; else atributos[k] = DataTypes.BIGINT
++            } else if (clave === 'STRING' || clave === 'ENUM') {
++              if (a?.type) { a.type = DataTypes.TEXT; delete a.values } else atributos[k] = DataTypes.TEXT
++            } else if (clave === 'NUMBER') {
++              // DataTypes.NUMBER genera 'NUMBER', válido en SQLite e inválido en PostgreSQL (los dos campos son enteros)
++              if (a?.type) a.type = DataTypes.INTEGER; else atributos[k] = DataTypes.INTEGER
++            }
++          }
++        }
++      }
++    })
++  }
+   return new Sequelize('database', 'username', 'password', {
+     dialect: 'sqlite',
+     retry: {

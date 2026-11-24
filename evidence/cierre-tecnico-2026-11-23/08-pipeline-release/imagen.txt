@@ -1,0 +1,1 @@
+sha256:2ab64e96129d17cd50be04403e2070722eacd74c0aeaa3557a118e4c6e3fb3fd corregida-cierre-tecnico+rasp

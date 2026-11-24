@@ -19,6 +19,9 @@ services:
     image: juice-corregida-rasp:local
     environment:
       JWT_PRIVATE_KEY_FILE: /run/secrets/jwt_private_key
+      # Cierre técnico: los retos de Juice Shop con disabledEnv quedan desactivados aunque no se detecte Docker
+      # (en otra plataforma /.dockerenv puede no existir y reabrirían XXE o NoSQL). No depende de la detección.
+      NODE_CONFIG: '{"challenges":{"safetyMode":"enabled"}}'
     secrets: [jwt_private_key]
     labels:
       siem.variante: "corregida"
@@ -44,6 +47,39 @@ services:
   alloy:
     volumes:
       - ./logs-corregido:/var/log/waf:ro
+
+  # Cierre técnico (2026-11-23): el ruler de Loki entrega las alertas a Alertmanager, que notifica a un receptor LOCAL.
+  loki:
+    command: ["-config.file=/etc/loki/loki.yaml", "-ruler.alertmanager-url=http://siem-alertmanager:9093"]
+
+  alertmanager:
+    image: prom/alertmanager:v0.28.1@sha256:27c475db5fb156cab31d5c18a4251ac7ed567746a2483ff264516437a39b15ba
+    container_name: siem-alertmanager
+    command: ["--config.file=/etc/alertmanager/alertmanager.yml", "--storage.path=/alertmanager"]
+    volumes:
+      - ./siem/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+    tmpfs:
+      - /alertmanager:rw,nosuid,size=16m
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 128m
+    restart: unless-stopped
+    networks: [siem]
+
+  notificador:
+    image: python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+    container_name: siem-notificador
+    command: ["python", "-I", "-u", "/app/notificador.py"]
+    user: "65534:65534"
+    volumes:
+      - ./siem/notificador.py:/app/notificador.py:ro
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    mem_limit: 64m
+    restart: unless-stopped
+    networks: [siem]
 
 secrets:
   jwt_private_key:

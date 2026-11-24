@@ -29,7 +29,9 @@ server {
     access_log /var/log/modsec/access.log siem_json;   # mismo volumen que el audit log → Alloy → Loki
 
     # --- Cabeceras de seguridad (A9): se fijan para todas las respuestas ---
-    more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'";
+    # Cierre técnico 2026-11-23: + form-action 'self' (ZAP 10055: directiva sin respaldo en default-src). 'unsafe-inline'
+    # en style-src se mantiene: la interfaz Angular aplica estilos en línea (excepción documentada).
+    more_set_headers "Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'; form-action 'self'";
     more_set_headers "Strict-Transport-Security: max-age=31536000; includeSubDomains";
     more_set_headers "X-Content-Type-Options: nosniff";
     more_set_headers "X-Frame-Options: DENY";

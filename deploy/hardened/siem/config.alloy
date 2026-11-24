@@ -82,7 +82,8 @@ discovery.relabel "contenedores" {
 
   rule {
     source_labels = ["container"]
-    regex         = "juice-hardened|juice-waf"
+    // siem-notificador (cierre técnico): las notificaciones de Alertmanager quedan auditadas en el SIEM
+    regex         = "juice-hardened|juice-waf|siem-notificador"
     action        = "keep"
   }
 }
@@ -107,4 +108,6 @@ loki.write "local" {
   endpoint {
     url = "http://loki:3100/loki/api/v1/push"
   }
+  // Cierre técnico: toda línea lleva su entorno para no mezclar el laboratorio local con un despliegue cloud.
+  external_labels = { entorno = "local" }
 }

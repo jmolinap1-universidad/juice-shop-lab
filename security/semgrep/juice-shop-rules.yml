@@ -53,3 +53,23 @@ rules:
     languages: [typescript, javascript]
     metadata: { cwe: "CWE-942", owasp: "A02:2025 Security Misconfiguration", asvs: "V3.4.2" }
     pattern: $APP.use(cors())
+
+  # Cierre técnico 2026-11-23: reglas que habrían detectado los hallazgos T1/T2 (NoSQL) y T7 (XXE).
+  - id: nosql-where-concatenado
+    message: >-
+      Consulta NoSQL con $where construido concatenando datos de la petición (inyección de código JavaScript en la base
+      de datos). Usar una consulta por campo. CWE-943 / ASVS V1.2.4.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-943", owasp: "A05:2025 Injection", asvs: "V1.2.4" }
+    pattern-either:
+      - pattern: '$C.find({ $where: $A + $B })'
+      - pattern: '$C.find({ $where: `...${$X}...` })'
+
+  - id: xml-entidades-externas
+    message: >-
+      Análisis XML con sustitución de entidades o carga de DTD externas (XXE). CWE-611 / ASVS V1.5.2.
+    severity: ERROR
+    languages: [typescript, javascript]
+    metadata: { cwe: "CWE-611", owasp: "A05:2025 Injection", asvs: "V1.5.2" }
+    pattern-regex: 'XML_PARSE_NOENT|XML_PARSE_DTDLOAD|noent\s*:\s*true'

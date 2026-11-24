@@ -1,0 +1,15 @@
+# Alertmanager del SIEM vigente (cierre técnico, 2026-11-23). Recibe las alertas del ruler de Loki y las entrega a un
+# receptor LOCAL (siem-notificador) en la red interna. Sin correo ni servicios externos: en un despliegue real este receptor
+# se sustituiría por correo/chat corporativo con credenciales gestionadas como secreto.
+route:
+  receiver: notificador-local
+  group_by: [alertname]
+  group_wait: 10s
+  group_interval: 1m
+  repeat_interval: 4h
+
+receivers:
+  - name: notificador-local
+    webhook_configs:
+      - url: http://siem-notificador:8080/alertas
+        send_resolved: true

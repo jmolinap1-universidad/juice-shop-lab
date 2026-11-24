@@ -1,0 +1,3 @@
+Arranque con 512 MB y 0,25 vCPU (como Seenode Basic) + PostgreSQL: running/healthy/oom=false en 22 s; mem=100.1MiB / 512MiB cpu=1.82%
+Durante regresión + recorrido: muestras=60 · memoria pico=145 MiB (límite 512) · media=126 MiB · CPU pico=26% (límite 25%)
+Estado final: running healthy oom=false reinicios=0
