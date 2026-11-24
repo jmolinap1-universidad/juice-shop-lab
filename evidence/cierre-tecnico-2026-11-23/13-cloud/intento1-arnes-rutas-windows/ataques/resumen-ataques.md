@@ -1,0 +1,23 @@
+# Casos de ataque Fase 4 — objetivo http://127.0.0.1:8090 (validar-cloud)
+
+Ejecutado: 2026-11-23T23:15:41-06:00
+
+> **Clase:** E=explotación demostrada · X=exposición observada · C=configuración insegura · N=ausencia de control.
+> **Veredicto** VULNERABLE = la condición se detectó (no implica explotación); la clase indica el tipo real del hallazgo.
+
+| ID | Caso | Clase | CWE | Veredicto | Detalle |
+|---|---|---|---|---|---|
+| A1 | SQLi bypass de login | E | CWE-89 | **MITIGADO** | Sin token (HTTP <html>
+<head><title>302 Found</title></) |
+| A2 | SQLi UNION (volcado de Users) | E | CWE-89 | **MITIGADO** | Sin datos de Users en la respuesta |
+| A3 | SQLi enumeración de esquema | E | CWE-89 | **MITIGADO** | Sin DDL en la respuesta |
+| A4 | Listado de directorios | X | CWE-548 | **MITIGADO** | Sin listados navegables |
+| A5 | Exposición de documento interno (/ftp) | X | CWE-538 | **MITIGADO** | HTTP 302 |
+| A6 | /metrics sin autenticación | X | CWE-200 | **MITIGADO** | HTTP 302 |
+| A7 | Asignación masiva (role=admin) | E | CWE-915 | **MITIGADO** | role no aceptado () |
+| A8 | CORS permisivo (configuración) | C | CWE-942 | **MITIGADO** | Sin ACAO abierto |
+| A9 | Cabeceras de seguridad | C | CWE-693 | **MITIGADO** | Presentes las 4 cabeceras clave |
+| A10 | Fuerza bruta en login | N | CWE-307 | **VULNERABLE** | 12 intentos sin 429: 302 302 302 302 302 302 302 302 302 302 302 302 |
+| A11 | Clave pública JWT servida | X | CWE-200 | **MITIGADO** | HTTP 302 |
+
+**Resultado:** 1 VULNERABLE / 10 MITIGADO de 11 casos (A1-A11). A12 BOLA/IDOR: ver evidence/cierre-tecnico-2026-11-23/13-cloud-digitalocean/local-limites-render/ataques/bola/.
