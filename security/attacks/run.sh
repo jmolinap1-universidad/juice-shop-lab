@@ -9,7 +9,7 @@ TARGET="${1:-http://127.0.0.1:3000}"
 host="$(printf '%s' "$TARGET" | sed -E 's#https?://##; s#[:/].*##')"
 case "$host" in
   127.0.0.1|localhost|::1|juice-hardened|juice-lab|juice-corregida) : ;;
-  *) echo "RECHAZADO: objetivo '$host' fuera del laboratorio. Solo 127.0.0.1/localhost."; exit 2 ;;
+  *) [ -n "${HOST_CLOUD_AUTORIZADO:-}" ] && [ "$host" = "$HOST_CLOUD_AUTORIZADO" ] || { echo "RECHAZADO: objetivo '$host' fuera del laboratorio. Solo 127.0.0.1/localhost o el host cloud autorizado."; exit 2; } ;;
 esac
 
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"

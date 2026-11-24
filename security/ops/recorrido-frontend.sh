@@ -8,7 +8,7 @@ set -u
 B="$1"; OUT="$2"
 case "$(printf '%s' "$B" | sed -E 's#https?://##; s#[:/].*##')" in
   127.0.0.1|localhost|juice-hardened|juice-corregida|waf-config-historica) : ;;
-  *) echo "RECHAZADO: objetivo fuera del laboratorio"; exit 2 ;;
+  *) [ -n "${HOST_CLOUD_AUTORIZADO:-}" ] && [ "$(printf '%s' "$B" | sed -E 's#https?://##; s#[:/].*##')" = "$HOST_CLOUD_AUTORIZADO" ] || { echo "RECHAZADO: objetivo fuera del laboratorio"; exit 2; } ;;  # host cloud propio, nombrado por el usuario
 esac
 TS=$(date +%s); PW='Passw0rd!123'; EM="recorrido_${TS}@juice-sh.op"; J='Content-Type: application/json'
 ok=0; waf=0; otro=0

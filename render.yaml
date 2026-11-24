@@ -2,7 +2,7 @@
 # DigitalOcean se descartó: exige método de pago y App Platform cobra los contenedores (ver DECISIONES.md, D-18).
 # 1 servicio web (plan free: 512 MB, 0,1 vCPU; se suspende tras 15 min sin tráfico) con WAF + Juice Shop corregido + RASP,
 # construido desde deploy/cloud/Dockerfile (la fuente se verifica contra el diff auditado), y 1 PostgreSQL free (vence a
-# los 30 días de creada). Secretos (sync: false): el EQUIPO los introduce al crear el Blueprint; nunca se escriben aquí.
+# los 30 días de creada). Único secreto (sync: false): los usuarios de la puerta, que introduce el EQUIPO; nunca aquí.
 # La imagen vulnerable histórica NO se despliega en la nube (solo en 127.0.0.1).
 services:
   - type: web
@@ -17,8 +17,11 @@ services:
     healthCheckPath: /healthz
     autoDeployTrigger: "off"
     envVars:
-      - key: JWT_PRIVATE_KEY_B64  # gitleaks:allow (solo el nombre; el valor lo introduce el equipo en el panel)
-        sync: false
+      # Clave JWT generada por el propio contenedor al arrancar (no secreta: solo activa la generación). Evita copiar y
+      # pegar una clave privada en el panel, que fue la causa de los despliegues fallidos del 2026-11-24.
+      - key: JWT_CLAVE_EFIMERA
+        value: "1"
+      # Usuarios de la puerta de acceso (líneas htpasswd bcrypt); los introduce el equipo
       - key: BASIC_AUTH_HTPASSWD
         sync: false
       - key: DATABASE_URL

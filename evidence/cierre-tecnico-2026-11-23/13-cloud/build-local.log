@@ -1506,3 +1506,276 @@ View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux
 #38 DONE 0.7s
 
 View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/prj5q0vywa5dbrtjnwprz2eb4
+--- reconstrucción 2026-11-24T00:20:45-06:00 (clave JWT efímera opcional; diagnóstico de la puerta)
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.49kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390
+#2 DONE 0.0s
+
+#3 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9
+#3 DONE 0.1s
+
+#4 [internal] load metadata for docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496
+#4 DONE 0.1s
+
+#5 [internal] load metadata for docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#5 DONE 0.1s
+
+#6 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#6 ...
+
+#7 [internal] load metadata for docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5
+#7 DONE 0.8s
+
+#6 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#6 DONE 0.9s
+
+#8 [internal] load .dockerignore
+#8 transferring context: 544B 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 7.43kB 0.0s done
+#9 DONE 0.0s
+
+#10 [installer 1/4] FROM docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#10 resolve docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c 0.1s done
+#10 DONE 0.1s
+
+#11 [stage-5  1/11] FROM docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5
+#11 resolve docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5
+#11 resolve docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5 0.1s done
+#11 DONE 0.1s
+
+#12 [fuente 1/4] FROM docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496
+#12 resolve docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 0.1s done
+#12 DONE 0.1s
+
+#13 [node 1/1] FROM gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390
+#13 resolve gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390 0.1s done
+#13 DONE 0.1s
+
+#14 [rasp 1/3] FROM docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9
+#14 resolve docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9 0.1s done
+#14 DONE 0.1s
+
+#15 [parches 1/5] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#15 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b 0.1s done
+#15 DONE 0.1s
+
+#16 [parches 2/5] COPY --from=fuente /w /w
+#16 CACHED
+
+#17 [installer 2/4] COPY --from=parches /w/src /juice-shop
+#17 CACHED
+
+#18 [stage-5  5/11] COPY --from=parches /w/FUENTE_DIFF_SHA256 /w/APP_COMMIT /juice-shop/.masi/
+#18 CACHED
+
+#19 [stage-5  2/11] COPY --from=node /nodejs /nodejs
+#19 CACHED
+
+#20 [rasp 3/3] RUN npm init -y >/dev/null  && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
+#20 CACHED
+
+#21 [fuente 4/4] RUN bash /h/preparar-fuente.sh git
+#21 CACHED
+
+#22 [stage-5  8/11] COPY deploy/cloud/acceso.html deploy/cloud/ok.txt /etc/nginx/
+#22 CACHED
+
+#23 [parches 3/5] COPY app-hardened/aplicar_v2.py app-hardened/aplicar_fase6.py app-hardened/aplicar_cierre_tecnico.py /h/
+#23 CACHED
+
+#24 [installer 3/4] WORKDIR /juice-shop
+#24 CACHED
+
+#25 [stage-5  9/11] COPY deploy/hardened/waf/rules/99-virtual-patches.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf
+#25 CACHED
+
+#26 [stage-5  7/11] COPY deploy/cloud/default.conf.template /etc/nginx/templates/conf.d/default.conf.template
+#26 CACHED
+
+#27 [fuente 3/4] COPY deploy/cloud/preparar-fuente.sh /h/preparar-fuente.sh
+#27 CACHED
+
+#28 [installer 4/4] RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"^4.0.0" &&     npm install --omit=dev &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     rm -f ftp/legal.md i18n/*.json &&     rm -rf infrastructure &&     find frontend/src -name '*.spec.ts' -delete
+#28 CACHED
+
+#29 [stage-5  3/11] COPY --from=installer --chown=101:0 /juice-shop /juice-shop
+#29 CACHED
+
+#30 [stage-5  4/11] COPY --from=rasp --chown=101:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
+#30 CACHED
+
+#31 [parches 5/5] RUN bash /h/preparar-fuente.sh python
+#31 CACHED
+
+#32 [rasp 2/3] WORKDIR /rasp
+#32 CACHED
+
+#33 [parches 4/5] COPY app-hardened/patches/v2/correcciones-cierre-tecnico.patch deploy/cloud/preparar-fuente.sh /h/
+#33 CACHED
+
+#34 [stage-5  6/11] COPY --chown=101:0 deploy/hardened/rasp/rasp-guard.js /juice-shop/rasp/rasp-guard.js
+#34 CACHED
+
+#35 [fuente 2/4] COPY app-hardened/patches /h/patches
+#35 CACHED
+
+#36 [stage-5 10/11] COPY deploy/hardened/waf/rules/98-exclusiones-fase6.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-998-EXCLUSIONES-FASE6.conf
+#36 CACHED
+
+#37 [stage-5 11/11] COPY --chmod=755 deploy/cloud/iniciar.sh /usr/local/bin/iniciar.sh
+#37 DONE 0.0s
+
+#38 exporting to image
+#38 exporting layers 0.1s done
+#38 exporting manifest sha256:b925b5e17f08d7bbb8696ba2314af03c45a4ba7021bb53dee44f9e5a7f8c09b6 0.0s done
+#38 exporting config sha256:5ee1d51a4fc078f8b360e4388ac15bc5db03d61c74423fbc02547cfefbf1d01a 0.0s done
+#38 exporting attestation manifest sha256:88d6fdf0c85ea316c58b9a0869116670b0200ea0ac3babfc1e7108d2acd1d039 0.0s done
+#38 exporting manifest list sha256:2e85781188b76c2733f0c7361ce71c4a778b0f1f612547f33a9df20e8c27137d 0.0s done
+#38 naming to docker.io/library/juice-cloud:local
+#38 naming to docker.io/library/juice-cloud:local done
+#38 unpacking to docker.io/library/juice-cloud:local 0.0s done
+#38 DONE 0.4s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/51g9iaykyryeh6izx2hq4rs56
+--- reconstrucción 2026-11-24T00:29:23-06:00 (diagnóstico: tipo PEM sin cabecera literal)
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 5.49kB 0.0s done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#3 DONE 0.2s
+
+#4 [internal] load metadata for docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5
+#4 DONE 0.1s
+
+#5 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#5 DONE 0.1s
+
+#6 [internal] load metadata for docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9
+#6 DONE 0.1s
+
+#7 [internal] load metadata for gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390
+#7 DONE 0.2s
+
+#8 [internal] load .dockerignore
+#8 transferring context: 544B 0.0s done
+#8 DONE 0.0s
+
+#9 [internal] load build context
+#9 transferring context: 7.52kB 0.0s done
+#9 DONE 0.0s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9
+#10 resolve docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9 0.1s done
+#10 DONE 0.1s
+
+#11 [installer 1/4] FROM docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c
+#11 resolve docker.io/library/node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c 0.1s done
+#11 DONE 0.1s
+
+#12 [parches 1/5] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#12 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b 0.1s done
+#12 DONE 0.1s
+
+#13 [node 1/1] FROM gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390
+#13 resolve gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390 0.1s done
+#13 DONE 0.1s
+
+#14 [fuente 1/4] FROM docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496
+#14 resolve docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 0.1s done
+#14 DONE 0.1s
+
+#15 [stage-5  1/11] FROM docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5
+#15 resolve docker.io/owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5 0.1s done
+#15 DONE 0.1s
+
+#16 [parches 2/5] COPY --from=fuente /w /w
+#16 CACHED
+
+#17 [installer 4/4] RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"^4.0.0" &&     npm install --omit=dev &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     rm -f ftp/legal.md i18n/*.json &&     rm -rf infrastructure &&     find frontend/src -name '*.spec.ts' -delete
+#17 CACHED
+
+#18 [stage-5  3/11] COPY --from=installer --chown=101:0 /juice-shop /juice-shop
+#18 CACHED
+
+#19 [rasp 2/3] WORKDIR /rasp
+#19 CACHED
+
+#20 [stage-5  4/11] COPY --from=rasp --chown=101:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
+#20 CACHED
+
+#21 [fuente 2/4] COPY app-hardened/patches /h/patches
+#21 CACHED
+
+#22 [rasp 3/3] RUN npm init -y >/dev/null  && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
+#22 CACHED
+
+#23 [fuente 3/4] COPY deploy/cloud/preparar-fuente.sh /h/preparar-fuente.sh
+#23 CACHED
+
+#24 [stage-5  6/11] COPY --chown=101:0 deploy/hardened/rasp/rasp-guard.js /juice-shop/rasp/rasp-guard.js
+#24 CACHED
+
+#25 [stage-5  8/11] COPY deploy/cloud/acceso.html deploy/cloud/ok.txt /etc/nginx/
+#25 CACHED
+
+#26 [stage-5  7/11] COPY deploy/cloud/default.conf.template /etc/nginx/templates/conf.d/default.conf.template
+#26 CACHED
+
+#27 [installer 2/4] COPY --from=parches /w/src /juice-shop
+#27 CACHED
+
+#28 [stage-5  5/11] COPY --from=parches /w/FUENTE_DIFF_SHA256 /w/APP_COMMIT /juice-shop/.masi/
+#28 CACHED
+
+#29 [parches 5/5] RUN bash /h/preparar-fuente.sh python
+#29 CACHED
+
+#30 [stage-5  9/11] COPY deploy/hardened/waf/rules/99-virtual-patches.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf
+#30 CACHED
+
+#31 [stage-5  2/11] COPY --from=node /nodejs /nodejs
+#31 CACHED
+
+#32 [installer 3/4] WORKDIR /juice-shop
+#32 CACHED
+
+#33 [fuente 4/4] RUN bash /h/preparar-fuente.sh git
+#33 CACHED
+
+#34 [parches 4/5] COPY app-hardened/patches/v2/correcciones-cierre-tecnico.patch deploy/cloud/preparar-fuente.sh /h/
+#34 CACHED
+
+#35 [parches 3/5] COPY app-hardened/aplicar_v2.py app-hardened/aplicar_fase6.py app-hardened/aplicar_cierre_tecnico.py /h/
+#35 CACHED
+
+#36 [stage-5 10/11] COPY deploy/hardened/waf/rules/98-exclusiones-fase6.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-998-EXCLUSIONES-FASE6.conf
+#36 CACHED
+
+#37 [stage-5 11/11] COPY --chmod=755 deploy/cloud/iniciar.sh /usr/local/bin/iniciar.sh
+#37 DONE 0.0s
+
+#38 exporting to image
+#38 exporting layers 0.1s done
+#38 exporting manifest sha256:b2746b586aca99db6bb0b3717d218aa6da35469c6623d81af53ca39f66974c97 0.0s done
+#38 exporting config sha256:71d92809bd9799da8bb2ac028c7cc2a97922b84c15cce6c488e170f7b8deb1e2 0.0s done
+#38 exporting attestation manifest sha256:0b8989062ad5fbedceb85d2c56e5ed5fb8ddc4deddf693f843c6504670a25092 0.0s done
+#38 exporting manifest list sha256:094b20b960bd0a2c203a3bbb180857a996c1535ccd22d327b8f4548adff4ab17 0.0s done
+#38 naming to docker.io/library/juice-cloud:local done
+#38 unpacking to docker.io/library/juice-cloud:local 0.0s done
+#38 DONE 0.3s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/x0vxfaydsajlmho89r9a9usy5

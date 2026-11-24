@@ -49,6 +49,13 @@ sleep 65
 codigos=""; for i in 1 2 3 4 5 6 7; do codigos="$codigos $(c -u "intruso$i:x" "$B/__acceso")"; done
 chk "7 intentos erróneos seguidos (límite 5/min, ráfaga 3)" ".*429.*" "$codigos"
 sleep 65
+if [ "${CHK_XFF:-0}" = 1 ]; then
+  # Solo detrás del balanceador de la plataforma: un X-Forwarded-For distinto en cada intento NO debe saltar el límite
+  # (nginx toma la última dirección, la que añade el balanceador, sin recursión)
+  codigos=""; for i in 1 2 3 4 5 6 7; do codigos="$codigos $(c -H "X-Forwarded-For: 198.51.100.$i" -u "intruso$i:x" "$B/__acceso")"; done
+  chk "7 intentos con X-Forwarded-For falsificado distinto (no salta el límite)" ".*429.*" "$codigos"
+  sleep 65
+fi
 curl -s -D "$TMP/h" -o /dev/null -K "$TMP/cred.cfg" "$B/__acceso"
 chk "/__acceso con credenciales válidas" 200 "$(head -1 "$TMP/h" | awk '{print $2}')"
 SC="$(grep -i '^set-cookie: lab_acceso=' "$TMP/h" | tr -d '\r')"
