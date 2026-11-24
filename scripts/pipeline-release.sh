@@ -20,7 +20,7 @@ docker run --rm -v "$W:/repo" -w /repo zricethezav/gitleaks:v8.30.1 git --config
   --report-format json --report-path "/repo/$OUT/gitleaks.json" /repo > "$OUT/gitleaks.log" 2>&1; echo "  exit=$?"
 echo "[2/5] Hadolint"
 : > "$OUT/hadolint.txt"
-for f in app-hardened/Dockerfile deploy/hardened/Dockerfile.rasp; do
+for f in app-hardened/Dockerfile deploy/hardened/Dockerfile.rasp deploy/cloud/Dockerfile; do
   echo "== $f" >> "$OUT/hadolint.txt"
   docker run --rm -i hadolint/hadolint:v2.15.1 hadolint - < "$f" >> "$OUT/hadolint.txt" 2>&1
 done

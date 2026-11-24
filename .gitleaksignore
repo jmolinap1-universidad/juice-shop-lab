@@ -1,0 +1,4 @@
+# Falsos positivos REVISADOS (uno por línea: huella de Gitleaks). No se añaden secretos reales aquí.
+# 2026-11-24 · curl-auth-user en security/ops/validar-cloud.sh (commit 4401dc4): contraseña ERRÓNEA a propósito
+# ('prueba:incorrecta') para comprobar que un 401 no entrega la cookie de acceso. Desde dc29bd4 la línea lleva gitleaks:allow.
+4401dc4e2b3522cb15f83157a344b4f3d83e6999:security/ops/validar-cloud.sh:curl-auth-user:46

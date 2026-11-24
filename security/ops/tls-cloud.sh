@@ -31,6 +31,7 @@ mkdir -p "$(dirname "$OUT")"
   echo '```'
   echo ""
   echo "## Redirección HTTP → HTTPS"
-  echo "- \`http://$H/\` → $(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 30 "http://$H/")"
+  echo "- \`http://$H/\` → $(curl -s -o /dev/null -D - --max-time 30 "http://$H/" | grep -iE '^(HTTP|location)' | tr -d '\r' | tr '\n' ' ')"
+  echo "- HSTS en HTTPS: $(curl -s -o /dev/null -D - --max-time 30 "https://$H/healthz" | grep -i '^strict-transport-security' | tr -d '\r')"
 } > "$OUT"
 cat "$OUT"

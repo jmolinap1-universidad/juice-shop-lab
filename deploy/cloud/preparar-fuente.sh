@@ -47,6 +47,16 @@ case "${1:-}" in
     if cmp -s "$GEN" "$H/correcciones-cierre-tecnico.patch" && [ "$CAMBIADOS" = 21 ]; then
       sha256sum "$GEN" | cut -c1-64 > "$W/FUENTE_DIFF_SHA256"
       echo "ok  fuente = diff auditado (sha256 $(cat "$W/FUENTE_DIFF_SHA256")), 21 archivos; variante corregida-cierre-tecnico"
+      # Mismas exclusiones que el .dockerignore del propio Juice Shop (la construcción local lo aplica por usar src/ como
+      # contexto; aquí la fuente pasa entre etapas con COPY --from, que lo ignora). Sin esto entraban terraform/ (con una
+      # clave privada de ejemplo que Trivy detecta como secreto), test/, cypress/, etc. Patrones simples, sin comodines.
+      n=0
+      while IFS= read -r p; do
+        p="${p%%#*}"; p="${p#/}"; p="${p%/}"
+        case "$p" in ""|*[\*\?\[]*) continue ;; esac
+        if [ -e "$W/src/$p" ]; then rm -rf "${W:?}/src/$p"; n=$((n+1)); fi
+      done < "$W/src/.dockerignore"
+      echo "ok  exclusiones del .dockerignore de Juice Shop aplicadas: $n rutas"
     else
       echo "FALLO: la fuente no coincide con el diff auditado ($CAMBIADOS archivos distintos)"; diff "$GEN" "$H/correcciones-cierre-tecnico.patch" | head -20; exit 1
     fi ;;

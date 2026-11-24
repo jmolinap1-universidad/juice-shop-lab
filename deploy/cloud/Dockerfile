@@ -45,7 +45,15 @@ RUN npm init -y >/dev/null \
 FROM gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390 AS node
 
 # ---- 6) Imagen final: WAF oficial (Debian 13, usuario nginx) + Node + app ----
-FROM owasp/modsecurity-crs@sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5
+# 2026-11-24: base 4.25.2-nginx-202611190211-lts (misma versión de CRS, Debian 13.7 más reciente: corrige brotli CRITICAL,
+# apt y zlib). Anterior: sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5 (202610180210).
+FROM owasp/modsecurity-crs@sha256:98d448750b86f5f94ca570590dd1461e3ab24efc97e7c41b271a55ac33b331fe
+# Parches de seguridad de Debian publicados después de la base (p. ej. krb5 deb13u2), en la misma capa que limpia las listas.
+# Hallazgo del escaneo de la imagen cloud (2026-11-24): con la base sola quedaban 60 CRITICAL/HIGH con corrección disponible.
+# Contrapartida: la capa depende del día de construcción (la base sí está fijada por digest); se documenta en la evidencia.
+USER 0
+# hadolint ignore=DL3005
+RUN apt-get update && apt-get -y --no-install-recommends upgrade && apt-get clean && rm -rf /var/lib/apt/lists/*
 LABEL org.opencontainers.image.title="OWASP Juice Shop corregido + WAF + RASP (cloud)" \
       org.opencontainers.image.version="20.3.0-corregida-cierre-tecnico" \
       org.opencontainers.image.vendor="MASI-UMG-2026" \

@@ -1,0 +1,1 @@
+sha256:75b91b779076bf889156fbe2ece67dfe13adce2716124b777ebc70c1a524ff69 corregida-cierre-tecnico+rasp+waf-cloud

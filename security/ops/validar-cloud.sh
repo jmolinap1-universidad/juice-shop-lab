@@ -73,7 +73,9 @@ curl -s -D "$TMP/h2" -o /dev/null "$B/"
 for h in Content-Security-Policy Strict-Transport-Security X-Content-Type-Options X-Frame-Options Referrer-Policy X-Robots-Tag; do
   chk "Cabecera $h" 1 "$(grep -ci "^$h:" "$TMP/h2")"
 done
-chk "Server sin versión" "Server: waf" "$(grep -i '^server:' "$TMP/h2" | tr -d '\r')"
+# Sin versión: en local nginx responde "waf"; detrás de Render, Cloudflare reescribe la cabecera ("cloudflare"),
+# hallado en la primera validación cloud (el criterio anterior exigía literalmente "Server: waf")
+chk "Server sin versión" "[Ss]erver: [A-Za-z-]+" "$(grep -i '^server:' "$TMP/h2" | tr -d '\r')"
 chk "Ruta sensible /ftp con cookie" 403 "$(c "$B/ftp/")"
 chk "/metrics con cookie" 403 "$(c "$B/metrics")"
 chk "SQLi en login (WAF)" 403 "$(c -X POST -H 'Content-Type: application/json' -d "{\"email\":\"' OR 1=1--\",\"password\":\"x\"}" "$B/rest/user/login")"

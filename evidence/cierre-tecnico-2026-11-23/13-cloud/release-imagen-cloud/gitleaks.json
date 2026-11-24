@@ -1,0 +1,23 @@
+[
+ {
+  "RuleID": "curl-auth-user",
+  "Description": "Discovered a potential basic authorization token provided in a curl command, which could compromise the curl accessed resource.",
+  "StartLine": 46,
+  "EndLine": 47,
+  "StartColumn": 52,
+  "EndColumn": 108,
+  "Match": "curl -s -o /dev/null -D - \"$B/__acceso\" | grep -ci '^set-cookie: lab_acceso')\"\nchk \"401 con contraseña errónea no entrega cookie\" 0 \"$(curl -s -o /dev/null -D - -u REDACTED ",
+  "Secret": "REDACTED",
+  "File": "security/ops/validar-cloud.sh",
+  "SymlinkFile": "",
+  "Commit": "4401dc4e2b3522cb15f83157a344b4f3d83e6999",
+  "Link": "https://github.com/jmolinap1-universidad/juice-shop-lab/blob/4401dc4e2b3522cb15f83157a344b4f3d83e6999/security/ops/validar-cloud.sh#L46-L47",
+  "Entropy": 3.5766177,
+  "Author": "Juan Carlos Molina Pérez",
+  "Email": "sinformatica92@gmail.com",
+  "Date": "2026-11-24T05:44:30Z",
+  "Message": "Puerta cloud: la cookie de acceso ya no viaja en el 401 (omision de autenticacion)\n\nadd_header ... always enviaba la cookie valida tambien en las respuestas 401 de /__acceso: cualquiera entraba\nsin credenciales. Hallado en la validacion local (los logs de auditoria mostraban Set-Cookie en 401).\nvalidar-cloud.sh comprueba ahora que un 401 no entrega cookie. recorrido-frontend.sh anade la cookie de\nacceso opcional (LAB_ACCESO) a su propia cabecera Cookie.\n\nCo-Authored-By: Claude Opus 5.5 \u003cnoreply@anthropic.com\u003e",
+  "Tags": [],
+  "Fingerprint": "4401dc4e2b3522cb15f83157a344b4f3d83e6999:security/ops/validar-cloud.sh:curl-auth-user:46"
+ }
+]
