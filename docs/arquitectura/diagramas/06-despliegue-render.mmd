@@ -1,0 +1,9 @@
+flowchart TB
+  A["1. Código en GitHub (rama main)<br/>variante corregida, deploy/cloud/Dockerfile, render.yaml"] --> B["2. Puerta de release<br/>local y en GitHub Actions (release.yml)<br/>Gitleaks · Hadolint · Semgrep · Trivy → APTA"]
+  B --> C["3. Blueprint render.yaml validado<br/>esquema oficial + política propia (15/15)"]
+  C --> D["4. Render crea los recursos desde el Blueprint<br/>servicio web Docker (free) + PostgreSQL 17 (free, sin acceso externo)"]
+  D --> E["5. El equipo configura los secretos en Render<br/>usuarios de la puerta (hash bcrypt, sync: false)<br/>DATABASE_URL por referencia"]
+  E --> F["6. Manual Deploy (despliegue automático desactivado)<br/>Render construye la imagen y verifica la fuente<br/>contra el diff auditado (22 archivos)"]
+  F --> G["7. Arranque: clave JWT generada en el contenedor<br/>chequeo de salud /healthz"]
+  G --> H["8. Verificación en la nube<br/>TLS, puerta 28/28, regresión 15/15, recorrido 35/35,<br/>A1-A12, BOLA, T1-T10, 2FA"]
+  H --> I["9. Operación<br/>colector SIEM (API de solo lectura) y alertas cloud"]

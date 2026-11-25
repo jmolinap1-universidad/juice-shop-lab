@@ -1,4 +1,4 @@
-b67f655dac6e28f39f7f11bcf03505e2006cfdcc25950cda2e9a31869483a632 *./bitacora.md
+424e7c5d8a72d8f98a78dac9ad95c3dcf487e6e5f95723e18f4a8243b31509a0 *./bitacora.md
 488de7ae3563a1cd2c9a58b34cd5a0847c41198d49d313a27dd595a68ac90971 *./cierre-2026-11-20/01-build/build-dockerfile-fase5-sin-cambios.log
 e46c0e55d5f600d24f56e45cfef75c17f90f35fd0ae9ce7427ddae0cce53f4af *./cierre-2026-11-20/01-build/build-variante-corregida.log
 6e7517d5ef81be6e142cc0691194144a8a696fcf4a850c3976ded0051d837607 *./cierre-2026-11-20/02-escaneos/hadolint.txt
@@ -938,7 +938,7 @@ b71424c9fe183312a026b0409ae4c2c62fedfdc9475820c14101a2912e074b7a *./fase-1/captu
 318602b1af33e33b81e2418de58430b1ec98333c15f9e4c929de1b671dda83d1 *./fase-1/capturas/threat-dragon-2026-11-25/prueba-negativa.md
 95767dcef8518633fca89115fc4fb1add26732399fa09e7bc0af9c0b4ba9f8c6 *./fase-1/capturas/threat-dragon-2026-11-25/threat-dragon-navegador.md
 cc1367ca21fac26611b50e7f0a84d46a044ca08c693eccd7d22c84c39554a1fe *./fase-1/capturas/threat-dragon-2026-11-25/validacion-esquema.md
-a7c6707c7a9f9d1f199bb1d36778c6517d51d2f882863b22a88b6cf81a3a52b2 *./fase-2/LEAME.md
+9ab7af14321fcb83f96a46fa2e7f48a29b43f7c98a011822c44a877b2626d46c *./fase-2/LEAME.md
 7d58308d4349f722860b6ad86226de34c96c1f71f8b1ba9da5d261893bcc452d *./fase-2/capturas/diagramas/01-stack-local.png
 8d43c5bfe5dd001090af15b38f7a663118abcd0018cdb210960a359fbad98142 *./fase-2/capturas/diagramas/02-render-real.png
 c58215ed9851b94dc93eb223f059744f90c4a1157aa3edcd78004f2fd06d16bb *./fase-2/capturas/diagramas/03-aws-objetivo.png
@@ -965,3 +965,11 @@ ed578042b19b51a8040704289489d00d71124081297c65f16c06db5b48b98328 *./fase-4/captu
 7bf3a63fa260d53e36c12905ff4c00b0f2e4e36ea6e09a37ace2945b2808458b *./fase-4/capturas/07-zap-alertas.jpg
 e6acca7b87950fb9766a7299511cd0911df1a8a7f49d37519d4f3bdbb178fbb8 *./fase-6/capturas/grafana-2026-11-25/01-grafana-siem-24h-paneles.png
 bd5a5fa27a67316a96085f306ce8f7838f8f40c1c62c2c20ec0bdb0b9834613a *./fase-6/capturas/grafana-2026-11-25/capturas.md
+127a9328d67b93392bf6b7f77b3506258ea9e32bcafa6b5a972793a2fdb7abb4 *./fase-2/capturas/diagramas/06-despliegue-render.png
+aa1dfe7c2f0c53f338dfc54cdbdccea2e3ef38867671bc843a1848ff2b831fd8 *./fase-2/capturas/repositorio-2026-11-25/01-repositorio-inicio.png
+1d9f5cd2a8d5ead47a2e3fc481468d857837cce6f3373238cdc591e82338c2f3 *./fase-2/capturas/repositorio-2026-11-25/02-repositorio-evidencias.png
+497fdc0bdad3c2f3eabe37d6a4e891cfadee3d9f4093defa34c45d54c3330c83 *./fase-2/capturas/repositorio-2026-11-25/capturas.md
+84bf890a2c5109d2040a2e450e89926bde423d45de4120313fdd2f885cd71673 *./fase-2/capturas/sitio-render-2026-11-25/01-sitio-tienda.png
+5dbbe03c317bd24ef3e572a64ee16e8eb7c005ef9cc594f0224f0aee29cb071e *./fase-2/capturas/sitio-render-2026-11-25/02-sitio-busqueda.png
+ce1dc4960858f93ff671375a337625652e6edf8157c14ab04c67871f3bd4d274 *./fase-2/capturas/sitio-render-2026-11-25/03-sitio-login.png
+b549fb2e288e70d0b3a7dcff77b9be36e95a4c8aac4eb6dc4afa986ad56f9d0f *./fase-2/capturas/sitio-render-2026-11-25/capturas.md
