@@ -49,6 +49,8 @@ y en `infra/terraform/` (AWS, solo `plan`). Lo desplegado no lo sustituye: se in
 | BD administrada | `DATABASE_URL` de Render | La app usa PostgreSQL (parche 13); `ipAllowList: []` (sin acceso externo) |
 | SIEM | Eventos cloud en Loki | Ingesta AUTOMÁTICA y autenticada (colector + API de Render): 48 s extremo a extremo, 0 secretos; T5/T7 verificados desde el SIEM |
 | Funcionalidad en tiempo real | socket.io (POST text/plain) | 200 tras EX-2 (antes 403 por la regla 920420) |
+| Alertas de la nube | 6 reglas `entorno="cloud"` en Loki → Alertmanager | SQLi, credenciales fallidas y límite en la puerta: FIRING ~1 min después del evento; colector caído: FIRING a los 78 s (`13-alertas-cloud/`) |
+| 2FA de la app | TOTP con pyotp, cuenta sintética | 13/13: la contraseña sola no da sesión; código erróneo y tmpToken forjado → 401. Se desactiva solo con la contraseña (observación, R16) (`12-2fa/render.md`) |
 
 ## 4. Puerta de release sobre la imagen cloud (hallazgo del 2026-11-24)
 La puerta (`scripts/pipeline-release.sh`, política `security/release/politica-release.json`) solo se había aplicado a la imagen de

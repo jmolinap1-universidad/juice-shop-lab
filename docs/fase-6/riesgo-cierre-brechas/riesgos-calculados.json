@@ -906,8 +906,8 @@
       "decision_sec_estado": "",
       "responsable": "Operaciones de seguridad (WAF)",
       "revision": "Si se publica detrás de un balanceador (revisar la IP de cliente usada por limit_req)",
-      "pendiente": "Limitación por cuenta además de por IP (ataques distribuidos no probados)",
-      "nota": "",
+      "pendiente": "Limitación por cuenta además de por IP (ataques distribuidos no probados); la 2FA es opcional por usuario y se DESACTIVA con la contraseña sin pedir el segundo factor (debilidad de diseño de Juice Shop hallada en la prueba, no corregida: exige cambiar backend y frontend)",
+      "nota": "La 2FA no reduce el residual: es opcional y no protege a las cuentas que no la activan, que son todas las sembradas.",
       "controles": [
         {
           "control": "Rate limiting nginx 5/min por IP, ráfaga 3 (HTTP 429)",
@@ -929,6 +929,13 @@
           "estado": "verificado",
           "verificacion": "probado",
           "evidencia": "evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md"
+        },
+        {
+          "control": "2FA (TOTP) de Juice Shop probada en local y en Render (13/13): con la 2FA activa la contraseña sola no da sesión (401 totp_token_required); código erróneo y tmpToken forjado (alg none) → 401",
+          "tipo": "preventivo",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-brechas-2026-11-24/12-2fa/render.md"
         }
       ],
       "aceptacion": null,
@@ -1062,8 +1069,8 @@
       "decision_sec_estado": "Planificado",
       "responsable": "Monitoreo (SIEM)",
       "revision": "Al añadir notificaciones y monitorear la propia ingesta",
-      "pendiente": "Alertas sobre eventos cloud con umbral propio; el colector depende del equipo local (sin servicio 24/7)",
-      "nota": "",
+      "pendiente": "Monitoreo cloud 24/7: el colector depende del equipo local (un servicio permanente tendría costo); las reglas de RASP y de arranque fallido en la nube están cargadas pero no se provocaron",
+      "nota": "La detección y las alertas no reducen el residual (regla del registro): R19 se mantiene 2×4.",
       "controles": [
         {
           "control": "SIEM: Alloy -> Loki -> Grafana; 3 fuentes ingestadas y 7 reglas (6 disparadas en las pruebas)",
@@ -1092,6 +1099,13 @@
           "estado": "verificado",
           "verificacion": "probado",
           "evidencia": "evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md"
+        },
+        {
+          "control": "Alertas propias de la nube (6 reglas, entorno=cloud): SQLi bloqueada, credenciales fallidas y límite en la puerta, RASP, arranque fallido y salud del colector; 4 disparadas extremo a extremo contra Render (~1 min) sin disparar reglas locales; reglas locales acotadas a entorno=local",
+          "tipo": "deteccion",
+          "estado": "verificado",
+          "verificacion": "probado",
+          "evidencia": "evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md"
         }
       ],
       "aceptacion": null,

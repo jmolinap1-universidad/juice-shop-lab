@@ -72,13 +72,20 @@ DELTA = {
     "R19": ([
         c("Centralización AUTOMÁTICA y AUTENTICADA de eventos cloud: colector de la API de Render (HTTPS + clave de solo lectura) → Loki con entorno=cloud, redacción y cursor; prueba extremo a extremo con marca",
           "deteccion", "verificado", "probado", f"{EV}/06-siem-render/extremo-a-extremo.md"),
+        c("Alertas propias de la nube (6 reglas, entorno=cloud): SQLi bloqueada, credenciales fallidas y límite en la puerta, RASP, arranque fallido y salud del colector; 4 disparadas extremo a extremo contra Render (~1 min) sin disparar reglas locales; reglas locales acotadas a entorno=local",
+          "deteccion", "verificado", "probado", f"{EV}/13-alertas-cloud/LEAME.md"),
      ],
      {"estado_tratamiento": "Ejecutado parcialmente",
-      "pendiente": "Alertas sobre eventos cloud con umbral propio; el colector depende del equipo local (sin servicio 24/7)"}),
+      "pendiente": "Monitoreo cloud 24/7: el colector depende del equipo local (un servicio permanente tendría costo); las reglas de RASP y de arranque fallido en la nube están cargadas pero no se provocaron",
+      "nota": "La detección y las alertas no reducen el residual (regla del registro): R19 se mantiene 2×4."}),
     "R16": ([
         c("Límite de intentos en la nube: 429 al 5.º intento, también con X-Forwarded-For falsificado distinto en cada petición",
           "preventivo", "verificado", "probado", f"{NUBE}/baterias/puerta-acceso.md"),
-     ], {}),
+        c("2FA (TOTP) de Juice Shop probada en local y en Render (13/13): con la 2FA activa la contraseña sola no da sesión (401 totp_token_required); código erróneo y tmpToken forjado (alg none) → 401",
+          "preventivo", "verificado", "probado", f"{EV}/12-2fa/render.md"),
+     ],
+     {"pendiente": "Limitación por cuenta además de por IP (ataques distribuidos no probados); la 2FA es opcional por usuario y se DESACTIVA con la contraseña sin pedir el segundo factor (debilidad de diseño de Juice Shop hallada en la prueba, no corregida: exige cambiar backend y frontend)",
+      "nota": "La 2FA no reduce el residual: es opcional y no protege a las cuentas que no la activan, que son todas las sembradas."}),
     "R03": ([
         c("En la nube la clave JWT la genera el contenedor en cada arranque (nadie la copia ni la pega; falla cerrada si no se activa): 5 casos de arranque",
           "preventivo", "verificado", "probado", "evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md"),

@@ -1,5 +1,5 @@
 # Validación de consistencia del registro de riesgos (generado por riesgo.py)
-# 378 comprobaciones, 0 fallas
+# 382 comprobaciones, 0 fallas
 OK   V1 24 riesgos con ID único R01-R24
 OK   V2 R01 P/I en escala 1-5
 OK   V3 R01 residual no mayor que inherente
@@ -240,6 +240,8 @@ OK   V11 R16 evidencia existe: evidence/fase-6/validacion-2026-11-10/03-waf-rasp
 OK   V12 R16 coherencia estado/verificación del control
 OK   V11 R16 evidencia existe: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md
 OK   V12 R16 coherencia estado/verificación del control
+OK   V11 R16 evidencia existe: evidence/cierre-brechas-2026-11-24/12-2fa/render.md
+OK   V12 R16 coherencia estado/verificación del control
 OK   V13 R16 plan: responsable, revisión y pendiente
 OK   V14 R16 tipo e impactos válidos
 OK   V2 R17 P/I en escala 1-5
@@ -279,6 +281,8 @@ OK   V12 R19 coherencia estado/verificación del control
 OK   V11 R19 evidencia existe: evidence/fase-6/cierre-final-2026-11-21/10-siem/hallazgo-perdida-ingesta.txt
 OK   V12 R19 coherencia estado/verificación del control
 OK   V11 R19 evidencia existe: evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md
+OK   V12 R19 coherencia estado/verificación del control
+OK   V11 R19 evidencia existe: evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md
 OK   V12 R19 coherencia estado/verificación del control
 OK   V13 R19 plan: responsable, revisión y pendiente
 OK   V14 R19 tipo e impactos válidos

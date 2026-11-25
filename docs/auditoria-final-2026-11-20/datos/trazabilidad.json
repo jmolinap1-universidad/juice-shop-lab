@@ -460,8 +460,8 @@
         6
       ],
       "riesgo": "R19",
-      "control": "Colector automático y autenticado (API de Render) → Loki con entorno=cloud; latencia medida 48 s",
-      "evidencia": "evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md"
+      "control": "Colector automático y autenticado (API de Render) → Loki con entorno=cloud; latencia medida 48 s; 6 alertas propias de la nube (4 disparadas extremo a extremo, ~1 min) y alerta de salud del colector",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md"
     },
     {
       "id": "TC10",

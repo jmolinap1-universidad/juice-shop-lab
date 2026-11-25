@@ -29,7 +29,8 @@ En Windows sin `make`: ejecutar los scripts equivalentes desde Git Bash (ver `do
 (matriz de las seis fases), `docs/fase-6/riesgo-cierre-brechas/` (registro y heatmaps), `docs/cierre-tecnico/REQUISITOS_CLOUD_DISENO_VS_IMPLEMENTADO.md`
 y `TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md`. **Despliegue cloud real:** Render, capa gratuita, acceso restringido —
 `docs/cierre-tecnico/DESPLIEGUE_CLOUD_RENDER.md` (Blueprint `render.yaml` desde `main`, imagen Alpine `deploy/cloud/`).
-Nuevos atajos: `make release-cloud`, `make iac-render`, `make xss-navegador`, `make colector-render`, `make risk-cierre-brechas`, `make trazabilidad`.
+Nuevos atajos: `make release-cloud`, `make iac-render`, `make xss-navegador`, `make colector-render`, `make risk-cierre-brechas`, `make trazabilidad`,
+`make threat-dragon` (DFD en Threat Dragon: `docs/fase-1/threat-dragon/juice-shop-lab.json`), `make prueba-2fa`.
 Plan original de Seenode: `docs/cierre-tecnico/PLAN_DESPLIEGUE_SEENODE.md`.
 
 Ver `CLAUDE.md` (reglas), `PROGRESO.md`, `DECISIONES.md` y `docs/` (entregables por fase).

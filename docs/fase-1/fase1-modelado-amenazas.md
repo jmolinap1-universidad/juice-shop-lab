@@ -43,8 +43,9 @@ Escala: Alta=3, Media=2, Baja=1. Criticidad = C+I+D (9 crítica · 7-8 alta · 5
 | A16 | Disponibilidad del servicio web (tienda) | Express `server.ts:768-773` | 1 | 2 | 3 | 6 | Media |
 
 ## 3. Diagrama de flujo de datos (DFD nivel 1)
-**[V]** Derivado del código. **[P]** Versión en OWASP Threat Dragon (`docs/fase-1/dfd-juice-shop.json`) pendiente de dibujo por el
-equipo (Threat Dragon está instalado en el equipo; la herramienta es gráfica).
+**[V]** Derivado del código. **[V]** Versión en OWASP Threat Dragon v2 (2026-11-25): `docs/fase-1/threat-dragon/juice-shop-lab.json`,
+generada desde estas tablas (`make threat-dragon`), validada con el esquema oficial y abierta en Threat Dragon v2.6.2
+(`evidence/cierre-brechas-2026-11-24/14-threat-dragon/`). Incluye un segundo diagrama con el despliegue real en Render.
 
 ```mermaid
 flowchart LR

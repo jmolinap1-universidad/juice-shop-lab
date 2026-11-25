@@ -83,7 +83,7 @@ discovery.relabel "contenedores" {
   rule {
     source_labels = ["container"]
     // siem-notificador (cierre técnico): las notificaciones de Alertmanager quedan auditadas en el SIEM
-    regex         = "juice-hardened|juice-waf|siem-notificador"
+    regex         = "juice-hardened|juice-waf|siem-notificador|siem-colector-render"
     action        = "keep"
   }
 }

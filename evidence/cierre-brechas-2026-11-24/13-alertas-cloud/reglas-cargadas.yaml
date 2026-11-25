@@ -1,0 +1,150 @@
+alertas.yaml:
+    - name: juice-shop-seguridad
+      interval: 15s
+      rules:
+        - alert: WAF_InyeccionSQL_Bloqueada
+          expr: sum(count_over_time({entorno="local", job="waf_audit"} |= "\"ruleId\":\"942" [5m])) > 0
+          labels:
+            fuente: waf
+            owasp: A05:2025
+            riesgo: R01,R02
+            severity: high
+          annotations:
+            summary: El WAF bloqueó intentos de inyección SQL (familia CRS 942xxx)
+        - alert: WAF_ParcheVirtual_Activado
+          expr: sum(count_over_time({entorno="local", job="waf_audit"} |~ "\"ruleId\":\"10000[0-9]\"" [5m])) > 0
+          labels:
+            fuente: waf
+            owasp: A01/A02:2025
+            riesgo: R07,R17
+            severity: high
+          annotations:
+            summary: Se activó un parche virtual propio (100001 asignación masiva / 100002 /metrics)
+        - alert: Login_FuerzaBruta_RateLimit
+          expr: sum(count_over_time({entorno="local", job="waf_access", status="429"} [5m])) >= 3
+          labels:
+            fuente: waf
+            owasp: A07:2025
+            riesgo: R16
+            severity: medium
+          annotations:
+            summary: Ráfaga de intentos de login frenada por limitación de tasa (HTTP 429)
+        - alert: Acceso_Rutas_Sensibles_Denegado
+          expr: sum(count_over_time({entorno="local", job="waf_access", status="403"} | json | uri=~"/(ftp|encryptionkeys|metrics|support/logs).*" [5m])) > 0
+          labels:
+            fuente: waf
+            owasp: A02:2025
+            riesgo: R12,R17
+            severity: medium
+          annotations:
+            summary: Intentos de acceso a rutas sensibles bloqueadas (listados, /metrics, claves)
+        - alert: API_Enumeracion_Objetos_PosibleBOLA
+          expr: count(sum by (uri) (count_over_time({entorno="local", job="waf_access", status="200"} | json | uri=~"/rest/basket/[0-9]+" [5m]))) >= 2
+          labels:
+            fuente: api-monitoring
+            owasp: A01:2025 / API1:2023
+            riesgo: R06
+            severity: info
+            tipo: indicador-investigacion
+          annotations:
+            summary: Varias cestas distintas leídas en 5 min. Indicador de investigación (falsos positivos con varios usuarios legítimos); no confirma BOLA
+        - alert: API_BOLA_AccesoAjenoDenegado
+          expr: sum(count_over_time({entorno="local", job="waf_access", status="403"} | json | uri=~"/(rest/basket|api/BasketItems|api/Addresss|api/Cards|api/Feedbacks)/[0-9]+" [5m])) > 0
+          labels:
+            fuente: api-monitoring
+            owasp: A01:2025 / API1:2023
+            riesgo: R06
+            severity: high
+          annotations:
+            summary: Intento de acceso a un objeto de otra cuenta denegado (403) en cestas, artículos, direcciones, tarjetas u opiniones
+        - alert: Ingesta_WAF_Ausente
+          expr: absent_over_time({entorno="local", job="waf_access"}[2m])
+          for: 1m
+          labels:
+            fuente: siem
+            owasp: A09:2025
+            riesgo: R19,R24
+            severity: high
+          annotations:
+            summary: No llegan registros de acceso del WAF a Loki desde hace más de 2 min (WAF, Alloy o Loki caídos)
+        - alert: RASP_Ataque_Detectado
+          expr: sum(count_over_time({entorno="local", job="docker", container="juice-hardened"} |~ "^Zen has (blocked|detected)" [5m])) > 0
+          labels:
+            fuente: rasp
+            owasp: A05:2025
+            riesgo: R01,R02
+            severity: critical
+          annotations:
+            summary: El RASP (Aikido Zen) detectó o bloqueó un ataque dentro de la aplicación
+        - alert: App_Errores_5xx
+          expr: sum(count_over_time({entorno="local", job="waf_access"} | json | status=~"5.." [5m])) > 5
+          labels:
+            fuente: api-monitoring
+            owasp: A10:2025
+            riesgo: R18
+            severity: medium
+          annotations:
+            summary: Tasa anómala de errores 5xx (posibles condiciones excepcionales mal gestionadas)
+    - name: juice-shop-nube-render
+      interval: 15s
+      rules:
+        - alert: Nube_WAF_InyeccionSQL_Bloqueada
+          expr: sum(count_over_time({entorno="cloud", job="waf_audit"} |= "\"ruleId\":\"942" [5m])) > 0
+          labels:
+            entorno: cloud
+            fuente: waf-cloud
+            owasp: A05:2025
+            riesgo: R01,R02,R21
+            severity: high
+          annotations:
+            summary: El WAF de Render bloqueó inyección SQL (CRS 942xxx)
+        - alert: Nube_Puerta_CredencialesFallidas
+          expr: sum(count_over_time({entorno="cloud", job="waf_access", status="401"} | json | uri="/__acceso" [5m])) >= 5
+          labels:
+            entorno: cloud
+            fuente: puerta-cloud
+            owasp: A07:2025
+            riesgo: R16,R21
+            severity: medium
+          annotations:
+            summary: 5 o más credenciales erróneas en la puerta de acceso de la nube en 5 min
+        - alert: Nube_Puerta_FuerzaBruta_RateLimit
+          expr: sum(count_over_time({entorno="cloud", job="waf_access", status="429"} [5m])) >= 3
+          labels:
+            entorno: cloud
+            fuente: puerta-cloud
+            owasp: A07:2025
+            riesgo: R16,R21
+            severity: high
+          annotations:
+            summary: Ráfaga frenada por el límite de intentos en la nube (HTTP 429)
+        - alert: Nube_RASP_Ataque_Detectado
+          expr: sum(count_over_time({entorno="cloud", job="docker"} |~ "Zen has (blocked|detected)" [5m])) > 0
+          labels:
+            entorno: cloud
+            fuente: rasp-cloud
+            owasp: A05:2025
+            riesgo: R01,R02
+            severity: critical
+          annotations:
+            summary: El RASP del contenedor de Render detectó o bloqueó un ataque
+        - alert: Nube_Arranque_Fallido
+          expr: sum(count_over_time({entorno="cloud", job="docker"} |~ "FALLO (app|clave JWT|acceso)" [10m])) > 0
+          labels:
+            entorno: cloud
+            fuente: plataforma-cloud
+            owasp: A05:2025
+            riesgo: R21,R03
+            severity: high
+          annotations:
+            summary: El contenedor de Render informa un fallo de arranque (app, clave JWT o puerta)
+        - alert: Colector_Render_Fallando
+          expr: sum(count_over_time({entorno="local", job="docker", container="siem-colector-render"} |= "ERROR" [10m])) >= 3
+          labels:
+            entorno: local
+            fuente: siem
+            owasp: A09:2025
+            riesgo: R19
+            severity: high
+          annotations:
+            summary: 'El colector de Render acumula errores (clave, API o Loki): la centralización cloud está interrumpida'

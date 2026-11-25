@@ -9,7 +9,7 @@ Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y
 - 2026-11-03 Etapa 1: estructura del repo; Juice Shop como submódulo `app/` en v20.3.0 (f189f521);
   laboratorio `deploy/lab` solo en 127.0.0.1:3000 (verificado HTTP 200). Pipeline `.github/workflows/devsecops.yml`.
 - 2026-11-03 Fase 1: `docs/fase-1/fase1-modelado-amenazas.md` (16 activos CIA, DFD Mermaid, 20 amenazas STRIDE
-  con referencias a código, DREAD, 7 capas, trazabilidad ASVS). DFD en Threat Dragon: pendiente (equipo).
+  con referencias a código, DREAD, 7 capas, trazabilidad ASVS). DFD en Threat Dragon: hecho el 2026-11-25 (`docs/fase-1/threat-dragon/`).
 - 2026-11-03 Fase 2: Terraform AWS (VPC, ALB TLS 1.3, WAFv2, ECS Fargate privado, KMS, IAM mínimo, logs).
   validate OK, plan offline 45 recursos; Checkov 142/7 → 144/0 (5 omisiones justificadas).
 - 2026-11-03 Fase 3 (local): Semgrep 90 hallazgos; Gitleaks 0; npm audit 40 (7 críticas, 20 altas);
@@ -109,4 +109,4 @@ Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y
   costos** (solo validación estática Checkov + plan offline). BD administrada (SQLite, no RDS). SIEM/monitoreo
   cloud (el SIEM local de la Fase 6 es de un solo nodo).
 - ~~Recompilar `app-hardened` con los 8 parches y medir residual sin WAF~~ (hecho el 2026-11-21); actualizar dependencias con CVE (pendiente).
-- Equipo: DFD en Threat Dragon, confirmación IDs ASVS 5.0.0, capturas manuales con Burp, logo UMG en portada.
+- Equipo: ~~DFD en Threat Dragon~~ (generado y validado el 2026-11-25; falta la revisión del equipo), confirmación IDs ASVS 5.0.0, capturas manuales con Burp, logo UMG en portada.

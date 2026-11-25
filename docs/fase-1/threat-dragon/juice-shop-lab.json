@@ -1,0 +1,4036 @@
+{
+  "version": "2.6.2",
+  "summary": {
+    "title": "Laboratorio AppSec — OWASP Juice Shop (MASI-UMG 2026)",
+    "owner": "Equipo del proyecto",
+    "description": "DFD y amenazas STRIDE del laboratorio: aplicación (Fase 1, variante corregida con defensa) y despliegue real en Render. Generado por security/threat-dragon/generar_modelo_td.py desde los datos versionados; no editar a mano sin regenerar.",
+    "id": 0
+  },
+  "detail": {
+    "contributors": [
+      {
+        "name": "Molina Pérez Juan Carlos"
+      },
+      {
+        "name": "Sánchez Flores Juan Walter Ernesto"
+      },
+      {
+        "name": "García Gonzalez Leopoldo Emanuel"
+      },
+      {
+        "name": "Cambara Castillo Vanessa Odeth"
+      }
+    ],
+    "diagrams": [
+      {
+        "version": "2.6.2",
+        "title": "Aplicación — DFD de la Fase 1 (variante corregida)",
+        "description": "Límites TB0 (Internet ↔ contenedores), TB1 (proceso ↔ almacenamiento) y TB2 (recurso remoto).",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "diagramType": "STRIDE",
+        "id": 0,
+        "cells": [
+          {
+            "position": {
+              "x": 200,
+              "y": 0
+            },
+            "size": {
+              "width": 760,
+              "height": 810
+            },
+            "attrs": {
+              "label": {
+                "text": "TB0 · Internet ↔ contenedores (WAF + Juice Shop corregido)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 3,
+                "strokeDasharray": "10 5"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "zIndex": -50,
+            "id": "8358c7aa-da7e-5c6b-845c-937c23e118b6",
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB0 · Internet ↔ contenedores (WAF + Juice Shop corregido)",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 1000,
+              "y": 40
+            },
+            "size": {
+              "width": 250,
+              "height": 600
+            },
+            "attrs": {
+              "label": {
+                "text": "TB1 · proceso ↔ almacenamiento"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 3,
+                "strokeDasharray": "10 5"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "zIndex": -50,
+            "id": "68df8bbb-68c6-5187-bb7d-794476074f20",
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "TB1 · proceso ↔ almacenamiento",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 1300,
+              "y": 110
+            },
+            "size": {
+              "width": 250,
+              "height": 110
+            },
+            "attrs": {
+              "text": {
+                "text": "DFD de la Fase 1 actualizado\n(variante corregida, parches 01-14,\ncon WAF, RASP y SIEM).\nAmenazas T01-T20; estado según\nel residual vigente."
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "zIndex": 11,
+            "id": "f55f9ca8-5df6-5527-9189-9282603562d2",
+            "data": {
+              "type": "tm.Text",
+              "name": "DFD de la Fase 1 actualizado\n(variante corregida, parches 01-14,\ncon WAF, RASP y SIEM).\nAmenazas T01-T20; estado según\nel residual vigente.",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 40
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Cliente / navegador"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "95e10889-bdba-59e4-9b83-cd8fa258b2e0",
+            "data": {
+              "name": "Cliente / navegador",
+              "description": "",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 320
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Atacante externo"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "73434ae1-17f2-5926-ab1e-a57c246211f5",
+            "data": {
+              "name": "Atacante externo",
+              "description": "Mismos canales que el cliente.",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 600
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Administrador"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "172df84e-42c8-59eb-8547-4328341a456d",
+            "data": {
+              "name": "Administrador",
+              "description": "Panel /administration.",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 250,
+              "y": 320
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "WAF nginx +\nModSecurity/CRS"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982",
+            "data": {
+              "name": "WAF nginx +\nModSecurity/CRS",
+              "description": "Proxy inverso con OWASP CRS 4.25.2, cabeceras y límites (Fases 5-6).",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 470,
+              "y": 40
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Frontend Angular"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "39e3bc34-6234-5148-a836-9b9f7cc2d5d5",
+            "data": {
+              "name": "Frontend Angular",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "005e84ae-b393-5a46-8649-7983dce49b65",
+                  "number": 1,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "T13 · XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)",
+                  "description": "XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)\nCódigo (v20.3.0 oficial): `server.ts:189`; `routes/userProfile.ts:91`\nOWASP Top 10:2025 / CWE: A05 / CWE-79\nSTRIDE de la Fase 1: T, I · riesgo vinculado R13.",
+                  "mitigation": "Controles verificados: CSP (script-src 'self') y cabeceras en el WAF: presentes en la respuesta; CRS 941 (XSS): 403 con dos vectores acotados (parámetro de búsqueda y cuerpo de una reseña); reglas 941100/941110/941160/941390 en el audit log; Parche 12: búsqueda sin bypassSecurityTrustHtml (Angular sanea el término) y sanitize-html 2.18.2; Prueba de XSS en navegador real (Chromium): 6 vectores (DOM, reflejado, 4 almacenados); corregida 0/6 con y sin el modo seguro de Juice Shop; oficial sin modo seguro 5/6; imagen cloud 0/6; Parche 14: correo, nombre de usuario y última IP saneados siempre en el servidor (V5 y V6 se ejecutaban en la corregida sin modo seguro); CSP del WAF (script-src 'self'): bloquea scripts en línea en la nube.\nPropuestos (no implementados): Codificación de salida en el frontend.\nEvidencia: app-hardened/patches/v2/correcciones-cierre-tecnico.patch, evidence/cierre-brechas-2026-11-24/02-xss-navegador/cloud/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/oficial-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/07-waf/familias-waf.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a9-security-headers.txt\nResidual vigente R13: 2×4 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.4 (Alto) · D,R,E,A,Di = [6, 9, 7, 7, 8]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "85151015-e6bd-5bbd-849c-380b200c4ffd",
+                  "number": 2,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T13 · XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)",
+                  "description": "XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)\nCódigo (v20.3.0 oficial): `server.ts:189`; `routes/userProfile.ts:91`\nOWASP Top 10:2025 / CWE: A05 / CWE-79\nSTRIDE de la Fase 1: T, I · riesgo vinculado R13.",
+                  "mitigation": "Controles verificados: CSP (script-src 'self') y cabeceras en el WAF: presentes en la respuesta; CRS 941 (XSS): 403 con dos vectores acotados (parámetro de búsqueda y cuerpo de una reseña); reglas 941100/941110/941160/941390 en el audit log; Parche 12: búsqueda sin bypassSecurityTrustHtml (Angular sanea el término) y sanitize-html 2.18.2; Prueba de XSS en navegador real (Chromium): 6 vectores (DOM, reflejado, 4 almacenados); corregida 0/6 con y sin el modo seguro de Juice Shop; oficial sin modo seguro 5/6; imagen cloud 0/6; Parche 14: correo, nombre de usuario y última IP saneados siempre en el servidor (V5 y V6 se ejecutaban en la corregida sin modo seguro); CSP del WAF (script-src 'self'): bloquea scripts en línea en la nube.\nPropuestos (no implementados): Codificación de salida en el frontend.\nEvidencia: app-hardened/patches/v2/correcciones-cierre-tecnico.patch, evidence/cierre-brechas-2026-11-24/02-xss-navegador/cloud/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/oficial-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/07-waf/familias-waf.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a9-security-headers.txt\nResidual vigente R13: 2×4 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.4 (Alto) · D,R,E,A,Di = [6, 9, 7, 7, 8]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 510,
+              "y": 320
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "API Express\n/rest /api /b2b"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "8cb4b38b-2cb5-599d-acf7-2874b87658d7",
+            "data": {
+              "name": "API Express\n/rest /api /b2b",
+              "description": "Proceso Node con RASP Aikido Zen; parches 01-14 en la variante corregida.",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "ea5062df-adb6-567d-a253-652be7e37fc6",
+                  "number": 3,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T02 · Inyección SQL UNION en búsqueda extrae tablas completas (Users, Cards)",
+                  "description": "Inyección SQL UNION en búsqueda extrae tablas completas (Users, Cards)\nCódigo (v20.3.0 oficial): `routes/search.ts:23`\nOWASP Top 10:2025 / CWE: A05 / CWE-89\nSTRIDE de la Fase 1: I · riesgo vinculado R02.",
+                  "mitigation": "Controles verificados: WAF ModSecurity + CRS 942xxx (HTTP 403); RASP Aikido Zen + rasp-guard: bloqueo en sqlite3.all (query.q) con HTTP 403; Alertas SIEM de inyección (WAF y RASP); Parche 02: consulta parametrizada en la búsqueda (variante corregida); A2 y A3 sin datos sin WAF ni RASP y búsqueda legítima con resultados.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json\nResidual vigente R02: 1×5 Medio (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 9.0 (Crítico) · D,R,E,A,Di = [10, 10, 7, 10, 8]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "e5d442f1-183e-542e-8847-3b71ce3f46eb",
+                  "number": 4,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T06 · Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks",
+                  "description": "Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks\nCódigo (v20.3.0 oficial): `server.ts:511-528`, `:427,631`\nOWASP Top 10:2025 / CWE: A01 Broken Access Control / CWE-639\nSTRIDE de la Fase 1: I, T · riesgo vinculado R06.",
+                  "mitigation": "Controles verificados: Heurística SIEM API_Enumeracion_Objetos_PosibleBOLA (con falsos positivos demostrados); Parche 08: verificación de propietario en /rest/basket/:id (variante corregida); A12 → 403 y la cesta propia → 200; Parche 10: verificación de propietario en artículos de cesta (GET/PUT/DELETE y lista), direcciones (PUT) y opiniones (DELETE); 0/10 accesos ajenos con éxito, 7/7 operaciones del propietario correctas; Alerta SIEM API_BOLA_AccesoAjenoDenegado (403 a objetos ajenos; inactiva con tráfico legítimo, activa con el intento cruzado); Parche 14: PUT /api/Products/:id exige sesión y rol admin (antes: sin autenticación, cualquiera modificaba el catálogo); probado: 401 sin token.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/bola/resultado-bola.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/02-bola-recursos/despues-parche10-corregida-rasp-sin-waf.md, evidence/fase-6/cierre-final-2026-11-21/10-siem/reglas-tras-disparadores.txt, evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/alertas-tras-trafico-legitimo.json\nResidual vigente R06: 2×4 Medio (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 8.2 (Crítico) · D,R,E,A,Di = [7, 10, 8, 8, 8]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "3e31135d-43e1-536a-bd21-56ae2b6ac195",
+                  "number": 5,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "T06 · Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks",
+                  "description": "Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks\nCódigo (v20.3.0 oficial): `server.ts:511-528`, `:427,631`\nOWASP Top 10:2025 / CWE: A01 Broken Access Control / CWE-639\nSTRIDE de la Fase 1: I, T · riesgo vinculado R06.",
+                  "mitigation": "Controles verificados: Heurística SIEM API_Enumeracion_Objetos_PosibleBOLA (con falsos positivos demostrados); Parche 08: verificación de propietario en /rest/basket/:id (variante corregida); A12 → 403 y la cesta propia → 200; Parche 10: verificación de propietario en artículos de cesta (GET/PUT/DELETE y lista), direcciones (PUT) y opiniones (DELETE); 0/10 accesos ajenos con éxito, 7/7 operaciones del propietario correctas; Alerta SIEM API_BOLA_AccesoAjenoDenegado (403 a objetos ajenos; inactiva con tráfico legítimo, activa con el intento cruzado); Parche 14: PUT /api/Products/:id exige sesión y rol admin (antes: sin autenticación, cualquiera modificaba el catálogo); probado: 401 sin token.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/bola/resultado-bola.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/02-bola-recursos/despues-parche10-corregida-rasp-sin-waf.md, evidence/fase-6/cierre-final-2026-11-21/10-siem/reglas-tras-disparadores.txt, evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/alertas-tras-trafico-legitimo.json\nResidual vigente R06: 2×4 Medio (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 8.2 (Crítico) · D,R,E,A,Di = [7, 10, 8, 8, 8]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "9082abc9-f5f9-539f-8c94-4288dafe355d",
+                  "number": 6,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "T07 · Registro permite fijar `role: admin` (asignación masiva)",
+                  "description": "Registro permite fijar `role: admin` (asignación masiva)\nCódigo (v20.3.0 oficial): `server.ts:436-448`\nOWASP Top 10:2025 / CWE: A01 / CWE-915\nSTRIDE de la Fase 1: E · riesgo vinculado R07.",
+                  "mitigation": "Controles verificados: Parche virtual ModSecurity 100001 (HTTP 403); Alerta SIEM WAF_ParcheVirtual_Activado; Parche 06: lista blanca de campos en el registro (variante corregida); role=admin ignorado (role customer) sin WAF.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json\nResidual vigente R07: 1×4 Bajo (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 10, 7, 5, 6]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "4f0cc2c8-12cb-5fda-952b-f5762f9d9312",
+                  "number": 7,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "T09 · Ejecución de código: `eval()` y `vm.runInContext` sobre datos del usuario",
+                  "description": "Ejecución de código: `eval()` y `vm.runInContext` sobre datos del usuario\nCódigo (v20.3.0 oficial): `routes/userProfile.ts:65`, `routes/b2bOrder.ts:23`, `routes/captcha.ts:22`, `routes/fileUpload.ts:114`\nOWASP Top 10:2025 / CWE: A05 / CWE-95\nSTRIDE de la Fase 1: E · riesgo vinculado R09.",
+                  "mitigation": "Controles verificados: Contención: FS raíz de solo lectura (escritura bloqueada con EROFS), usuario no root, cap_drop ALL; Parche 05: eval() eliminado en routes/userProfile.ts (revisado en el diff). No ejercitable dinámicamente: Juice Shop desactiva esa rama en Docker (safetyMode auto, disabledEnv Docker).\nEvidencia: app-hardened/patches/v2/correcciones-hito-a.patch, evidence/fase-5/despues/runtime-hardening-inspect.txt\nResidual vigente R09: 3×4 Alto (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.6 (Alto) · D,R,E,A,Di = [10, 8, 5, 10, 5]",
+                  "status": "Open"
+                },
+                {
+                  "id": "aae1c63a-d09c-5df0-bf7c-eda8a44648e8",
+                  "number": 8,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T14 · CORS `*` permite lectura cross-origin",
+                  "description": "CORS `*` permite lectura cross-origin\nCódigo (v20.3.0 oficial): `server.ts:183-184`\nOWASP Top 10:2025 / CWE: A02 / CWE-942\nSTRIDE de la Fase 1: I · riesgo vinculado R14.",
+                  "mitigation": "Controles verificados: WAF oculta Access-Control-Allow-Origin (comprobado con Origin externo); Parche 07: CORS con origen explícito (variante corregida); sin ACAO abierto con Origin externo y sin WAF.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a8-cors-headers.txt\nResidual vigente R14: 1×3 Bajo (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [4, 9, 6, 6, 8]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "4d782baf-79d6-5f90-891a-53dd399e9bc9",
+                  "number": 9,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "T15 · Open redirect con lista blanca evadible (`includes`)",
+                  "description": "Open redirect con lista blanca evadible (`includes`)\nCódigo (v20.3.0 oficial): `server.ts:687`; `lib/insecurity.ts:133`\nOWASP Top 10:2025 / CWE: A01 / CWE-601\nSTRIDE de la Fase 1: S · riesgo vinculado R15.",
+                  "mitigation": "Controles verificados: .\nPropuestos (no implementados): Comparación exacta de destinos permitidos.\nEvidencia: \nResidual vigente R15: 4×3 Alto (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.2 (Alto) · D,R,E,A,Di = [4, 9, 7, 5, 6]",
+                  "status": "Open"
+                },
+                {
+                  "id": "f9d1f0d9-a35d-57f1-a717-b958f1f356ae",
+                  "number": 10,
+                  "modelType": "STRIDE",
+                  "type": "Denial of service",
+                  "title": "T18 · Expresiones `vm` y uploads ZIP pueden agotar CPU/memoria (timeout 2 s, límite 200 kB)",
+                  "description": "Expresiones `vm` y uploads ZIP pueden agotar CPU/memoria (timeout 2 s, límite 200 kB)\nCódigo (v20.3.0 oficial): `routes/b2bOrder.ts:23`, `server.ts:722`\nOWASP Top 10:2025 / CWE: A10 Exceptional Conditions / CWE-400\nSTRIDE de la Fase 1: D · riesgo vinculado R18.",
+                  "mitigation": "Controles verificados: Límites de pids (200), memoria (1 GiB) y CPU (1.0) configurados; Parche 12: b2bOrder ya no evalúa las líneas de pedido como código (vm/notevil); el reto RCE queda sin vía de ejecución.\nEvidencia: app-hardened/patches/v2/correcciones-cierre-tecnico.patch, evidence/fase-5/despues/runtime-hardening-inspect.txt\nResidual vigente R18: 3×4 Alto (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.0 (Alto) · D,R,E,A,Di = [5, 6, 5, 10, 4]",
+                  "status": "Open"
+                },
+                {
+                  "id": "7e07792f-2576-51dc-9bc9-86e9978b105c",
+                  "number": 11,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "T20 · Dependencias con CVE críticas (marsdb, lodash 2.4.2, crypto-js 3.3.0, tar)",
+                  "description": "Dependencias con CVE críticas (marsdb, lodash 2.4.2, crypto-js 3.3.0, tar)\nCódigo (v20.3.0 oficial): Fase 3: `evidence/fase-3/sca/`\nOWASP Top 10:2025 / CWE: A03 / CWE-1395\nSTRIDE de la Fase 1: T · riesgo vinculado R20.",
+                  "mitigation": "Controles verificados: SCA en CI (npm audit, OSV, Grype, Trivy) en cada push; Parches 11 y base distroless actualizada: Trivy CRITICAL 11→1 y HIGH 33→2 sobre la imagen en ejecución (misma base de datos de vulnerabilidades); el CRITICAL restante (marsdb) no tiene versión corregida; Puerta de release (scripts/pipeline-release.sh + security/release/politica-release.json): bloquea CRITICAL/HIGH sin excepción vigente; prueba negativa con la imagen oficial: BLOQUEADA (41 incumplimientos); Imagen cloud con base Alpine de la misma versión del WAF: Trivy CRITICAL 3→1 (marsdb, exceptuada) y HIGH 135→0; puerta de release APTA; Política de release en CI (GitHub Actions release.yml): IaC de Render, puerta de la imagen de la app y de la imagen cloud en cada cambio.\nPropuestos (no implementados): Actualizar dependencias vulnerables.\nEvidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md, evidence/cierre-brechas-2026-11-24/11-ci-release/resultado-ci.md, evidence/cierre-tecnico-2026-11-23/08-pipeline-release/prueba-negativa-imagen-oficial/puerta-release.md, evidence/cierre-tecnico-2026-11-23/08-pipeline-release/puerta-release.md, evidence/fase-3/sca/\nResidual vigente R20: 2×5 Alto (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 7.4 (Alto) · D,R,E,A,Di = [8, 6, 5, 10, 8]",
+                  "status": "Open"
+                }
+              ],
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 760,
+              "y": 140
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Autenticación\nJWT"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "839c24d2-d1fb-5427-bccc-de0d8c3a2a64",
+            "data": {
+              "name": "Autenticación\nJWT",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "bb8165ae-01f3-5187-a4f0-54ed56bff3c3",
+                  "number": 12,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "T01 · Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)",
+                  "description": "Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)\nCódigo (v20.3.0 oficial): `routes/login.ts:34` (template literal con `req.body.email`)\nOWASP Top 10:2025 / CWE: A05 Injection / CWE-89\nSTRIDE de la Fase 1: S, E · riesgo vinculado R01.",
+                  "mitigation": "Controles verificados: WAF ModSecurity + CRS 942100/949110 (HTTP 403); RASP Aikido Zen + integración rasp-guard: bloqueo en sqlite3.all con HTTP 403; Alertas SIEM WAF_InyeccionSQL_Bloqueada y RASP_Ataque_Detectado; Parche 01 v2: consulta parametrizada + verificación scrypt (variante corregida); A1 sin token y HTTP 401 sin WAF ni RASP.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json\nResidual vigente R01: 1×5 Medio (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 9.6 (Crítico) · D,R,E,A,Di = [10, 10, 9, 10, 9]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "72942f80-47aa-58a9-a87f-4de14e3984ea",
+                  "number": 13,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "T01 · Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)",
+                  "description": "Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)\nCódigo (v20.3.0 oficial): `routes/login.ts:34` (template literal con `req.body.email`)\nOWASP Top 10:2025 / CWE: A05 Injection / CWE-89\nSTRIDE de la Fase 1: S, E · riesgo vinculado R01.",
+                  "mitigation": "Controles verificados: WAF ModSecurity + CRS 942100/949110 (HTTP 403); RASP Aikido Zen + integración rasp-guard: bloqueo en sqlite3.all con HTTP 403; Alertas SIEM WAF_InyeccionSQL_Bloqueada y RASP_Ataque_Detectado; Parche 01 v2: consulta parametrizada + verificación scrypt (variante corregida); A1 sin token y HTTP 401 sin WAF ni RASP.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json\nResidual vigente R01: 1×5 Medio (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 9.6 (Crítico) · D,R,E,A,Di = [10, 10, 9, 10, 9]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "af8e71b7-863c-5cc5-b833-abed70eb33d1",
+                  "number": 14,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "T03 · Clave privada RSA embebida: cualquiera con el código forja JWT válidos",
+                  "description": "Clave privada RSA embebida: cualquiera con el código forja JWT válidos\nCódigo (v20.3.0 oficial): `lib/insecurity.ts:21,54`\nOWASP Top 10:2025 / CWE: A04 Cryptographic Failures / CWE-798\nSTRIDE de la Fase 1: S · riesgo vinculado R03.",
+                  "mitigation": "Controles verificados: Parche 04 v2: clave privada fuera del código, cargada de un secreto montado y rotada; un token firmado con la clave antigua recibe HTTP 401; Arranque fail-closed: sin secreto la aplicación no inicia (código de salida 1); En la nube la clave JWT la genera el contenedor en cada arranque (nadie la copia ni la pega; falla cerrada si no se activa): 5 casos de arranque.\nPropuestos (no implementados): Gestor de secretos / KMS del proveedor cloud (custodia compartida, no transfiere la responsabilidad).\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/arranque-sin-secreto.txt, evidence/cierre-2026-11-20/03-corregida-sin-waf/regresion-funcional.md, evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md\nResidual vigente R03: 2×5 Alto (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 8.6 (Crítico) · D,R,E,A,Di = [10, 10, 6, 10, 7]",
+                  "status": "Open"
+                },
+                {
+                  "id": "1bc5ab9a-7bfc-5315-b418-2a157a1bc56a",
+                  "number": 15,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "T04 · Bibliotecas JWT obsoletas (`jsonwebtoken` 0.4.0, `express-jwt` 0.1.3) aceptan algoritmos d",
+                  "description": "Bibliotecas JWT obsoletas (`jsonwebtoken` 0.4.0, `express-jwt` 0.1.3) aceptan algoritmos débiles/`none`\nCódigo (v20.3.0 oficial): `package.json`; npm audit (Fase 3)\nOWASP Top 10:2025 / CWE: A03 Supply Chain / CWE-347\nSTRIDE de la Fase 1: S · riesgo vinculado R04.",
+                  "mitigation": "Controles verificados: SCA en CI (npm audit, OSV, Grype) que identifica el componente; Parche 11: express-jwt 8.5.1 + jsonwebtoken 9.0.3 + jws 4.0.1 con RS256 fijo; alg=none y confusión HS256 con la clave pública → 401; token legítimo → 200.\nPropuestos (no implementados): Actualizar bibliotecas JWT y fijar algoritmos.\nEvidencia: evidence/cierre-tecnico-2026-11-23/04-despues-parches/jwt-algoritmos.md, evidence/fase-3/sca/\nResidual vigente R04: 1×5 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.2 (Alto) · D,R,E,A,Di = [9, 7, 5, 10, 5]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "7f6ed74d-ef23-56d4-aefb-a67fbee7ac53",
+                  "number": 16,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "T16 · Fuerza bruta: sin límite de intentos en `/rest/user/login` (solo en reset)",
+                  "description": "Fuerza bruta: sin límite de intentos en `/rest/user/login` (solo en reset)\nCódigo (v20.3.0 oficial): `server.ts:371` vs `:624`\nOWASP Top 10:2025 / CWE: A07 Authentication Failures / CWE-307\nSTRIDE de la Fase 1: S · riesgo vinculado R16.",
+                  "mitigation": "Controles verificados: Rate limiting nginx 5/min por IP, ráfaga 3 (HTTP 429); Alerta SIEM Login_FuerzaBruta_RateLimit; Límite de intentos en la nube: 429 al 5.º intento, también con X-Forwarded-For falsificado distinto en cada petición; 2FA (TOTP) de Juice Shop probada en local y en Render (13/13): con la 2FA activa la contraseña sola no da sesión (401 totp_token_required); código erróneo y tmpToken forjado (alg none) → 401.\nEvidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md, evidence/cierre-brechas-2026-11-24/12-2fa/render.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a10-bruteforce-login.txt, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json\nResidual vigente R16: 3×3 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.2 (Alto) · D,R,E,A,Di = [6, 9, 8, 5, 8]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 760,
+              "y": 450
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Carga de\narchivos"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "af7dce5f-cdee-5a99-8959-0586b0105662",
+            "data": {
+              "name": "Carga de\narchivos",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "8be9c419-8419-5c1d-8ce1-0879e5b95a25",
+                  "number": 17,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T10 · XXE: parser XML con entidades externas lee archivos locales",
+                  "description": "XXE: parser XML con entidades externas lee archivos locales\nCódigo (v20.3.0 oficial): `lib/xml.ts`, `routes/fileUpload.ts` (`handleXmlUpload`)\nOWASP Top 10:2025 / CWE: A02 Misconfiguration / CWE-611\nSTRIDE de la Fase 1: I · riesgo vinculado R10.",
+                  "mitigation": "Controles verificados: Parche 12: parser XML sin NOENT ni DTDLOAD y sin proveedores de archivos; con el modo seguro desactivado la imagen oficial resuelve /etc/hostname y la corregida no.\nPropuestos (no implementados): Parser XML sin entidades externas ni DTD.\nEvidencia: evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/xxe-dirigida.md\nResidual vigente R10: 1×5 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 8, 5, 10, 5]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 470,
+              "y": 620
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Estáticos y\nlistados"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "2642db9f-ab1a-5166-aff4-f53dd1b13b76",
+            "data": {
+              "name": "Estáticos y\nlistados",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "77ad7e75-1eda-5e7a-84af-2ed8adb22ae9",
+                  "number": 18,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T12 · Listado de directorios en `/ftp`, `/support/logs`, `/encryptionkeys`",
+                  "description": "Listado de directorios en `/ftp`, `/support/logs`, `/encryptionkeys`\nCódigo (v20.3.0 oficial): `server.ts:290,298,302`\nOWASP Top 10:2025 / CWE: A02 / CWE-548\nSTRIDE de la Fase 1: I · riesgo vinculado R12.",
+                  "mitigation": "Controles verificados: nginx deny de rutas sensibles (HTTP 403); Alerta SIEM Acceso_Rutas_Sensibles_Denegado.\nPropuestos (no implementados): Retirar serve-index y archivos internos (Evitar).\nEvidencia: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json\nResidual vigente R12: 3×4 Alto (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 9.0 (Crítico) · D,R,E,A,Di = [6, 10, 10, 10, 9]",
+                  "status": "Open"
+                }
+              ],
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 780,
+              "y": 640
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "/metrics"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "8c30ac7c-020f-51d1-933f-7009e226368f",
+            "data": {
+              "name": "/metrics",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "463bb5bf-fd22-5179-a528-b181292aef09",
+                  "number": 19,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T17 · `/metrics` expuesto sin autenticación",
+                  "description": "`/metrics` expuesto sin autenticación\nCódigo (v20.3.0 oficial): `server.ts:759`\nOWASP Top 10:2025 / CWE: A02 / CWE-200\nSTRIDE de la Fase 1: I · riesgo vinculado R17.",
+                  "mitigation": "Controles verificados: nginx deny /metrics + parche virtual 100002 (mismo componente WAF); Alerta SIEM Acceso_Rutas_Sensibles_Denegado.\nEvidencia: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a6-metrics.txt, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json\nResidual vigente R17: 3×2 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.4 (Alto) · D,R,E,A,Di = [3, 10, 10, 2, 7]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 1040,
+              "y": 90
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "SQLite / PostgreSQL\nUsers, Cards…"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "165390eb-a45f-5691-8336-21c036801247",
+            "data": {
+              "name": "SQLite / PostgreSQL\nUsers, Cards…",
+              "description": "SQLite en local; PostgreSQL 17 administrado en Render (parche 13).",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "6954d616-a6f0-5ced-bf16-a5ea4f79dec3",
+                  "number": 20,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T05 · Contraseñas con MD5 sin sal → descifrado trivial tras fuga",
+                  "description": "Contraseñas con MD5 sin sal → descifrado trivial tras fuga\nCódigo (v20.3.0 oficial): `lib/insecurity.ts:41`\nOWASP Top 10:2025 / CWE: A04 / CWE-916\nSTRIDE de la Fase 1: I · riesgo vinculado R05.",
+                  "mitigation": "Controles verificados: Bloqueo de la vía de extracción por SQLi (WAF + RASP); Parche 03 v2: scrypt con sal aleatoria (sin dependencias nuevas); 27/27 usuarios con scrypt, login y cambio de contraseña probados.\nEvidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/regresion-funcional.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv\nResidual vigente R05: 1×5 Medio (inherente Crítico).",
+                  "severity": "High",
+                  "score": "DREAD 7.8 (Alto) · D,R,E,A,Di = [8, 10, 6, 10, 5]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": true,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "position": {
+              "x": 1040,
+              "y": 290
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "MarsDB\nreseñas, pedidos"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "514182f0-cdb3-56b5-a9ba-34f68ce63980",
+            "data": {
+              "name": "MarsDB\nreseñas, pedidos",
+              "description": "",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "ba09e062-ad04-573e-9250-4f3495284865",
+                  "number": 21,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "T08 · Inyección NoSQL en actualización de reseñas (`$ne`, operadores)",
+                  "description": "Inyección NoSQL en actualización de reseñas (`$ne`, operadores)\nCódigo (v20.3.0 oficial): `server.ts:662`; `routes/updateProductReviews.ts`\nOWASP Top 10:2025 / CWE: A05 / CWE-943\nSTRIDE de la Fase 1: T · riesgo vinculado R08.",
+                  "mitigation": "Controles verificados: Parche 12: reseñas y pedidos consultados por campo (sin $where), id sin operadores, sin actualización masiva; T1-T3 protegidos incluso con el modo seguro desactivado (la imagen oficial sí es vulnerable).\nPropuestos (no implementados): Rechazar operadores en filtros de MarsDB.\nEvidencia: evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/corregida/resultados.md\nResidual vigente R08: 1×4 Bajo (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [5, 9, 6, 8, 5]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "position": {
+              "x": 1040,
+              "y": 500
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Sistema de archivos\nftp/ uploads/"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "de252099-f552-562c-9c9b-4264a130667d",
+            "data": {
+              "name": "Sistema de archivos\nftp/ uploads/",
+              "description": "",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "position": {
+              "x": 1330,
+              "y": 420
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "URL remota\n(imagen de perfil)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "46879568-7862-568f-8a9c-9eccff819a79",
+            "data": {
+              "name": "URL remota\n(imagen de perfil)",
+              "description": "Recurso de terceros (TB2).",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 1330,
+              "y": 700
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Registros → SIEM\n(Alloy/Loki/Grafana)"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "05a4e8ab-89fd-5931-92c1-1b1b7da9b32b",
+            "data": {
+              "name": "Registros → SIEM\n(Alloy/Loki/Grafana)",
+              "description": "",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "66909d7d-e2cc-5d34-9f8a-2e0ad131614d",
+                  "number": 22,
+                  "modelType": "STRIDE",
+                  "type": "Repudiation",
+                  "title": "T19 · Logs de acceso sin integridad ni centralización; sin alertas",
+                  "description": "Logs de acceso sin integridad ni centralización; sin alertas\nCódigo (v20.3.0 oficial): `server.ts:302-304`\nOWASP Top 10:2025 / CWE: A09 Logging & Alerting Failures / CWE-778\nSTRIDE de la Fase 1: R · riesgo vinculado R19.",
+                  "mitigation": "Controles verificados: SIEM: Alloy -> Loki -> Grafana; 3 fuentes ingestadas y 7 reglas (6 disparadas en las pruebas); Alerta Ingesta_WAF_Ausente: latido del WAF cada 30 s; con el colector detenido pasó a pending (2 min) y firing (+1 min); resuelta al reanudar, 6/6 líneas recuperadas; Descubrimiento de contenedores cada 5 s (antes 60 s): 5/5 detecciones del RASP llegan a Loki tras recrear la app; Centralización AUTOMÁTICA y AUTENTICADA de eventos cloud: colector de la API de Render (HTTPS + clave de solo lectura) → Loki con entorno=cloud, redacción y cursor; prueba extremo a extremo con marca; Alertas propias de la nube (6 reglas, entorno=cloud): SQLi bloqueada, credenciales fallidas y límite en la puerta, RASP, arranque fallido y salud del colector; 4 disparadas extremo a extremo contra Render (~1 min) sin disparar reglas locales; reglas locales acotadas a entorno=local.\nEvidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md, evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md, evidence/fase-6/cierre-final-2026-11-21/10-siem/alerta-ingesta-ausente.txt, evidence/fase-6/cierre-final-2026-11-21/10-siem/hallazgo-perdida-ingesta.txt, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json\nResidual vigente R19: 2×4 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.2 (Alto) · D,R,E,A,Di = [5, 8, 4, 10, 4]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "isALog": true,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "HTTP(S) JSON/HTML",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "HTTP(S) JSON/HTML",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "0aae8c74-d0b5-5ecc-8e19-d823e1360c72",
+            "source": {
+              "cell": "95e10889-bdba-59e4-9b83-cd8fa258b2e0"
+            },
+            "target": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "mismos canales",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "mismos canales",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "601d6068-5721-517f-b8b6-264687491994",
+            "source": {
+              "cell": "73434ae1-17f2-5926-ab1e-a57c246211f5"
+            },
+            "target": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "/administration",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "/administration",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "11eeb359-e6cf-5319-b4ca-c27d790b083a",
+            "source": {
+              "cell": "172df84e-42c8-59eb-8547-4328341a456d"
+            },
+            "target": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "/ y /assets",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "/ y /assets",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "89ec6798-8891-5c87-9a62-044b529f165f",
+            "source": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "target": {
+              "cell": "39e3bc34-6234-5148-a836-9b9f7cc2d5d5"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "/rest /api /b2b",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "/rest /api /b2b",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "7007c089-7070-5991-b097-7a927c2b325a",
+            "source": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "target": {
+              "cell": "8cb4b38b-2cb5-599d-acf7-2874b87658d7"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "/ftp /support/logs",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "/ftp /support/logs",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "c3f43b0a-989a-5f9f-8c0c-3715dc9fe826",
+            "source": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "target": {
+              "cell": "2642db9f-ab1a-5166-aff4-f53dd1b13b76"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "/metrics (403 del WAF)",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "/metrics (403 del WAF)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "c7350c86-25e6-5e97-8764-01273defa873",
+            "source": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "target": {
+              "cell": "8c30ac7c-020f-51d1-933f-7009e226368f"
+            },
+            "vertices": [
+              {
+                "x": 420,
+                "y": 770
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "login / token",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "login / token",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "e8b31fbb-c587-5a19-86f0-1bb1e32da48a",
+            "source": {
+              "cell": "8cb4b38b-2cb5-599d-acf7-2874b87658d7"
+            },
+            "target": {
+              "cell": "839c24d2-d1fb-5427-bccc-de0d8c3a2a64"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "consulta de login",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "consulta de login",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "719ff020-2f64-5232-baa6-671ee93c6280",
+            "source": {
+              "cell": "839c24d2-d1fb-5427-bccc-de0d8c3a2a64"
+            },
+            "target": {
+              "cell": "165390eb-a45f-5691-8336-21c036801247"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "Sequelize",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Sequelize",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "b77728c0-8588-50e5-99c2-966f19a56da0",
+            "source": {
+              "cell": "8cb4b38b-2cb5-599d-acf7-2874b87658d7"
+            },
+            "target": {
+              "cell": "165390eb-a45f-5691-8336-21c036801247"
+            },
+            "vertices": [
+              {
+                "x": 930,
+                "y": 330
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "reseñas, pedidos",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "reseñas, pedidos",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "9d39e2ea-7c41-55e2-bc31-e661a500144b",
+            "source": {
+              "cell": "8cb4b38b-2cb5-599d-acf7-2874b87658d7"
+            },
+            "target": {
+              "cell": "514182f0-cdb3-56b5-a9ba-34f68ce63980"
+            },
+            "vertices": [
+              {
+                "x": 940,
+                "y": 360
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "archivos",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "archivos",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "1675ddd7-d7a4-5fe1-ba66-db8eaf373a22",
+            "source": {
+              "cell": "8cb4b38b-2cb5-599d-acf7-2874b87658d7"
+            },
+            "target": {
+              "cell": "af7dce5f-cdee-5a99-8959-0586b0105662"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "ZIP/XML/YAML",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "ZIP/XML/YAML",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "901b1861-e325-5318-881b-0d04dab91333",
+            "source": {
+              "cell": "af7dce5f-cdee-5a99-8959-0586b0105662"
+            },
+            "target": {
+              "cell": "de252099-f552-562c-9c9b-4264a130667d"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "descarga por URL (SSRF)",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "descarga por URL (SSRF)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": true,
+              "protocol": "HTTP(S)",
+              "threats": [
+                {
+                  "id": "6e4cac15-454f-56be-bee7-f1f126d99895",
+                  "number": 23,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "T11 · SSRF: el servidor descarga URLs arbitrarias",
+                  "description": "SSRF: el servidor descarga URLs arbitrarias\nCódigo (v20.3.0 oficial): `server.ts:339`; `routes/profileImageUrlUpload.ts`\nOWASP Top 10:2025 / CWE: A01 / CWE-918\nSTRIDE de la Fase 1: I, E · riesgo vinculado R11.",
+                  "mitigation": "Controles verificados: Parche 12: la URL de imagen se valida (http/https, resolución DNS solo a IP públicas, sin redirecciones); T5: la app ya no pide la URL interna (0 peticiones en el log del WAF).\nPropuestos (no implementados): Lista blanca de destinos y filtrado de egreso.\nEvidencia: evidence/cierre-tecnico-2026-11-23/06-regresion/artefacto-final/sin-waf/pruebas/resultados.md\nResidual vigente R11: 2×3 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.2 (Alto) · D,R,E,A,Di = [7, 8, 6, 5, 5]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "23e2af86-ecbe-5ba3-9646-d7b1872d31ee",
+                  "number": 24,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "T11 · SSRF: el servidor descarga URLs arbitrarias",
+                  "description": "SSRF: el servidor descarga URLs arbitrarias\nCódigo (v20.3.0 oficial): `server.ts:339`; `routes/profileImageUrlUpload.ts`\nOWASP Top 10:2025 / CWE: A01 / CWE-918\nSTRIDE de la Fase 1: I, E · riesgo vinculado R11.",
+                  "mitigation": "Controles verificados: Parche 12: la URL de imagen se valida (http/https, resolución DNS solo a IP públicas, sin redirecciones); T5: la app ya no pide la URL interna (0 peticiones en el log del WAF).\nPropuestos (no implementados): Lista blanca de destinos y filtrado de egreso.\nEvidencia: evidence/cierre-tecnico-2026-11-23/06-regresion/artefacto-final/sin-waf/pruebas/resultados.md\nResidual vigente R11: 2×3 Medio (inherente Alto).",
+                  "severity": "High",
+                  "score": "DREAD 6.2 (Alto) · D,R,E,A,Di = [7, 8, 6, 5, 5]",
+                  "status": "Mitigated"
+                }
+              ],
+              "isTrustBoundary": false
+            },
+            "id": "9f8bb3cd-4f23-530f-9cd9-15055202f868",
+            "source": {
+              "cell": "af7dce5f-cdee-5a99-8959-0586b0105662"
+            },
+            "target": {
+              "cell": "46879568-7862-568f-8a9c-9eccff819a79"
+            },
+            "vertices": [
+              {
+                "x": 990,
+                "y": 440
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "lectura",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "lectura",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "9f810c11-4500-5c1a-b7f6-0e17eee9dcbf",
+            "source": {
+              "cell": "2642db9f-ab1a-5166-aff4-f53dd1b13b76"
+            },
+            "target": {
+              "cell": "de252099-f552-562c-9c9b-4264a130667d"
+            },
+            "vertices": [
+              {
+                "x": 940,
+                "y": 600
+              }
+            ]
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "auditoría y accesos",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "auditoría y accesos",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "Docker logs → Alloy",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "b904f032-927f-50ff-b227-0d764688d438",
+            "source": {
+              "cell": "3f3e5d14-a544-54c3-86fc-9ad49b5fe982"
+            },
+            "target": {
+              "cell": "05a4e8ab-89fd-5931-92c1-1b1b7da9b32b"
+            },
+            "vertices": [
+              {
+                "x": 330,
+                "y": 790
+              },
+              {
+                "x": 1280,
+                "y": 790
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "version": "2.6.2",
+        "title": "Despliegue real — Render + PostgreSQL",
+        "description": "Servicio web gratuito con acceso restringido, BD administrada privada y colector SIEM local.",
+        "thumbnail": "./public/content/images/thumbnail.stride.jpg",
+        "diagramType": "STRIDE",
+        "id": 1,
+        "cells": [
+          {
+            "position": {
+              "x": 480,
+              "y": 50
+            },
+            "size": {
+              "width": 560,
+              "height": 320
+            },
+            "attrs": {
+              "label": {
+                "text": "Servicio web Render · contenedor único Alpine (512 MB)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 3,
+                "strokeDasharray": "10 5"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "zIndex": -50,
+            "id": "83ddf5a0-9287-57fa-888b-c12b14408ba8",
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "Servicio web Render · contenedor único Alpine (512 MB)",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 1100,
+              "y": 50
+            },
+            "size": {
+              "width": 260,
+              "height": 240
+            },
+            "attrs": {
+              "label": {
+                "text": "Red privada de Render"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 3,
+                "strokeDasharray": "10 5"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "zIndex": -50,
+            "id": "704b97e6-ceb7-57a0-a84d-be284315d568",
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "Red privada de Render",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 1100,
+              "y": 420
+            },
+            "size": {
+              "width": 300,
+              "height": 380
+            },
+            "attrs": {
+              "label": {
+                "text": "Equipo del laboratorio (127.0.0.1)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 3,
+                "strokeDasharray": "10 5"
+              }
+            },
+            "visible": true,
+            "shape": "trust-boundary-box",
+            "zIndex": -50,
+            "id": "8d164af7-a75a-597f-859c-d9b30299d26c",
+            "data": {
+              "type": "tm.BoundaryBox",
+              "name": "Equipo del laboratorio (127.0.0.1)",
+              "description": "",
+              "isTrustBoundary": true,
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 420
+            },
+            "size": {
+              "width": 300,
+              "height": 70
+            },
+            "attrs": {
+              "text": {
+                "text": "Despliegue real verificado: commit 768d1da,\nacceso restringido (puerta /__acceso).\nAmenazas TC01-TC10 (trazabilidad §6)."
+              }
+            },
+            "visible": true,
+            "shape": "td-text-block",
+            "zIndex": 11,
+            "id": "cf891639-0245-59e1-adb1-ed192208befb",
+            "data": {
+              "type": "tm.Text",
+              "name": "Despliegue real verificado: commit 768d1da,\nacceso restringido (puerta /__acceso).\nAmenazas TC01-TC10 (trazabilidad §6).",
+              "hasOpenThreats": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 40
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Usuario autorizado\n(navegador)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "f0b1e565-41d5-5f6b-b449-b0d2eb60169e",
+            "data": {
+              "name": "Usuario autorizado\n(navegador)",
+              "description": "",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 260
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Atacante en Internet"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "2f35292f-cd07-57a9-bc44-793aeab0f904",
+            "data": {
+              "name": "Atacante en Internet",
+              "description": "",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 0,
+              "y": 600
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Equipo del laboratorio"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "actor",
+            "zIndex": 1,
+            "id": "92c60312-4386-5575-a7f0-cc0877a8f257",
+            "data": {
+              "name": "Equipo del laboratorio",
+              "description": "",
+              "type": "tm.Actor",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "providesAuthentication": false
+            }
+          },
+          {
+            "position": {
+              "x": 260,
+              "y": 150
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Borde de Render\n(Cloudflare + LB)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": "4 3"
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "41536631-05da-5905-a408-78a02c739a1d",
+            "data": {
+              "name": "Borde de Render\n(Cloudflare + LB)",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": true,
+              "reasonOutOfScope": "Gestionado por Render (TLS 1.2/1.3, DDoS de la plataforma); no configurable en el plan free.",
+              "threats": [],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 580,
+              "y": 150
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "nginx + ModSecurity\npuerta /__acceso"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "83fd111d-1d8b-5a04-a3ff-88646cfb0ffb",
+            "data": {
+              "name": "nginx + ModSecurity\npuerta /__acceso",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "a9be649a-c03c-5ee2-9e08-54c82f4d0df1",
+                  "number": 25,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "TC01 · Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)",
+                  "description": "Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)\nElemento: Borde de Render → puerta /__acceso · STRIDE S, E · riesgo vinculado R21.",
+                  "mitigation": "Puerta propia; un 401 no entrega cookie; cookie de 256 bits Secure/HttpOnly/SameSite\nEvidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 6, 5, 9, 8]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "6ae682b2-a2ff-5a0c-b608-e03cb923e695",
+                  "number": 26,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "TC01 · Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)",
+                  "description": "Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)\nElemento: Borde de Render → puerta /__acceso · STRIDE S, E · riesgo vinculado R21.",
+                  "mitigation": "Puerta propia; un 401 no entrega cookie; cookie de 256 bits Secure/HttpOnly/SameSite\nEvidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 6, 5, 9, 8]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 880,
+              "y": 150
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Juice Shop corregido\n+ RASP"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "9f74a4c6-b431-5438-b0d8-0ddfed5d4433",
+            "data": {
+              "name": "Juice Shop corregido\n+ RASP",
+              "description": "Parches 01-14, clave JWT efímera generada en el contenedor.",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "b9f67118-af9f-5cea-8285-9f6cb34a2af7",
+                  "number": 27,
+                  "modelType": "STRIDE",
+                  "type": "Denial of service",
+                  "title": "TC08 · Indisponibilidad: suspensión por inactividad, vencimiento de la BD free (30 días), límite ",
+                  "description": "Indisponibilidad: suspensión por inactividad, vencimiento de la BD free (30 días), límite de memoria\nElemento: Plataforma (plan free) · STRIDE D · riesgo vinculado R21.",
+                  "mitigation": "Supervisión del arranque (el contenedor se detiene si la app cae); memoria medida 132-204 MiB de 512; procedimiento de reactivación documentado\nEvidencia: evidence/cierre-brechas-2026-11-24/09-validacion-imagen-alpine-local/recursos.txt\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 7.6 (Alto) · D,R,E,A,Di = [3, 9, 8, 9, 9]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": true,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 1145,
+              "y": 130
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "PostgreSQL 17 (free)\nipAllowList vacía"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "1d89df84-8251-5c80-907a-cb09b3079e8e",
+            "data": {
+              "name": "PostgreSQL 17 (free)\nipAllowList vacía",
+              "description": "Cifrado en reposo AES-256 declarado por Render (no verificable).",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": true,
+              "isEncrypted": true,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "position": {
+              "x": 760,
+              "y": 470
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "Logs de Render\n(7 días)"
+              },
+              "topLine": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "8ac8b281-4dc2-5a72-a392-fa780d81b105",
+            "data": {
+              "name": "Logs de Render\n(7 días)",
+              "description": "",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "982029d0-2ae7-5474-b942-59ec7c63108f",
+                  "number": 28,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "TC05 · Tokens, cookies o contraseñas en los logs de la plataforma o del SIEM",
+                  "description": "Tokens, cookies o contraseñas en los logs de la plataforma o del SIEM\nElemento: Contenedor → logs de Render · STRIDE I · riesgo vinculado R23.",
+                  "mitigation": "Auditoría del WAF sin cabeceras ni cuerpos (A,F,H,Z); redacción en el colector; 0 secretos en Loki\nEvidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md\nResidual vigente R23: 2×5 Alto.",
+                  "severity": "High",
+                  "score": "DREAD 6.0 (Alto) · D,R,E,A,Di = [7, 6, 4, 8, 5]",
+                  "status": "Open"
+                }
+              ],
+              "hasOpenThreats": true,
+              "isALog": true,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "position": {
+              "x": 330,
+              "y": 560
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Plano de control\nRender (panel/API)"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "25811a17-7b0d-5386-bfad-a1fda1d834ee",
+            "data": {
+              "name": "Plano de control\nRender (panel/API)",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "05629c13-6432-542d-a139-c17309da5bee",
+                  "number": 29,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "TC04 · Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)",
+                  "description": "Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)\nElemento: Panel de Render / repositorio · STRIDE I, S · riesgo vinculado R03.",
+                  "mitigation": "Clave JWT generada por el contenedor; secretos sync:false; API key de solo lectura fuera de git; Gitleaks en CI\nEvidencia: evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md\nResidual vigente R03: 2×5 Alto.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 4, 5, 9, 6]",
+                  "status": "Open"
+                },
+                {
+                  "id": "6684a3ba-2439-54f8-8ae3-55882b115953",
+                  "number": 30,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "TC04 · Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)",
+                  "description": "Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)\nElemento: Panel de Render / repositorio · STRIDE I, S · riesgo vinculado R03.",
+                  "mitigation": "Clave JWT generada por el contenedor; secretos sync:false; API key de solo lectura fuera de git; Gitleaks en CI\nEvidencia: evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md\nResidual vigente R03: 2×5 Alto.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 4, 5, 9, 6]",
+                  "status": "Open"
+                },
+                {
+                  "id": "bbb734ab-ee70-59c6-86e8-154a5139467f",
+                  "number": 31,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "TC10 · Compromiso de la cuenta del equipo en Render o GitHub",
+                  "description": "Compromiso de la cuenta del equipo en Render o GitHub\nElemento: Cuenta de Render (plano de control) · STRIDE S, T, E · riesgo vinculado R21.",
+                  "mitigation": "Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)\nEvidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.4 (Alto) · D,R,E,A,Di = [10, 3, 4, 10, 5]",
+                  "status": "Open"
+                },
+                {
+                  "id": "5a3c9c7a-119e-5ee5-b4bf-a04e51a55804",
+                  "number": 32,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "TC10 · Compromiso de la cuenta del equipo en Render o GitHub",
+                  "description": "Compromiso de la cuenta del equipo en Render o GitHub\nElemento: Cuenta de Render (plano de control) · STRIDE S, T, E · riesgo vinculado R21.",
+                  "mitigation": "Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)\nEvidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.4 (Alto) · D,R,E,A,Di = [10, 3, 4, 10, 5]",
+                  "status": "Open"
+                },
+                {
+                  "id": "33a90464-73e1-5154-8dfa-ed9ee53c71f2",
+                  "number": 33,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "TC10 · Compromiso de la cuenta del equipo en Render o GitHub",
+                  "description": "Compromiso de la cuenta del equipo en Render o GitHub\nElemento: Cuenta de Render (plano de control) · STRIDE S, T, E · riesgo vinculado R21.",
+                  "mitigation": "Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)\nEvidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.4 (Alto) · D,R,E,A,Di = [10, 3, 4, 10, 5]",
+                  "status": "Open"
+                }
+              ],
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 230,
+              "y": 730
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "GitHub main\nrender.yaml, Dockerfile"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "f8bbeb50-8bed-5de7-a324-209a776c7468",
+            "data": {
+              "name": "GitHub main\nrender.yaml, Dockerfile",
+              "description": "",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "68e5af68-c3cf-5a27-ab5b-8d826b63d05e",
+                  "number": 34,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "TC07 · Configuración insegura del Blueprint (plan de pago, BD abierta, despliegue automático, ram",
+                  "description": "Configuración insegura del Blueprint (plan de pago, BD abierta, despliegue automático, rama equivocada)\nElemento: Blueprint render.yaml · STRIDE T · riesgo vinculado R21.",
+                  "mitigation": "validar-render.py (esquema oficial + política) en CI; prueba negativa\nEvidencia: evidence/cierre-brechas-2026-11-24/05-iac-render/prueba-negativa.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "Medium",
+                  "score": "DREAD 5.8 (Medio) · D,R,E,A,Di = [6, 5, 4, 8, 6]",
+                  "status": "Mitigated"
+                }
+              ],
+              "hasOpenThreats": false,
+              "isALog": false,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "position": {
+              "x": 620,
+              "y": 680
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "Construcción de la\nimagen (Render)"
+              },
+              "body": {
+                "stroke": "red",
+                "strokeWidth": 2.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "656383e9-50b4-5574-8611-08ff06208bdf",
+            "data": {
+              "name": "Construcción de la\nimagen (Render)",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [
+                {
+                  "id": "5de32779-3b8d-507f-9fdf-0539f7a37dfe",
+                  "number": 35,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "TC06 · Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)",
+                  "description": "Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)\nElemento: Imagen del contenedor cloud · STRIDE T, E, D · riesgo vinculado R20.",
+                  "mitigation": "Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI\nEvidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md\nResidual vigente R20: 2×5 Alto.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [7, 4, 4, 9, 9]",
+                  "status": "Open"
+                },
+                {
+                  "id": "8aaca56c-bcfa-5feb-a64a-7e90fe6a69e9",
+                  "number": 36,
+                  "modelType": "STRIDE",
+                  "type": "Elevation of privilege",
+                  "title": "TC06 · Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)",
+                  "description": "Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)\nElemento: Imagen del contenedor cloud · STRIDE T, E, D · riesgo vinculado R20.",
+                  "mitigation": "Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI\nEvidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md\nResidual vigente R20: 2×5 Alto.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [7, 4, 4, 9, 9]",
+                  "status": "Open"
+                },
+                {
+                  "id": "958de344-00e8-509c-b24a-0b356732ae1a",
+                  "number": 37,
+                  "modelType": "STRIDE",
+                  "type": "Denial of service",
+                  "title": "TC06 · Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)",
+                  "description": "Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)\nElemento: Imagen del contenedor cloud · STRIDE T, E, D · riesgo vinculado R20.",
+                  "mitigation": "Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI\nEvidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md\nResidual vigente R20: 2×5 Alto.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [7, 4, 4, 9, 9]",
+                  "status": "Open"
+                }
+              ],
+              "hasOpenThreats": true,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 1190,
+              "y": 460
+            },
+            "size": {
+              "width": 120,
+              "height": 120
+            },
+            "attrs": {
+              "text": {
+                "text": "colector-render\n(API key solo lectura)"
+              },
+              "body": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "process",
+            "zIndex": 1,
+            "id": "4ab3199a-1767-513f-8136-0be737fca4e1",
+            "data": {
+              "name": "colector-render\n(API key solo lectura)",
+              "description": "",
+              "type": "tm.Process",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "handlesCardPayment": false,
+              "handlesGoodsOrServices": false,
+              "isWebApplication": false,
+              "privilegeLevel": ""
+            }
+          },
+          {
+            "position": {
+              "x": 1165,
+              "y": 680
+            },
+            "size": {
+              "width": 170,
+              "height": 80
+            },
+            "attrs": {
+              "text": {
+                "text": "SIEM local\nLoki / Grafana"
+              },
+              "topLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              },
+              "bottomLine": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "strokeDasharray": ""
+              }
+            },
+            "visible": true,
+            "shape": "store",
+            "zIndex": 1,
+            "id": "bbd45ecd-49d1-50b0-b69e-c838fc8a7305",
+            "data": {
+              "name": "SIEM local\nLoki / Grafana",
+              "description": "",
+              "type": "tm.Store",
+              "isTrustBoundary": false,
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "threats": [],
+              "hasOpenThreats": false,
+              "isALog": true,
+              "storesCredentials": false,
+              "isEncrypted": false,
+              "isSigned": false,
+              "storesInventory": false
+            }
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "HTTPS TLS 1.2/1.3",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "HTTPS TLS 1.2/1.3",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "eea40e8e-624c-58a3-96dd-5d558fa86e88",
+            "source": {
+              "cell": "f0b1e565-41d5-5f6b-b449-b0d2eb60169e"
+            },
+            "target": {
+              "cell": "41536631-05da-5905-a408-78a02c739a1d"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "HTTPS",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "HTTPS",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "709bea17-4b3b-502d-bb37-b7f7e44b6043",
+            "source": {
+              "cell": "2f35292f-cd07-57a9-bc44-793aeab0f904"
+            },
+            "target": {
+              "cell": "41536631-05da-5905-a408-78a02c739a1d"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "HTTP + X-Forwarded-For",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "HTTP + X-Forwarded-For",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": [
+                {
+                  "id": "b041caa3-a7d7-5407-a688-31269c414754",
+                  "number": 38,
+                  "modelType": "STRIDE",
+                  "type": "Spoofing",
+                  "title": "TC02 · Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado",
+                  "description": "Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado\nElemento: Borde de Render → login y puerta · STRIDE S, D · riesgo vinculado R16.",
+                  "mitigation": "IP real = última dirección de X-Forwarded-For (sin recursión); 429 al 5.º intento\nEvidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md\nResidual vigente R16: 3×3 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.8 (Alto) · D,R,E,A,Di = [6, 8, 7, 6, 7]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "806b596c-fa14-569b-b923-43e3a60122e5",
+                  "number": 39,
+                  "modelType": "STRIDE",
+                  "type": "Denial of service",
+                  "title": "TC02 · Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado",
+                  "description": "Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado\nElemento: Borde de Render → login y puerta · STRIDE S, D · riesgo vinculado R16.",
+                  "mitigation": "IP real = última dirección de X-Forwarded-For (sin recursión); 429 al 5.º intento\nEvidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md\nResidual vigente R16: 3×3 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.8 (Alto) · D,R,E,A,Di = [6, 8, 7, 6, 7]",
+                  "status": "Mitigated"
+                }
+              ],
+              "isTrustBoundary": false
+            },
+            "id": "08909888-73bd-5cab-a833-247e8c05a8ec",
+            "source": {
+              "cell": "41536631-05da-5905-a408-78a02c739a1d"
+            },
+            "target": {
+              "cell": "83fd111d-1d8b-5a04-a3ff-88646cfb0ffb"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "127.0.0.1:3000",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "127.0.0.1:3000",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "c4a3f6eb-ad37-5446-9467-90fa7f318c2c",
+            "source": {
+              "cell": "83fd111d-1d8b-5a04-a3ff-88646cfb0ffb"
+            },
+            "target": {
+              "cell": "9f74a4c6-b431-5438-b0d8-0ddfed5d4433"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "SQL (sslmode=require)",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "SQL (sslmode=require)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": false,
+              "protocol": "PostgreSQL/TLS",
+              "threats": [
+                {
+                  "id": "b542e73c-f713-5c41-9b20-8a34663fb82a",
+                  "number": 40,
+                  "modelType": "STRIDE",
+                  "type": "Information disclosure",
+                  "title": "TC03 · BD administrada expuesta a Internet o con credenciales en el repositorio",
+                  "description": "BD administrada expuesta a Internet o con credenciales en el repositorio\nElemento: Servicio web → PostgreSQL administrado · STRIDE I, T · riesgo vinculado R21.",
+                  "mitigation": "ipAllowList vacía; DATABASE_URL por referencia del Blueprint; TLS obligatorio\nEvidencia: evidence/cierre-brechas-2026-11-24/05-iac-render/validacion.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 5, 4, 9, 6]",
+                  "status": "Mitigated"
+                },
+                {
+                  "id": "cb6b5b8c-c7c5-5ec3-b0e6-364780897bee",
+                  "number": 41,
+                  "modelType": "STRIDE",
+                  "type": "Tampering",
+                  "title": "TC03 · BD administrada expuesta a Internet o con credenciales en el repositorio",
+                  "description": "BD administrada expuesta a Internet o con credenciales en el repositorio\nElemento: Servicio web → PostgreSQL administrado · STRIDE I, T · riesgo vinculado R21.",
+                  "mitigation": "ipAllowList vacía; DATABASE_URL por referencia del Blueprint; TLS obligatorio\nEvidencia: evidence/cierre-brechas-2026-11-24/05-iac-render/validacion.md\nResidual vigente R21: 2×4 Medio.",
+                  "severity": "High",
+                  "score": "DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 5, 4, 9, 6]",
+                  "status": "Mitigated"
+                }
+              ],
+              "isTrustBoundary": false
+            },
+            "id": "9602a177-0772-5b18-9c4b-436acd0a2c80",
+            "source": {
+              "cell": "9f74a4c6-b431-5438-b0d8-0ddfed5d4433"
+            },
+            "target": {
+              "cell": "1d89df84-8251-5c80-907a-cb09b3079e8e"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "auditoría JSON (stdout)",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "auditoría JSON (stdout)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "stdout",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "d63f35f2-4594-5c83-92b9-487f0e4b8b91",
+            "source": {
+              "cell": "83fd111d-1d8b-5a04-a3ff-88646cfb0ffb"
+            },
+            "target": {
+              "cell": "8ac8b281-4dc2-5a72-a392-fa780d81b105"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "stdout de la app y del RASP",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "stdout de la app y del RASP",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "stdout",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "045a874e-cb6a-5267-a53b-86327c3df12b",
+            "source": {
+              "cell": "9f74a4c6-b431-5438-b0d8-0ddfed5d4433"
+            },
+            "target": {
+              "cell": "8ac8b281-4dc2-5a72-a392-fa780d81b105"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "GET /v1/logs cada 60 s",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "GET /v1/logs cada 60 s",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [
+                {
+                  "id": "25656bf0-516d-5216-a9cb-45b9820ba023",
+                  "number": 42,
+                  "modelType": "STRIDE",
+                  "type": "Repudiation",
+                  "title": "TC09 · Pérdida de trazabilidad de lo ocurrido en la nube (logs 7 días en Render, sin centralizar)",
+                  "description": "Pérdida de trazabilidad de lo ocurrido en la nube (logs 7 días en Render, sin centralizar)\nElemento: Contenedor → SIEM · STRIDE R · riesgo vinculado R19.",
+                  "mitigation": "Colector automático y autenticado (API de Render) → Loki con entorno=cloud; latencia medida 48 s; 6 alertas propias de la nube (4 disparadas extremo a extremo, ~1 min) y alerta de salud del colector\nEvidencia: evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md\nResidual vigente R19: 2×4 Medio.",
+                  "severity": "Medium",
+                  "score": "DREAD 5.8 (Medio) · D,R,E,A,Di = [5, 6, 5, 7, 6]",
+                  "status": "Mitigated"
+                }
+              ],
+              "isTrustBoundary": false
+            },
+            "id": "4ca90786-cda1-5dd4-bcf9-deb2fc66dd57",
+            "source": {
+              "cell": "8ac8b281-4dc2-5a72-a392-fa780d81b105"
+            },
+            "target": {
+              "cell": "4ab3199a-1767-513f-8136-0be737fca4e1"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "push entorno=cloud",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "push entorno=cloud",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "HTTP (red Docker interna)",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "614ed067-354f-55a9-8b3b-fa231b9881a5",
+            "source": {
+              "cell": "4ab3199a-1767-513f-8136-0be737fca4e1"
+            },
+            "target": {
+              "cell": "bbd45ecd-49d1-50b0-b69e-c838fc8a7305"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "login (GitHub)",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "login (GitHub)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "7c6219bf-1ad9-5c35-9dd4-80194da1531a",
+            "source": {
+              "cell": "92c60312-4386-5575-a7f0-cc0877a8f257"
+            },
+            "target": {
+              "cell": "25811a17-7b0d-5386-bfad-a1fda1d834ee"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "git push",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "git push",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": true,
+              "protocol": "HTTPS/SSH",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "bf22b0ae-46ae-55d1-a1c6-dcdaf06441ae",
+            "source": {
+              "cell": "92c60312-4386-5575-a7f0-cc0877a8f257"
+            },
+            "target": {
+              "cell": "f8bbeb50-8bed-5de7-a324-209a776c7468"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "Blueprint (sincronización manual)",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Blueprint (sincronización manual)",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": true,
+              "isPublicNetwork": false,
+              "protocol": "HTTPS",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "e0320f50-85f8-50f5-8afa-60f7b2cec144",
+            "source": {
+              "cell": "f8bbeb50-8bed-5de7-a324-209a776c7468"
+            },
+            "target": {
+              "cell": "656383e9-50b4-5574-8611-08ff06208bdf"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "Manual Deploy",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "Manual Deploy",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "interno",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "5cec06f7-c192-50ab-a8a9-6754e67e33eb",
+            "source": {
+              "cell": "25811a17-7b0d-5386-bfad-a1fda1d834ee"
+            },
+            "target": {
+              "cell": "656383e9-50b4-5574-8611-08ff06208bdf"
+            },
+            "vertices": []
+          },
+          {
+            "shape": "flow",
+            "attrs": {
+              "line": {
+                "stroke": "#333333",
+                "strokeWidth": 1.5,
+                "targetMarker": {
+                  "name": "block"
+                },
+                "sourceMarker": {
+                  "name": ""
+                },
+                "strokeDasharray": ""
+              }
+            },
+            "width": 200,
+            "height": 100,
+            "zIndex": 10,
+            "connector": "smooth",
+            "labels": [
+              {
+                "markup": [
+                  {
+                    "tagName": "ellipse",
+                    "selector": "labelBody"
+                  },
+                  {
+                    "tagName": "text",
+                    "selector": "labelText"
+                  }
+                ],
+                "attrs": {
+                  "labelText": {
+                    "text": "imagen desplegada",
+                    "textAnchor": "middle",
+                    "textVerticalAnchor": "middle"
+                  },
+                  "labelBody": {
+                    "ref": "labelText",
+                    "refRx": "50%",
+                    "refRy": "60%",
+                    "fill": "#fff",
+                    "strokeWidth": 0
+                  }
+                },
+                "position": 0.5
+              }
+            ],
+            "data": {
+              "type": "tm.Flow",
+              "name": "imagen desplegada",
+              "description": "",
+              "outOfScope": false,
+              "reasonOutOfScope": "",
+              "hasOpenThreats": false,
+              "isBidirectional": false,
+              "isEncrypted": false,
+              "isPublicNetwork": false,
+              "protocol": "interno",
+              "threats": [],
+              "isTrustBoundary": false
+            },
+            "id": "5f1f3820-6fea-5c32-bbd1-eed31f05b522",
+            "source": {
+              "cell": "656383e9-50b4-5574-8611-08ff06208bdf"
+            },
+            "target": {
+              "cell": "9f74a4c6-b431-5438-b0d8-0ddfed5d4433"
+            },
+            "vertices": [
+              {
+                "x": 1050,
+                "y": 620
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "diagramTop": 2,
+    "reviewer": "Pendiente de revisión por el equipo",
+    "threatTop": 42
+  }
+}

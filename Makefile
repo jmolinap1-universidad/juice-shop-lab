@@ -4,7 +4,7 @@ LAB_URL := http://127.0.0.1:3000
 
 HARD := deploy/hardened/docker-compose.yml
 
-.PHONY: lab-up lab-down hard-up hard-down scan attack report ops-up ops-down risk risk-vigente risk-cierre-tecnico ops-validar corregida-build ops-corregido-up ops-corregido-ps ops-corregido-down release validar-artefacto risk-cierre-brechas trazabilidad xss-navegador iac-render cloud-build release-cloud colector-render
+.PHONY: lab-up lab-down hard-up hard-down scan attack report ops-up ops-down risk risk-vigente risk-cierre-tecnico ops-validar corregida-build ops-corregido-up ops-corregido-ps ops-corregido-down release validar-artefacto risk-cierre-brechas trazabilidad xss-navegador iac-render cloud-build release-cloud colector-render threat-dragon prueba-2fa
 
 lab-up:     ## Laboratorio vulnerable solo en 127.0.0.1:3000
 	docker compose -f $(LAB) up -d
@@ -94,6 +94,13 @@ release-cloud: cloud-build ## Puerta de release sobre la imagen cloud
 
 colector-render: ## Colector Render → Loki (requiere deploy/corregido/secrets/render_api_key, clave de SOLO LECTURA)
 	cd deploy/hardened && docker compose -f docker-compose.yml -f docker-compose.ops.yml -f docker-compose.corregido.yml --profile nube up -d colector-render
+
+threat-dragon: ## DFD en Threat Dragon: genera el modelo, lo valida (esquema oficial + prueba negativa) y lo abre en Threat Dragon v2.6.2 local
+	bash security/threat-dragon/ejecutar-threat-dragon.sh "evidence/threat-dragon-$$(date +%F)"
+
+prueba-2fa: ## 2FA (TOTP) de Juice Shop contra la imagen cloud LOCAL en 127.0.0.1:8090 (requiere el contenedor juice-cloud)
+	MSYS_NO_PATHCONV=1 docker run --rm --network host -v "$(CURDIR)":/r python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b \
+		sh -c 'pip install -q --root-user-action=ignore pyotp==2.9.0 && python -I /r/security/ops/prueba-2fa.py http://127.0.0.1:8090 /r/evidence/prueba-2fa-$$(date +%F).md /r/deploy/corregido/secrets/cloud-prueba.cred'
 
 ops-validar: ## Fase 6: escenarios del RASP sin WAF (R22) con registro HTTP y disponibilidad (requiere make ops-up)
 	bash security/ops/escenario-rasp.sh "$(CURDIR)/evidence/fase-6/validacion-$$(date +%F)/rasp-monitoreo" false
