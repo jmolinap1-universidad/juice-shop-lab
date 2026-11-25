@@ -1,0 +1,47 @@
+# Construcción de la variante corregida — 2026-11-24T22:15:16-06:00
+app/ = f189f521266f42c6bd05884468292000cee852ed (v20.3.0), sin cambios
+exportado app/ (LF) a app-hardened/build/orig y src
+ok  parche 02-sqli-search -> routes/search.ts
+ok  parche 05-eval-userprofile -> routes/userProfile.ts
+ok  parche 06-asignacion-masiva-registro -> server.ts
+ok  parche 07-cors-restringido -> server.ts
+ok  parche 08-bola-cesta-propietario -> routes/basket.ts
+ok  lib/insecurity.ts
+ok  models/user.ts
+ok  routes/login.ts
+ok  routes/changePassword.ts
+ok  routes/2fa.ts (2 comparaciones)
+ok  server.ts
+Correcciones v2 aplicadas.
+ok  server.ts (parche 10: BasketItems GET/PUT/DELETE y lista, Addresss PUT, Feedbacks DELETE)
+ok  package.json (9 cambios)
+ok  lib/insecurity.ts (4 cambios)
+ok  lib/utils.ts (4 cambios)
+ok  routes/showProductReviews.ts (2 cambios)
+ok  routes/trackOrder.ts (2 cambios)
+ok  routes/updateProductReviews.ts (3 cambios)
+ok  lib/xml.ts (2 cambios)
+ok  routes/profileImageUrlUpload.ts (2 cambios)
+ok  routes/recycles.ts (2 cambios)
+ok  server.ts (6 cambios)
+ok  package.json (1 cambios)
+ok  models/index.ts (2 cambios)
+ok  routes/login.ts (1 cambios)
+ok  routes/search.ts (1 cambios)
+ok  routes/search.ts (2 cambios)
+ok  routes/b2bOrder.ts (1 cambios)
+ok  routes/chat.ts (1 cambios)
+ok  frontend/src/app/search-result/search-result.component.ts (1 cambios)
+Parches 11 y 12 aplicados.
+ok  models/user.ts (2 cambios)
+ok  routes/saveLoginIp.ts (1 cambios)
+ok  server.ts (1 cambios)
+Parche 14 aplicado.
+AVISO: diff auditado reescrito en app-hardened/patches/v2/correcciones-cierre-brechas.patch (revisar antes de commitear)
+ok  fuente = diff auditado (app-hardened/patches/v2/correcciones-cierre-brechas.patch), 22 archivos cambiados; variante corregida-cierre-brechas
+docker build juice-corregida:local ...
+sha256:a4aa3dd0a9f9ff6915abb5fdfa4c6c9e04772788f764e0eb3725dc7965c13580
+imagen juice-corregida:local = sha256:a4aa3dd0a9f9ff6915abb5fdfa4c6c9e04772788f764e0eb3725dc7965c13580
+sha256:1849a86fc138e469809a4e42fac593fbf5db7b1498ae6375731be73340f9c1fb
+imagen juice-corregida-rasp:local = sha256:1849a86fc138e469809a4e42fac593fbf5db7b1498ae6375731be73340f9c1fb
+RESULTADO: ÉXITO

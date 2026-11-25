@@ -3,8 +3,8 @@
 # (variante corregida-cierre-tecnico, parches 01-13) y verifica que coincide con el diff auditado. Si no coincide,
 # la construcción FALLA: la plataforma no puede desplegar una fuente distinta a la revisada.
 #   etapa "git":    clona Juice Shop en el tag fijado, comprueba el commit y aplica 02, 05, 06, 07 y 08 (git apply)
-#   etapa "python": aplica 01/03/04/09 (aplicar_v2.py), 10 (aplicar_fase6.py), 11-13 (aplicar_cierre_tecnico.py)
-#                   y compara el diff regenerado con app-hardened/patches/v2/correcciones-cierre-tecnico.patch
+#   etapa "python": aplica 01/03/04/09 (aplicar_v2.py), 10 (aplicar_fase6.py), 11-13 (aplicar_cierre_tecnico.py), 14 (aplicar_cierre_brechas.py)
+#                   y compara el diff regenerado con app-hardened/patches/v2/correcciones-cierre-brechas.patch
 set -euo pipefail
 W=/w
 H=/h
@@ -36,7 +36,8 @@ case "${1:-}" in
     python -I "$H/aplicar_v2.py" "$W/src"
     python -I "$H/aplicar_fase6.py" "$W/src"
     python -I "$H/aplicar_cierre_tecnico.py" "$W/src"
-    ARCHIVOS="lib/insecurity.ts models/user.ts routes/login.ts routes/changePassword.ts routes/2fa.ts server.ts routes/search.ts routes/userProfile.ts routes/basket.ts package.json lib/utils.ts lib/xml.ts routes/showProductReviews.ts routes/trackOrder.ts routes/updateProductReviews.ts routes/profileImageUrlUpload.ts routes/recycles.ts frontend/src/app/search-result/search-result.component.ts routes/b2bOrder.ts routes/chat.ts models/index.ts"
+    python -I "$H/aplicar_cierre_brechas.py" "$W/src"
+    ARCHIVOS="lib/insecurity.ts models/user.ts routes/login.ts routes/changePassword.ts routes/2fa.ts server.ts routes/search.ts routes/userProfile.ts routes/basket.ts package.json lib/utils.ts lib/xml.ts routes/showProductReviews.ts routes/trackOrder.ts routes/updateProductReviews.ts routes/profileImageUrlUpload.ts routes/recycles.ts frontend/src/app/search-result/search-result.component.ts routes/b2bOrder.ts routes/chat.ts models/index.ts routes/saveLoginIp.ts"
     GEN=/tmp/correcciones-regenerado.patch
     : > "$GEN"
     for f in $ARCHIVOS; do
@@ -44,9 +45,9 @@ case "${1:-}" in
     done
     sed -i "s#^-const privateKey = '-----BEGIN RSA PRIVATE KEY-----.*#-const privateKey = '[REDACTADO: clave privada de prueba de Juice Shop; no se versiona]'#" "$GEN"
     CAMBIADOS="$( { diff -rq "$W/orig" "$W/src" || true; } | wc -l)"
-    if cmp -s "$GEN" "$H/correcciones-cierre-tecnico.patch" && [ "$CAMBIADOS" = 21 ]; then
+    if cmp -s "$GEN" "$H/correcciones-cierre-brechas.patch" && [ "$CAMBIADOS" = 22 ]; then
       sha256sum "$GEN" | cut -c1-64 > "$W/FUENTE_DIFF_SHA256"
-      echo "ok  fuente = diff auditado (sha256 $(cat "$W/FUENTE_DIFF_SHA256")), 21 archivos; variante corregida-cierre-tecnico"
+      echo "ok  fuente = diff auditado (sha256 $(cat "$W/FUENTE_DIFF_SHA256")), 22 archivos; variante corregida-cierre-brechas (parches 01-14)"
       # Mismas exclusiones que el .dockerignore del propio Juice Shop (la construcción local lo aplica por usar src/ como
       # contexto; aquí la fuente pasa entre etapas con COPY --from, que lo ignora). Sin esto entraban terraform/ (con una
       # clave privada de ejemplo que Trivy detecta como secreto), test/, cypress/, etc. Patrones simples, sin comodines.
@@ -58,7 +59,7 @@ case "${1:-}" in
       done < "$W/src/.dockerignore"
       echo "ok  exclusiones del .dockerignore de Juice Shop aplicadas: $n rutas"
     else
-      echo "FALLO: la fuente no coincide con el diff auditado ($CAMBIADOS archivos distintos)"; diff "$GEN" "$H/correcciones-cierre-tecnico.patch" | head -20; exit 1
+      echo "FALLO: la fuente no coincide con el diff auditado ($CAMBIADOS archivos distintos)"; diff "$GEN" "$H/correcciones-cierre-brechas.patch" | head -20; exit 1
     fi ;;
   *) echo "uso: preparar-fuente.sh git|python"; exit 2 ;;
 esac

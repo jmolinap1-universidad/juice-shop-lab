@@ -16,8 +16,8 @@ RUN bash /h/preparar-fuente.sh git
 # ---- 2) Parches 01/03/04/09-13 (reemplazos literales verificados) y comprobación contra el diff auditado ----
 FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b AS parches
 COPY --from=fuente /w /w
-COPY app-hardened/aplicar_v2.py app-hardened/aplicar_fase6.py app-hardened/aplicar_cierre_tecnico.py /h/
-COPY app-hardened/patches/v2/correcciones-cierre-tecnico.patch deploy/cloud/preparar-fuente.sh /h/
+COPY app-hardened/aplicar_v2.py app-hardened/aplicar_fase6.py app-hardened/aplicar_cierre_tecnico.py app-hardened/aplicar_cierre_brechas.py /h/
+COPY app-hardened/patches/v2/correcciones-cierre-brechas.patch deploy/cloud/preparar-fuente.sh /h/
 RUN bash /h/preparar-fuente.sh python
 
 # ---- 3) Compilación (mismos pasos que app-hardened/Dockerfile) ----
@@ -51,9 +51,21 @@ FROM owasp/modsecurity-crs@sha256:98d448750b86f5f94ca570590dd1461e3ab24efc97e7c4
 # Parches de seguridad de Debian publicados después de la base (p. ej. krb5 deb13u2), en la misma capa que limpia las listas.
 # Hallazgo del escaneo de la imagen cloud (2026-11-24): con la base sola quedaban 60 CRITICAL/HIGH con corrección disponible.
 # Contrapartida: la capa depende del día de construcción (la base sí está fijada por digest); se documenta en la evidencia.
+# 2026-11-24 (cierre de brechas): además se RETIRAN paquetes que la configuración no usa y que arrastraban CVE HIGH sin
+# corrección: módulos nginx image-filter, xslt, njs y geoip (solo se cargan modsecurity y headers-more) con sus librerías
+# gráficas (gd, tiff, x11, fontconfig, expat), la herramienta curl con libcurl4 (ModSecurity usa libcurl-gnutls, que se
+# conserva; el chequeo de salud pasa a Node) y perl no esencial (con moreutils, que nada usa). Se comprobó que ningún script
+# de arranque los invoca. Lo que queda sin corrección es esencial para Debian o lo enlaza ModSecurity (libxml2, libssl,
+# libcurl-gnutls): ver docs/cierre-tecnico/TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md.
 USER 0
 # hadolint ignore=DL3005
-RUN apt-get update && apt-get -y --no-install-recommends upgrade && apt-get clean && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get -y --no-install-recommends upgrade \
+ && apt-get -y purge nginx-module-image-filter nginx-module-xslt nginx-module-njs nginx-module-geoip libgd3 libfontconfig1 \
+      fontconfig-config libxslt1.1 libtiff6 libxpm4 libx11-6 libx11-data libexpat1 curl libcurl4t64 perl libperl5.40 \
+      perl-modules-5.40 libio-pty-perl libipc-run-perl libtimedate-perl libtime-duration-perl moreutils \
+ && rm -f /usr/lib/nginx/modules/ngx_http_image_filter_module* /usr/lib/nginx/modules/ngx_http_xslt_filter_module* \
+      /usr/lib/nginx/modules/ngx_*_js_module* /usr/lib/nginx/modules/ngx_*_geoip_module* \
+ && apt-get clean && rm -rf /var/lib/apt/lists/*
 LABEL org.opencontainers.image.title="OWASP Juice Shop corregido + WAF + RASP (cloud)" \
       org.opencontainers.image.version="20.3.0-corregida-cierre-tecnico" \
       org.opencontainers.image.vendor="MASI-UMG-2026" \
@@ -68,6 +80,7 @@ COPY deploy/cloud/default.conf.template /etc/nginx/templates/conf.d/default.conf
 COPY deploy/cloud/acceso.html deploy/cloud/ok.txt /etc/nginx/
 COPY deploy/hardened/waf/rules/99-virtual-patches.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf
 COPY deploy/hardened/waf/rules/98-exclusiones-fase6.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-998-EXCLUSIONES-FASE6.conf
+COPY deploy/hardened/waf/rules/97-exclusiones-antes-crs.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
 COPY --chmod=755 deploy/cloud/iniciar.sh /usr/local/bin/iniciar.sh
 # WAF (mismos valores que deploy/hardened); audit log sin cabeceras ni cuerpos (partes A, F, H, Z): en la nube no hay
 # Alloy que redacte tokens, cookies o contraseñas, así que no se registran.
@@ -96,6 +109,6 @@ ENV BACKEND="http://127.0.0.1:3000" \
 USER 101
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=90s --retries=3 \
-    CMD ["curl", "-sf", "http://127.0.0.1:8080/healthz"]
+    CMD ["/usr/bin/env", "NODE_OPTIONS=", "/nodejs/bin/node", "-e", "fetch('http://127.0.0.1:8080/healthz').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
 ENTRYPOINT ["/usr/local/bin/iniciar.sh"]
 CMD ["nginx", "-g", "daemon off;"]

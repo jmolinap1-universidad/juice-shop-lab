@@ -11,7 +11,7 @@ services:
     plan: free
     region: virginia
     repo: https://github.com/jmolinap1-universidad/juice-shop-lab
-    branch: cierre/tecnico-web-seenode
+    branch: main
     dockerfilePath: ./deploy/cloud/Dockerfile
     dockerContext: .
     healthCheckPath: /healthz

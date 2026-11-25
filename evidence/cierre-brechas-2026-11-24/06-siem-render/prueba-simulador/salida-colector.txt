@@ -1,0 +1,10 @@
+== corrida 1 (clave correcta)
+2026-11-25T04:33:34+00:00 colector-render: inicio: servicio prueba, cada 60 s, destino http://sim-render:8000/loki/api/v1/push
+2026-11-25T04:33:34+00:00 colector-render: ciclo correcto: 3 líneas nuevas enviadas a Loki (hasta 2026-11-25T03:33:34.030790+00:00)
+== corrida 2 (misma ventana: no debe reenviar)
+2026-11-25T04:33:35+00:00 colector-render: inicio: servicio prueba, cada 60 s, destino http://sim-render:8000/loki/api/v1/push
+2026-11-25T04:33:35+00:00 colector-render: ciclo correcto: 0 líneas nuevas enviadas a Loki (hasta 2026-11-25T03:33:34.030790+00:00)
+== clave incorrecta
+2026-11-25T04:33:36+00:00 colector-render: inicio: servicio prueba, cada 60 s, destino http://sim-render:8000/loki/api/v1/push
+2026-11-25T04:33:36+00:00 colector-render: ERROR API Render: HTTP 401 Unauthorized
+rc=2

@@ -50,21 +50,27 @@ for p in 02-sqli-search 05-eval-userprofile 06-asignacion-masiva-registro 07-cor
 done
 
 docker run --rm -v "$(hostpath "$ROOT/app-hardened"):/h" "$PY" python -I /h/aplicar_v2.py /h/build/src | tee -a "$LOG"
-# VARIANTE_OBJETIVO: hito-a (01-09) · fase6 (+10) · cierre (+11 y 12, por defecto desde el cierre técnico 2026-11-23).
-# HITO_A=1 se mantiene como sinónimo de VARIANTE_OBJETIVO=hito-a.
-OBJ="${VARIANTE_OBJETIVO:-cierre}"; [ "${HITO_A:-0}" = 1 ] && OBJ=hito-a
+# VARIANTE_OBJETIVO: hito-a (01-09) · fase6 (+10) · cierre (+11, 12 y 13) · brechas (+14, por defecto desde el cierre de
+# brechas 2026-11-24). HITO_A=1 se mantiene como sinónimo de VARIANTE_OBJETIVO=hito-a.
+OBJ="${VARIANTE_OBJETIVO:-brechas}"; [ "${HITO_A:-0}" = 1 ] && OBJ=hito-a
 ARCHIVOS="lib/insecurity.ts models/user.ts routes/login.ts routes/changePassword.ts routes/2fa.ts server.ts routes/search.ts routes/userProfile.ts routes/basket.ts"
 ESPERADOS=9
 case "$OBJ" in
   hito-a) AUDITADO=app-hardened/patches/v2/correcciones-hito-a.patch; VARIANTE=corregida-hito-a ;;
-  fase6|cierre)
+  fase6|cierre|brechas)
     docker run --rm -v "$(hostpath "$ROOT/app-hardened"):/h" "$PY" python -I /h/aplicar_fase6.py /h/build/src | tee -a "$LOG"
     AUDITADO=app-hardened/patches/v2/correcciones-fase6.patch; VARIANTE=corregida-fase6
-    if [ "$OBJ" = cierre ]; then
+    if [ "$OBJ" = cierre ] || [ "$OBJ" = brechas ]; then
       docker run --rm -v "$(hostpath "$ROOT/app-hardened"):/h" "$PY" python -I /h/aplicar_cierre_tecnico.py /h/build/src | tee -a "$LOG"
       AUDITADO=app-hardened/patches/v2/correcciones-cierre-tecnico.patch; VARIANTE=corregida-cierre-tecnico
       ARCHIVOS="$ARCHIVOS package.json lib/utils.ts lib/xml.ts routes/showProductReviews.ts routes/trackOrder.ts routes/updateProductReviews.ts routes/profileImageUrlUpload.ts routes/recycles.ts frontend/src/app/search-result/search-result.component.ts routes/b2bOrder.ts routes/chat.ts models/index.ts"
       ESPERADOS=21
+    fi
+    if [ "$OBJ" = brechas ]; then
+      docker run --rm -v "$(hostpath "$ROOT/app-hardened"):/h" "$PY" python -I /h/aplicar_cierre_brechas.py /h/build/src | tee -a "$LOG"
+      AUDITADO=app-hardened/patches/v2/correcciones-cierre-brechas.patch; VARIANTE=corregida-cierre-brechas
+      ARCHIVOS="$ARCHIVOS routes/saveLoginIp.ts"
+      ESPERADOS=22
     fi ;;
   *) log "FALLO: VARIANTE_OBJETIVO desconocida: $OBJ"; exit 1 ;;
 esac

@@ -1,0 +1,96 @@
+# Política de RELEASE en CI (separada de devsecops.yml, que es la política de INFORME del laboratorio y nunca bloquea).
+# Construye los artefactos FINALES desde el código y aplica la puerta (scripts/pipeline-release.sh +
+# security/release/politica-release.json). Un job en rojo significa «artefacto NO apto según la política», no un fallo de CI.
+#   iac-render    validación de render.yaml: esquema oficial de Render + política de seguridad propia
+#   puerta-app    imagen de la app corregida (distroless + RASP), parches 01-14 verificados contra el diff auditado
+#   puerta-cloud  imagen que se despliega en Render (WAF + app + RASP), construida igual que en Render
+# Sin secretos: no publica imágenes ni despliega; solo construye, escanea y decide.
+name: release
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "app-hardened/**"
+      - "deploy/cloud/**"
+      - "deploy/hardened/rasp/**"
+      - "deploy/hardened/waf/rules/**"
+      - "scripts/construir-corregida.sh"
+      - "scripts/pipeline-release.sh"
+      - "security/release/**"
+      - "security/semgrep/**"
+      - "security/iac/**"
+      - "render.yaml"
+      - ".gitleaks.toml"
+      - ".gitleaksignore"
+      - ".github/workflows/release.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PY: python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+
+jobs:
+  iac-render:
+    name: IaC de Render (render.yaml)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar render.yaml (esquema oficial + política)
+        run: |
+          rc=0
+          RAMA=$(sed -nE 's/^ *branch: *(.+)$/\1/p' render.yaml | head -1)
+          RAMA_REMOTA="$(git ls-remote --heads origin "$RAMA")"; export RAMA_REMOTA
+          docker run --rm -e RAMA_REMOTA -v "$PWD:/r" -w /r "$PY" sh -c \
+            'pip install -q --no-cache-dir --root-user-action=ignore pyyaml==6.0.2 jsonschema==4.23.0 && python -I security/iac/validar-render.py /r security/iac/render.yaml.schema.json iac-render.md' || rc=$?
+          cat iac-render.md >> "$GITHUB_STEP_SUMMARY"; exit $rc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: iac-render, path: iac-render.md }
+
+  puerta-app:
+    name: Puerta de release — imagen de la app
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true, fetch-depth: 0 }
+      - name: Construir la variante corregida (parches 01-14, verificada contra el diff auditado)
+        run: bash scripts/construir-corregida.sh construccion.log || { tail -30 construccion.log; exit 1; }
+      - name: Puerta de release
+        run: |
+          rc=0; bash scripts/pipeline-release.sh juice-corregida-rasp:local salida/puerta-app || rc=$?
+          { echo "# Imagen de la app (juice-corregida-rasp)"; cat salida/puerta-app/puerta-release.md; } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: puerta-app, path: "salida/puerta-app/\nconstruccion.log" }
+
+  puerta-cloud:
+    name: Puerta de release — imagen cloud (Render)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with: { submodules: true, fetch-depth: 0 }
+      - name: Fuente corregida para Semgrep (misma verificación)
+        run: bash scripts/construir-corregida.sh construccion.log || { tail -30 construccion.log; exit 1; }
+      - name: Construir la imagen cloud como la construye Render
+        run: |
+          docker build --platform linux/amd64 -f deploy/cloud/Dockerfile -t juice-cloud:local . > build-cloud.log 2>&1 || { tail -40 build-cloud.log; exit 1; }
+          grep -E "ok  (fuente|exclusiones)" build-cloud.log
+      - name: Puerta de release
+        run: |
+          rc=0; bash scripts/pipeline-release.sh juice-cloud:local salida/puerta-cloud || rc=$?
+          { echo "# Imagen cloud (Render)"; cat salida/puerta-cloud/puerta-release.md; } >> "$GITHUB_STEP_SUMMARY"
+          exit $rc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: puerta-cloud, path: "salida/puerta-cloud/\nbuild-cloud.log" }
