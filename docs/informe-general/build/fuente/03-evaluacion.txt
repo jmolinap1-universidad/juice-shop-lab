@@ -1,0 +1,175 @@
+# 3. Evaluación de Seguridad
+La evaluación sigue la separación de enfoques de NIST SP 800-115 (Scarfone et al., 2008). La caja negra no usa ningún conocimiento del código. La caja gris dirige las cargas útiles con el conocimiento de rutas y modelos. La caja blanca revisa el código fuente. Los resultados de cada enfoque se presentan por separado, para no atribuir a una prueba de caja negra lo que se descubrió leyendo el código. Cada batería se ejecutó primero contra el laboratorio vulnerable, para obtener el riesgo inherente, y después contra la variante corregida, la imagen cloud en local y el despliegue real de Render.
+## 3.1 Pentesting Caja Negra
+### Superficie de ataque y perímetro
+La superficie expuesta se enumeró de forma reproducible desde `app/server.ts`. Comprende 109 rutas declaradas con ruta literal (50 GET, 40 POST, 13 PUT, 5 DELETE y 1 PATCH), unas 81 rutas bajo `/rest`, `/api` y `/b2b`, y 14 modelos expuestos como API CRUD automática. Incluye además tres puntos de entrada de archivos (`/file-upload`, `/profile/image/url` y `/rest/memories`), rutas estáticas con listado (`/ftp`, `/encryptionkeys`, `/support/logs`) y un endpoint de métricas sin autenticación (`/metrics`). Juice Shop no tiene webhooks entrantes ni salientes. La {T:perimetro} delimita los puertos y endpoints de cada entorno.
+@TABLA perimetro | Delimitación del perímetro local y cloud
+@ANCHOS 3.4,5.4,6.6
+| Entorno | Puertos y endpoints expuestos | Controles en el perímetro |
+|---|---|---|
+| Laboratorio vulnerable | 3000/tcp solo en 127.0.0.1 (Nmap 7.98: un único puerto abierto) | Ninguno: línea base del riesgo inherente |
+| Defensa local | 127.0.0.1:8088 (WAF), 127.0.0.1:3001 (Grafana) y 127.0.0.1:3100 (Loki); app, RASP y Alertmanager en redes internas | WAF con CRS, límite de intentos, rutas internas denegadas y cabeceras de seguridad |
+| Render | 443/tcp del borde de Render (HTTP 80 redirige con 301); la app solo escucha en 127.0.0.1:3000 dentro del contenedor | Puerta `/__acceso`, WAF, límite por IP real, TLS 1.2/1.3 y HSTS; `/healthz` como única ruta sin autenticación |
+| PostgreSQL de Render | Sin acceso externo (`ipAllowList: []`); solo la red privada de la región | TLS obligatorio desde la app; credenciales por referencia del Blueprint |
+@NOTA Elaboración propia a partir de `evidence/fase-4/nmap-127-3000.txt`, `docs/fase-6/fase6-mitigaciones.md`, `evidence/cierre-brechas-2026-11-24/05-iac-render/validacion.md` y `10-validacion-render/tls.md`.
+### Herramientas y resultados
+La {T:caja-negra} resume las pruebas de caja negra ejecutadas y su resultado. El reconocimiento con Nmap (Lyon, 2009) identificó un único servicio HTTP, cuya respuesta ya revelaba `Access-Control-Allow-Origin: *` y la ausencia de una política de seguridad de contenido. El escaneo de OWASP ZAP es de tipo *baseline* y, por lo tanto, pasivo (ZAP Dev Team, s.f.): observa respuestas y cabeceras, pero no inyecta. Por eso la prueba activa sin conocimiento del código la aportó sqlmap (Damele y Stampar, s.f.), dirigido al parámetro `q` del buscador que se descubrió desde la interfaz.
+@TABLA caja-negra | Pruebas de caja negra y resultados
+@ANCHOS 3.3,4.4,7.8
+| Herramienta (versión) | Objetivo y fecha | Resultado |
+|---|---|---|
+| Nmap 7.98 | Laboratorio, red interna de Docker (2026-11-04) | 3000/tcp abierto; cabeceras de la respuesta HTTP con CORS abierto y sin CSP |
+| ZAP 2.17.0, baseline pasivo | Laboratorio vulnerable (2026-11-04) | 9 alertas: 2 Medium (CSP no establecida; CORS permisivo), 4 Low y 3 informativas; FAIL 0 · WARN-NEW 7 · PASS 61 |
+| sqlmap 1.10.4 (imagen fijada por digest) | `/rest/products/search?q=` del laboratorio (2026-11-04) | VULNERABLE: inyección *boolean-based blind* y *time-based blind*; motor SQLite identificado; 169 peticiones, sin volcado masivo |
+| ZAP 2.17.0, baseline pasivo | Variante final detrás del WAF, red interna (2026-11-24) | 7 alertas, 0 High: 2 Medium sobre directivas de la CSP (sin directiva de respaldo; `style-src 'unsafe-inline'`), 2 Low y 3 informativas. Desaparece el CORS permisivo |
+| OpenSSL 3.5.7 | Borde de Render (2026-11-24) | TLS 1.0 y 1.1 rechazados; TLS 1.2 (ECDHE-ECDSA-AES128-GCM-SHA256) y TLS 1.3 (TLS_AES_256_GCM_SHA384) aceptados; certificado de Google Trust Services; HTTP con 301; HSTS de un año |
+| curl (puerta de acceso) | Render (2026-11-24) | 28/28: sin cookie, 302; credenciales erróneas, 401; cookie falsificada, 302; 429 a partir del quinto intento, también con `X-Forwarded-For` falsificado |
+@NOTA Fuentes: `evidence/fase-4/` (nmap, zap, blackbox-2026-11-04), `evidence/cierre-tecnico-2026-11-23/12-caja-negra/resumen-zap.md` y `evidence/cierre-brechas-2026-11-24/10-validacion-render/`. En la nube no se ejecutó un escaneo de puertos, porque el borde de Render es infraestructura compartida de un tercero y queda fuera del alcance autorizado.
+La {F:zap} muestra el resumen del informe de ZAP sobre la instancia vulnerable y la {F:sqli-union} el efecto de la inyección UNION de la Fase 4, que devuelve correos y hashes de la tabla de usuarios en lugar de productos.
+@FIGURA zap | docs/evidencias-fase4-5/img/06-zap-reporte-resumen.jpg | Resumen del informe de OWASP ZAP sobre el laboratorio vulnerable | 13
+@NOTA Captura del informe HTML `evidence/fase-4/zap/zap-baseline.html` (2026-11-04). El objetivo `host.docker.internal:3000` corresponde al 127.0.0.1 del equipo.
+@FIGURA sqli-union | docs/evidencias-fase4-5/img/02-sqli-union-users.jpg | Respuesta de la búsqueda con inyección UNION en el laboratorio vulnerable | 13
+@NOTA Captura del caso A2 (`evidence/fase-4/antes/a2-sqli-union-search.json`). Datos sintéticos del laboratorio.
+El escaneo pasivo no detecta por sí solo inyecciones, controles de acceso ni lógica de negocio. La ausencia de alertas High en el segundo escaneo no equivale, por tanto, a la ausencia de vulnerabilidades. Esos vectores se cubren con las pruebas activas del apartado 3.2.
+## 3.2 Pentesting Caja Gris / Blanca
+### Casos de ataque A1-A12
+El arnés `security/attacks/run.sh` ejecuta doce casos dirigidos con curl y registra el código HTTP real de cada petición. Una respuesta sin código (000), un error 5xx o un tiempo agotado se clasifican como «no concluyente» y nunca como mitigación. Los casos se clasifican según lo que demuestran:
+- **Explotación demostrada (E):** A1, A2, A3, A7 y A12.
+- **Exposición observada (X):** A4, A5, A6 y A11.
+- **Configuración insegura (C):** A8 y A9.
+- **Ausencia de control (N):** A10.
+A11 es informativo, porque servir una clave pública RSA es aceptable por diseño. El hallazgo real es la clave privada embebida, que solo es visible en caja blanca. La {T:casos} compara los siete escenarios en los que se repitió el mismo arnés.
+@HORIZONTAL
+@DATOS casos | Resultado de los casos A1-A12 por escenario
+@NOTA Fuente: `docs/auditoria-final-2026-11-20/TRAZABILIDAD_STRIDE_DREAD_7_CAPAS.md`, sección 3. VULN. = vulnerable; Mitig. = mitigado con respuesta HTTP válida. La descripción de cada escenario figura en la misma fuente.
+@VERTICAL
+La comparación separa el efecto del código del efecto del perímetro. La variante corregida sin WAF elimina las inyecciones, la asignación masiva, el CORS abierto y el BOLA. Mantiene expuestos los listados, `/metrics`, las cabeceras y el límite de intentos, que se cierran en el proxy y el WAF. A la inversa, el WAF por sí solo no detiene el BOLA (A12 sigue vulnerable con la imagen oficial defendida), porque la petición es sintácticamente legítima. Solo la combinación de código corregido y perímetro deja los doce casos mitigados, tanto en local como en Render.
+### Autorización a nivel de objeto (BOLA/IDOR)
+En la Fase 4 se demostró el BOLA con dos cuentas sintéticas. La cuenta B obtuvo con su propio token la cesta de la cuenta A, con HTTP 200 y `UserId` de A (CWE-639, API1:2023). Tras los parches 08 y 10, la batería `security/ops/bola-recursos.sh` amplió la prueba a cinco tipos de objeto: direcciones, tarjetas, artículos de cesta, la lista de artículos y opiniones. Comprueba el efecto releyendo cada objeto con la cuenta propietaria. La {T:bola} muestra el resultado en Render.
+@TABLAMD bola | Prueba de BOLA en cinco tipos de objeto sobre el despliegue de Render | evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/bola-recursos.md | 0 | 0,1,2,3,4 | 3.2,3.0,1.7,5.2,3.1
+@NOTA Fuente: `evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/bola-recursos.md` (2026-11-25). Controles positivos: el propietario modifica, lee y borra sus propios objetos en 7 de 7 operaciones, lo que descarta un bloqueo indiscriminado.
+### Casos complementarios T1-T10 y autenticación
+La caja gris se completó con diez casos derivados de hallazgos medidos: inyección NoSQL sobre reseñas y pedidos, modificación de reseñas ajenas, SSRF hacia un servicio interno, CSRF con un origen ajeno, XXE con entidad externa, errores 5xx con mensajes internos, quejas de otras cuentas y reciclajes sin sesión. La {T:t1t10} recoge su ejecución en Render.
+@TABLAMD t1t10 | Casos complementarios T1-T10 en Render | evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/pruebas/resultados.md | 0 | 0,1,3,4,5 | 1.2,4.0,1.6,6.6,3.1
+@NOTA Fuente: `evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/pruebas/resultados.md`. T5 y T7 se cerraron consultando el SIEM: 0 peticiones de la app con la marca de SSRF (reglas 931100, 934110 y 949110 en la auditoría del WAF) y 0 líneas con la entidad XXE resuelta. Ambos quedan PROTEGIDOS. En total, 0 vulnerables.
+La autenticación se evaluó con pruebas específicas, resumidas en la {T:autenticacion}.
+@TABLA autenticacion | Pruebas de autenticación y gestión de sesión
+@ANCHOS 5,6.5,4
+| Prueba | Resultado | Evidencia |
+|---|---|---|
+| Fuerza bruta en el login (A10) | Vulnerable: 12 intentos con 12 respuestas 401, sin bloqueo. Corregida: 429 desde el quinto intento por IP | `evidence/fase-4/antes/`; `10-validacion-render/baterias/ataques.txt` |
+| JWT con `alg=none` y confusión HS256 con la clave pública | 401 en ambos casos; el token legítimo RS256 recibe 200 (parche 11) | `evidence/cierre-tecnico-2026-11-23/` (`jwt-algoritmos.md`) |
+| Token firmado con la clave anterior a la rotación | 401 (la clave embebida ya no es válida) | `evidence/cierre-2026-11-20/03-corregida-sin-waf/` |
+| Arranque sin secreto JWT | La app no inicia (código de salida 1): falla en cerrado | `evidence/cierre-2026-11-20/03-corregida-sin-waf/arranque-sin-secreto.txt` |
+| Almacenamiento de contraseñas | 27/27 cuentas con scrypt con sal; 0 MD5 | `docs/auditoria-final-2026-11-20/PARCHEO_Y_REGRESION.md` |
+| Doble factor (TOTP) | 13/13 en local y en Render. Con la 2FA activa, la contraseña sola no da sesión; un código erróneo o un tmpToken forjado reciben 401. Observación: la 2FA se desactiva solo con la contraseña | `evidence/cierre-brechas-2026-11-24/12-2fa/` |
+| Puerta de acceso cloud | 28/28; cookie de 256 bits `Secure`, `HttpOnly` y `SameSite` | `10-validacion-render/baterias/puerta-acceso.md` |
+@NOTA Elaboración propia a partir de las evidencias indicadas.
+### Caja blanca
+La revisión de código combinó Semgrep, CodeQL y lectura manual (apartado 3.5). Su hallazgo más grave es la clave privada RS256 codificada en `lib/insecurity.ts` (CWE-798). Con ella cualquiera que lea el código público puede forjar sesiones de cualquier usuario sin explotar ninguna inyección. No se automatizó el forjado ni se versionó la clave. La caja blanca también ubicó las consultas SQL construidas con plantillas de texto (`routes/login.ts:34`, `routes/search.ts:23`), el uso de `eval` y `vm` sobre datos del usuario, el hash MD5 sin sal y la API automática sin verificación de propietario. Esta revisión orientó los parches del apartado 4.3.
+### Casos de abuso
+Los casos de abuso describen la intención del atacante y se vinculan con la prueba que los demuestra. La {T:abuso} indica el alcance real de cada demostración y su estado tras los controles.
+@TABLA abuso | Casos de abuso: alcance demostrado y estado final
+@ANCHOS 1.5,3.1,4.5,4.0,3.5
+| N.º | Actor | Caso de abuso | Demostración inicial | Estado en Render |
+|---|---|---|---|---|
+| AB1 | Atacante anónimo | Iniciar sesión como administrador sin contraseña | A1: explotación completa | Mitigado (403 del WAF; 401 sin WAF) |
+| AB2 | Atacante anónimo | Robar credenciales y descifrar hashes MD5 | A2: extracción de correos y hashes | Mitigado; contraseñas con scrypt |
+| AB3 | Atacante anónimo | Crear una cuenta de administrador | A7: explotación completa | Mitigado (rol no aceptado) |
+| AB4 | Usuario autenticado | Leer o alterar objetos de otro usuario | A12 y batería BOLA | Mitigado: 0/10 accesos ajenos |
+| AB5 | Atacante anónimo | Leer documentos internos | A4, A5 y A11: exposición | Mitigado (403 en el perímetro) |
+| AB6 | Atacante anónimo | Reconocer el sistema por métricas y esquema | A6 y A3 | Mitigado |
+| AB7 | Sitio malicioso | Leer datos de la víctima desde otro origen | A8: solo cabecera permisiva, no demostrado | Sin `ACAO` abierto; CSRF con origen ajeno, 403 |
+| AB8 | Atacante anónimo | Adivinar contraseñas sin bloqueo | A10: ausencia de límite, sin acierto | 429 desde el quinto intento |
+@NOTA Elaboración propia a partir de `docs/fase-4/fase4-pruebas-seguridad.md` (sección 5) y de las baterías de `evidence/cierre-brechas-2026-11-24/10-validacion-render/`.
+## 3.3 Evaluación OWASP Web Top 10
+La cobertura se presenta categoría por categoría y distingue lo probado de lo solo revisado. No se afirma cobertura total. La {T:owasp} compara el estado inicial de la Fase 4 con el estado final, con referencia al OWASP Top 10:2025 (OWASP Foundation, 2025a).
+@HORIZONTAL
+@TABLA owasp | Cobertura del OWASP Top 10:2025: estado inicial y final
+@ANCHOS 3.6,4.8,6.6,5.4
+| Categoría | Fase 4 (vulnerable) | Estado final (variante y Render) | Límite o pendiente |
+|---|---|---|---|
+| A01 Broken Access Control | Probado: A5, A7, A12 (BOLA); SSRF identificado, no probado | Probado y mitigado: BOLA 0/10 en cinco objetos; A7; quejas y reciclajes por propietario; SSRF bloqueado (T5) | Objetos de la API no auditados (Memories, PrivacyRequests, historial de pedidos); redirección abierta (R15) sin corregir |
+| A02 Security Misconfiguration | Probado: A4, A6, A8, A9, A11 | Mitigado en el perímetro: listados, `/metrics` y clave pública con 403; cabeceras presentes; CORS restringido en el código | Sin WAF, los listados y `/metrics` siguen expuestos (corrección en el perímetro) |
+| A03 Software Supply Chain Failures | Revisado: SCA de la Fase 3 | Puerta de release: Trivy app C1/H2 y cloud C1/H0 con excepciones fechadas; SBOM en cada construcción | marsdb sin corrección (excepción hasta 2026-12-31) |
+| A04 Cryptographic Failures | Revisado: MD5, clave privada embebida | Probado: scrypt 27/27; clave rotada y fuera del código; TLS 1.3 con AES-256-GCM medido | TLS 1.2 aceptado por la plataforma; cifrado en reposo solo declarado |
+| A05 Injection | Probado: A1-A3 y sqlmap | Probado y mitigado: SQLi, NoSQL (T1-T3), XXE (T7) y XSS en navegador (0/6); bloqueos 942, 941, 932 y 934 | `eval` y `vm` (R09) sin prueba dinámica fuera de Docker |
+| A06 Insecure Design | Revisado: STRIDE y DREAD | Modelo en Threat Dragon con 42 amenazas; casos de abuso ejecutados | La 2FA se desactiva solo con la contraseña (diseño de Juice Shop) |
+| A07 Authentication Failures | Revisado: A10 | Probado: 429 desde el quinto intento, JWT `alg=none` con 401, 2FA 13/13 | Sin limitación por cuenta ante ataques distribuidos |
+| A08 Software or Data Integrity Failures | No probado | Fuente verificada contra el diff auditado al construir; imágenes fijadas por digest; Gitleaks 0 | Sin firma de imágenes |
+| A09 Security Logging and Alerting Failures | No probado | Probado: SIEM con 15 reglas, ingesta cloud en 48 s y alertas cloud en alrededor de 1 min | Un solo nodo; colector local sin cobertura de 24 horas |
+| A10 Mishandling of Exceptional Conditions | No probado | Probado: errores 5xx genéricos sin traza (T8); RASP sin auto-DoS en sqlite3 | Sinks del RASP distintos de sqlite3 sin probar |
+@NOTA Elaboración propia a partir de `docs/fase-4/fase4-pruebas-seguridad.md` (sección 6), `docs/fase-6/fase6-mitigaciones.md` y `evidence/cierre-brechas-2026-11-24/`.
+@VERTICAL
+## 3.4 Evaluación de Plugins y Themes
+### Aplicabilidad
+Juice Shop no tiene un sistema de plugins ni de temas como el de los CMS tradicionales. El título se conserva por la estructura obligatoria, y su contenido se aplica a los dos elementos equivalentes que sí existen. El primero son los componentes de terceros que extienden la aplicación: 2745 componentes en el SBOM de la imagen oficial, generado con Syft en formato CycloneDX (Ecma International, 2024). El segundo es la capa de presentación, el frontend Angular, que cumple el papel del tema. No se afirma la existencia de plugins o temas tradicionales.
+### Componentes de terceros
+Los componentes se evaluaron con npm audit, OSV-Scanner y Grype (apartado 3.6). Destacan bibliotecas directas desactualizadas con impacto en seguridad: `jsonwebtoken` 0.1.0 y 0.4.0, `express-jwt` 0.1.3, `sanitize-html` 1.4.2, `marsdb` 0.6.11, y `lodash` 2.4.2 y `crypto-js` 3.3.0 como dependencias transitivas. Además, el código incluye material didáctico de los retos (`data/static/codefixes/`) que el SAST marca como inyecciones, aunque no se ejecuta. Se documentó como excepción y no se ocultó.
+### Frontend y XSS en navegador
+El frontend se evaluó con una prueba de XSS en un navegador real. Con Chromium (Playwright 1.49.1) se cargó la carga útil `<iframe src="javascript:alert(...)">` en seis vectores: DOM en la búsqueda, reflejado en el seguimiento de pedidos, y almacenado en opiniones, productos, correo del usuario visto por el administrador y última IP de inicio de sesión. Una ejecución cuenta cuando aparece el diálogo o el iframe en el DOM. La {T:xss} resume los resultados.
+@TABLA xss | XSS en navegador: seis vectores por objetivo
+@ANCHOS 6.0,2.9,7.5
+| Objetivo | Ejecutados | Observación |
+|---|---|---|
+| Imagen oficial, modo seguro por defecto | 1/6 | V1 (DOM en la búsqueda) se ejecuta |
+| Imagen oficial sin modo seguro | 5/6 | Los vectores almacenados se ejecutan al desactivar el modo seguro de Juice Shop |
+| Variante corregida (parche 14), con modo seguro | 0/6 | Sumideros corregidos en el código |
+| Variante corregida sin modo seguro | 0/6 | La corrección no depende del modo seguro |
+| Imagen cloud final (local) | 0/6 | Además, el WAF rechaza con 403 el almacenamiento de las cargas útiles |
+@NOTA Fuente: `evidence/cierre-brechas-2026-11-24/02-xss-navegador/` y `09-validacion-imagen-alpine-local/xss/`.
+@FIGURA xss-oficial | evidence/cierre-brechas-2026-11-24/02-xss-navegador/oficial-sms/V1.png | Imagen oficial sin modo seguro: retos de XSS resueltos tras ejecutar las cargas útiles | 14
+@NOTA Captura de Playwright (2026-11-25). Juice Shop notifica en verde cada reto superado, lo que confirma la ejecución.
+@FIGURA xss-cloud | evidence/cierre-brechas-2026-11-24/02-xss-navegador/cloud/V1.png | Imagen cloud final: la misma carga útil en la búsqueda no se inyecta | 14
+@NOTA Captura de Playwright sobre la imagen que se despliega en Render, ejecutada en local (2026-11-25).
+El residual del XSS no llega al mínimo. El frontend conserva otros usos de `bypassSecurityTrustHtml` (marcador de retos y captcha) y la CSP mantiene `'unsafe-inline'` en los estilos, lo que coincide con las dos alertas Medium del segundo escaneo de ZAP.
+## 3.5 SAST (Código del CMS / Plugins)
+### Línea base
+Semgrep 1.181.1 (Semgrep, s.f.) analizó el código de Juice Shop, sus workflows y la infraestructura del repositorio, con reglas de la comunidad y reglas propias en `security/`. Informó 90 hallazgos: 26 ERROR, 62 WARNING y 2 MEDIUM. La {T:semgrep} agrupa las reglas más relevantes para la aplicación. CodeQL (GitHub, s.f.) se ejecuta en el workflow `devsecops.yml` y publica su análisis en GitHub; sus resultados no se versionan como archivo local.
+@TABLA semgrep | Hallazgos principales de Semgrep sobre la versión vulnerable
+@ANCHOS 6,2.6,7.9
+| Regla (CWE) | Hallazgos | Relación con el modelo de amenazas |
+|---|---|---|
+| express-directory-listing (CWE-548) y variante de comprobación | 33 + 5 | T12: listados de `/ftp`, `/encryptionkeys` y `/support/logs` |
+| express-sequelize-injection y sequelize-raw-query-template-literal (CWE-89) | 6 + 5 | T01 y T02; varias en el material didáctico de `codefixes` |
+| node-eval-user-input y code-string-concat (CWE-95) | 5 + 1 | T09: `eval` y `vm` |
+| weak-password-hash-md5 (CWE-916) | 2 | T05 |
+| hardcoded-private-key y hardcoded-jwt-secret (CWE-798) | 1 + 1 | T03: clave privada embebida |
+| cors-wildcard (CWE-942) y express-open-redirect (CWE-601) | 1 + 1 | T14 y T15 |
+| run-shell-injection, gha-curl-pipe-shell y github-actions-mutable-action-tag | 5 + 1 + 7 | Workflows del proyecto original de Juice Shop (fuera de la imagen) |
+| aws-subnet-has-public-ip-address e insecure-load-balancer-tls-version | 5 + 5 | Ejemplos de Terraform de los retos de Juice Shop (`infrastructure/`), no el diseño del proyecto |
+@NOTA Fuente: `evidence/fase-3/sast/resumen-semgrep.md` (90 hallazgos: 62 WARNING, 26 ERROR y 2 MEDIUM).
+### Resultado sobre el artefacto final
+La puerta de release ejecuta las reglas propias de Semgrep sobre el código de la variante corregida. Bloquea si existe un ERROR sin excepción documentada. En la última ejecución hubo 12 ERROR, todos cubiertos por siete excepciones con justificación, responsable y fecha de vencimiento, y 33 WARNING. Las excepciones son: el material didáctico de `codefixes` (dos reglas); el MD5 que se conserva para identificadores de pedido, Gravatar y B2B, mientras las contraseñas usan scrypt; el script de empaquetado, que no forma parte de la imagen; y tres usos de `vm` con cadenas de código fijas. Gitleaks v8.30.1 no encontró secretos en el historial completo del repositorio. Un único falso positivo se revisó y se registró en `.gitleaksignore`.
+## 3.6 SCA (Dependencias y Plugins)
+El análisis de composición de software se ejecutó con cuatro herramientas independientes, cuyas bases de datos no coinciden: npm audit, OSV-Scanner (Google, s.f.), Grype sobre el SBOM de Syft (Anchore, s.f.-a, s.f.-b) y Trivy sobre la imagen (Aqua Security, s.f.). Ninguna se usa para ocultar a otra. La {T:sca} compara la línea base con el artefacto final.
+@TABLA sca | Análisis de composición de software: línea base y artefacto final
+@ANCHOS 4.2,5.6,6.7
+| Herramienta | Línea base (imagen oficial v20.3.0) | Artefacto final |
+|---|---|---|
+| npm audit | 40 avisos: 7 críticos, 20 altos, 11 moderados y 2 bajos | Dependencias directas actualizadas por el parche 11 |
+| OSV-Scanner v2.7.0 | 28 paquetes afectados y 62 vulnerabilidades únicas | — |
+| Grype v0.120.1 (SBOM Syft, CycloneDX) | 129 coincidencias: 12 Critical, 44 High, 61 Medium, 5 Low y 7 Negligible | Informativo: app 1 Critical y 18 High; imagen cloud 1 Critical y 15 High |
+| Trivy 0.75.0 (imagen) | 11 CRITICAL y 32 HIGH (81 en dependencias Node y 45 en el sistema base); 5 secretos de reto | App: CRITICAL 1 y HIGH 2, exceptuadas (marsdb y libssl de la base distroless). Imagen cloud: CRITICAL 1 (marsdb, exceptuada) y HIGH 0; 0 secretos |
+@NOTA Fuentes: `evidence/fase-3/sca/`, `docs/fase-5/fase5-contenedores-hardening.md` y `evidence/cierre-brechas-2026-11-24/08-puerta-release-local/`. La decisión de la política se basa en Trivy. Grype se reporta como información adicional y su diferencia se documenta.
+El parche 11 actualizó `express-jwt` a 8.5.1, `jsonwebtoken` a 9.0.3, `jws` a 4.0.1 y `sanitize-html` a 2.18.2. También eliminó `download` y `decompress` e impuso versiones corregidas de `crypto-js` (4.2.0), `tar` (7.5.23) y `minimatch` (3.1.5). La dependencia restante crítica, `marsdb` 0.6.11 (GHSA-5mrr-rgp6-x4gr), no tiene versión corregida. Su vía conocida de explotación (`$where`) se eliminó del código (parche 12) y su aceptación temporal vence el 2026-12-31.
+## 3.7 Evaluación de Contenedores y Kubernetes
+### Aplicabilidad de Kubernetes
+El proyecto no usa Kubernetes. La orquestación local se hace con Docker Compose y el despliegue cloud es un servicio de contenedor gestionado por Render. Por ello no se presentan resultados de herramientas específicas de Kubernetes. Los principios aplicables de NIST SP 800-190 se evalúan sobre las imágenes y el entorno de ejecución de los contenedores realmente usados (Souppaya et al., 2017): imágenes mínimas y fijadas, escaneo de vulnerabilidades, usuario no root, sistema de archivos de solo lectura, capacidades mínimas, límites de recursos y separación de redes.
+### Imágenes y Dockerfiles
+La Fase 5 escaneó la imagen oficial y la propuesta endurecida. La {T:contenedores} resume las mediciones con Trivy, Hadolint (Hadolint, s.f.) y Checkov (Palo Alto Networks, s.f.).
+@TABLA contenedores | Evaluación de contenedores e IaC de despliegue
+@ANCHOS 4.6,5.4,6.5
+| Control | Medición inicial | Medición final |
+|---|---|---|
+| Trivy sobre la imagen oficial | 11 CRITICAL y 32 HIGH; repaquetar no reduce CVE de dependencias | Variante corregida: CRITICAL 1 y HIGH 2 exceptuadas; imagen cloud Alpine: CRITICAL 1 exceptuada y HIGH 0 |
+| Hadolint v2.15.1 | `app/Dockerfile`: 11 avisos (10 DL3059 y 1 DL3006) | 0 avisos en los Dockerfiles de la app, de la RASP y de la imagen cloud |
+| Checkov 3.4.0 sobre `deploy/` y `app-hardened/` | — | 47 superadas, 0 fallidas, 0 omitidas |
+| Secretos en la imagen | 5 (clave privada de `insecurity.ts` y tokens de prueba) | 0 en la imagen cloud final |
+| Construcción del Dockerfile endurecido | El Dockerfile de la Fase 5 no construía (`npm install --ignore-scripts` omitía la compilación) | Corregido y construido; Hadolint 0 |
+@NOTA Fuentes: `docs/fase-5/fase5-contenedores-hardening.md`, `docs/auditoria-final-2026-11-20/PARCHEO_Y_REGRESION.md` y `evidence/cierre-brechas-2026-11-24/08-puerta-release-local/`.
+### Imagen cloud y política de release
+La imagen que se despliega en Render combina el WAF y la aplicación en un solo contenedor. Al aplicarle por primera vez la puerta de release, el 2026-11-24, resultó BLOQUEADA. Los paquetes de Debian de la imagen base del WAF tenían vulnerabilidades altas sin corrección publicada, entre ellas libxml2, que enlaza ModSecurity. La {T:imagen-cloud} muestra la evolución hasta una imagen apta, conseguida sin bajar umbrales ni añadir excepciones.
+@TABLAMD imagen-cloud | Evolución de la imagen cloud frente a la política de release | docs/cierre-tecnico/TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md | 0 | 0,1,2,3,4,5 | 4.6,2.3,1.4,2.4,2.3,3.3
+@NOTA Fuente: `docs/cierre-tecnico/TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md`, sección 1. Trivy 0.75.0 con `scripts/pipeline-release.sh` y la política `security/release/politica-release.json`.
+La reducción a la variante Alpine de la misma versión del WAF (CRS 4.25.2) y la compilación de la aplicación para musl (`node:24-alpine`) redujeron de 63 a 1 las vulnerabilidades críticas y altas sin corrección publicada; la restante es marsdb, ya exceptuada. La imagen se validó después funcional y ofensivamente con 0,1 vCPU, 512 MB y PostgreSQL 17, con un consumo final de memoria de 149,2 MiB y sin reinicios. El WAF del entorno local pasó a la misma base. Docker Bench for Security quedó pendiente, porque requiere acceso privilegiado al daemon del equipo; los controles que evalúa se verificaron con `docker inspect` (apartado 4.5).

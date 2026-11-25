@@ -1,0 +1,21 @@
+flowchart TB
+  P["push / pull request<br/>a main"] --> D
+  subgraph D["devsecops.yml (informa, no bloquea)"]
+    direction LR
+    d1["Gitleaks v8.30.1"]
+    d2["Semgrep 1.181.1 + CodeQL"]
+    d3["npm audit · OSV-Scanner v2.7.0<br/>Syft v1.55.0 (SBOM) · Grype v0.120.1"]
+    d4["Trivy 0.75.0 · Hadolint v2.15.1"]
+    d5["Terraform 1.16.7 validate · Checkov 3.4.0"]
+    d6["ZAP baseline contra<br/>contenedor efímero del job"]
+  end
+  P --> R
+  subgraph R["release.yml (puerta que bloquea)"]
+    direction LR
+    r1["IaC de Render<br/>esquema oficial + política"]
+    r2["Puerta de release<br/>imagen de la app"]
+    r3["Puerta de release<br/>imagen cloud (Render)"]
+  end
+  R --> V{"¿APTA según<br/>politica-release.json?"}
+  V -->|"sí"| DEP["Despliegue manual en Render<br/>(Manual Deploy)"]
+  V -->|"no"| BLK["BLOQUEADA:<br/>no se despliega"]

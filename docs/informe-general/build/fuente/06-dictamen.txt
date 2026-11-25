@@ -1,0 +1,162 @@
+# 6. Dictamen y Mejores Prácticas
+## 6.1 Conclusiones
+El proyecto demuestra con evidencia reproducible que la combinación de correcciones en el código, defensa perimetral, endurecimiento de contenedores y monitoreo reduce el riesgo de una aplicación de comercio electrónico deliberadamente vulnerable. El riesgo inherente, con 8 críticos y 16 altos, pasó a un residual de 0 críticos, 7 altos, 14 medios y 3 bajos, calculado solo con controles probados y validado con 382 comprobaciones automáticas sin fallas.
+Las conclusiones se sustentan en los siguientes hechos verificados:
+1) **Análisis de riesgos y activos.** El inventario de 42 activos, la valoración CIA, las 30 amenazas STRIDE con DREAD (20 de la aplicación y 10 de la nube real) y el análisis por siete capas, con sus cuatro subcapas de aplicación, forman una cadena trazable de amenaza a riesgo, control y evidencia. El modelo está disponible en Threat Dragon y se validó contra su esquema oficial. Falta la revisión formal del modelo por el equipo.
+2) **Arquitectura cloud y DevSecOps.** La arquitectura objetivo en AWS cumple en diseño los requisitos de la Opción B, con 144 comprobaciones de Checkov superadas y 0 fallidas, pero no se desplegó. El despliegue real en Render cubre el contenedor, la base de datos administrada privada, el WAF, la función de puerta de enlace, el menor privilegio y TLS 1.3 con AES-256 en tránsito. Quedan parciales la CDN propia y el TLS 1.3 exclusivo, y el cifrado en reposo es solo declarado. El pipeline integra SAST, SCA, SBOM, análisis de contenedores e IaC y una puerta de release que bloqueó de verdad una imagen no conforme.
+3) **Ciberdefensa.** Las pruebas de caja negra, gris y blanca demostraron cuatro explotaciones completas y un BOLA en la versión vulnerable. En Render, los mismos casos (A1-A12), la batería BOLA en cinco tipos de objeto y los casos T1-T10 terminaron sin resultados vulnerables, con la regresión funcional y el recorrido de la interfaz intactos.
+4) **Ciberseguridad operativa.** Los catorce parches eliminan la causa de los hallazgos principales sin depender del WAF. El WAF y el RASP aportan capas adicionales, y el SIEM centraliza los eventos locales y de la nube con alertas probadas de extremo a extremo.
+5) **Límite del resultado.** La ausencia de hallazgos en las baterías no equivale a ausencia de vulnerabilidades. Juice Shop conserva más de cien retos que no forman parte del modelo de amenazas, y siete riesgos siguen altos.
+### Dictamen
+La variante corregida, desplegada en Render con el commit `768d1da`, se considera **apta para una demostración temporal con acceso restringido**: puerta de autenticación previa, datos sintéticos y URL no anunciada. **No es apta para su exposición pública abierta** ni para tratar datos reales de clientes. El dictamen se condiciona a los pendientes declarados:
+- La CDN propia con caché y el TLS 1.3 exclusivo requieren un dominio de pago.
+- La autenticación multifactor de las cuentas de GitHub y Render no está verificada.
+- El cifrado en reposo de la base de datos solo lo declara el proveedor.
+- El monitoreo cloud no tiene cobertura de 24 horas.
+- La excepción de marsdb vence el 2026-12-31.
+- La base de datos gratuita vence el 2026-12-24.
+- La correspondencia de Juice Shop con la Opción B depende de la aceptación del catedrático.
+## 6.2 Recomendaciones Técnicas
+Las recomendaciones se ordenan según el riesgo que reducen y la evidencia que las motiva:
+1) **Retirar los listados y archivos internos del servidor web** (R12, evitar). Hoy solo los bloquea el WAF, por lo que una omisión del perímetro los expondría de nuevo.
+2) **Sustituir marsdb antes del 2026-12-31** (R20, R08), o renovar de forma expresa la aceptación del dueño del riesgo con nuevas condiciones.
+3) **Corregir la redirección abierta** con una comparación exacta de destinos (R15) y **eliminar los usos restantes de `eval` y `vm`**, con una prueba dinámica fuera de Docker (R09).
+4) **Usar un gestor de secretos con rotación automática** para la clave JWT (R03) y, en un despliegue productivo, separar el WAF y la aplicación en servicios distintos.
+5) **Exigir el segundo factor para desactivar la 2FA** y añadir la limitación por cuenta además de por IP (R16).
+6) **Completar la auditoría de autorización** del resto de objetos de la API: Memories, PrivacyRequests e historial de pedidos (R06, R23).
+7) **Probar el bloqueo del RASP** en los sinks `fs`, `http`, `child_process` y `vm`, y **ejecutar una prueba de carga controlada** que demuestre el efecto de los límites de recursos (R22, R18).
+8) **Mover el SIEM a un servicio permanente** con autenticación en Loki, sin acceso anónimo a Grafana y con notificaciones a personas (R19, R24). Requiere aprobar el costo.
+9) **Adquirir un dominio** para habilitar Cloudflare con caché, WAF gestionado y TLS 1.3 mínimo (R21), y **activar y declarar la autenticación multifactor** en las cuentas del equipo.
+10) **Fijar las dependencias con un archivo de bloqueo** en la construcción cloud, para que la imagen del CI y la de Render sean idénticas byte a byte, y **firmar las imágenes**.
+## 6.3 Roadmap de Seguridad Continua
+La {T:roadmap} organiza las recomendaciones en tres horizontes, con el riesgo que atiende cada acción y el rol responsable.
+@TABLA roadmap | Roadmap de seguridad continua
+@ANCHOS 2.6,7.6,2.2,4.1
+| Horizonte | Acción | Riesgo | Responsable (rol) |
+|---|---|---|---|
+| Inmediato (antes del 2026-12-24) | Exportar o renovar la base de datos de Render, o suspender el servicio | R21 | Operaciones cloud |
+| Inmediato | Activar y declarar la autenticación multifactor en GitHub y Render; añadir el usuario del equipo a la puerta | R21 | Líder del proyecto |
+| Inmediato | Revisar y firmar el modelo de Threat Dragon | R19 | Seguridad de aplicaciones |
+| Corto plazo (antes del 2026-12-31) | Sustituir marsdb o renovar su aceptación | R20, R08 | Desarrollo backend; dueño del riesgo |
+| Corto plazo | Retirar listados y `/metrics` del servidor; corregir la redirección abierta | R12, R17, R15 | Desarrollo backend |
+| Corto plazo | Exigir el segundo factor para desactivar la 2FA; limitación por cuenta | R16 | Desarrollo backend |
+| Mediano plazo | Gestor de secretos, WAF y app separados, dominio con CDN y TLS 1.3 exclusivo | R03, R21 | Arquitectura cloud |
+| Mediano plazo | SIEM permanente con autenticación y notificaciones; pruebas del RASP por sink | R19, R22, R24 | Monitoreo |
+| Continuo | Puerta de release en cada construcción; revisión de excepciones y de Grype; repetición de las baterías tras cada cambio | R20, R06 | Todos los roles |
+@NOTA Elaboración propia a partir de la columna de revisión y de actividad pendiente del registro de riesgos.
+## 6.4 Lecciones Aprendidas
+- **Un control configurado no es un control probado.** El Dockerfile endurecido de la Fase 5 nunca se había construido y fallaba. Los parches de diseño de la Fase 6 habrían impedido iniciar sesión o publicado la clave privada. Solo la construcción y la prueba real revelaron esos defectos.
+- **La herramienta también puede mentir.** `git apply` omitió en silencio un parche y devolvió éxito, el registro HTTP del arnés quedó vacío en Git Bash y la puerta de release contaba como avisos los mensajes de descarga de Docker. Cada resultado se contrastó con un efecto observable antes de aceptarlo.
+- **El WAF no corrige la lógica.** El BOLA atravesó el WAF con peticiones legítimas en apariencia, y solo la verificación de propietario en el código lo eliminó. A la inversa, sin el WAF los listados y `/metrics` volvían a quedar expuestos.
+- **Proteger también puede dañar.** El bloqueo por defecto del RASP terminaba el proceso: un auto-DoS que solo se descubrió midiendo la disponibilidad. El WAF bloqueaba usos legítimos, socket.io entre ellos, hasta que se acotaron las exclusiones.
+- **La observación cambia el diagnóstico.** La centralización de los eventos de Render reveló un falso positivo masivo que nadie había notado. Acotar las reglas por entorno evitó que una caída del WAF local quedara oculta por el tráfico de la nube.
+- **El riesgo residual es relativo al entorno.** R21 era bajo mientras no existía despliegue y debió revalorarse al publicar. La imagen cloud cumplía la política de la app, pero no la suya propia hasta cambiar su base.
+- **Separar lo diseñado de lo desplegado evita conclusiones falsas.** Mantener visibles las brechas (CDN, TLS 1.3 exclusivo, cifrado en reposo y MFA) es más útil para el lector que un cumplimiento declarado sin evidencia.
+## 6.5 Anexos
+Los anexos reúnen el detalle que respalda los apartados anteriores. Todas las rutas son relativas al repositorio `jmolinap1-universidad/juice-shop-lab` en el commit `fa143b7`.
+@HORIZONTAL
+### Anexo A. Inventario de activos: detalle y justificación CIA
+@DATOS inventario-detalle | Inventario de activos: estado, proceso, descripción, acceso y relaciones
+@NOTA Fuente: `docs/auditoria-final-2026-11-20/INVENTARIO_ACTIVOS_ISO27001.csv`.
+@DATOS inventario-cia | Justificación de la valoración CIA por activo
+@NOTA Fuente: `docs/auditoria-final-2026-11-20/INVENTARIO_ACTIVOS_ISO27001.csv`. Formato C-I-D (total C+I+D).
+### Anexo B. Justificación del riesgo residual
+@DATOS riesgo-justificacion | Razonamiento de la probabilidad y del impacto residuales por riesgo
+@NOTA Fuente: `docs/fase-6/riesgo-cierre-brechas/riesgos-calculados.json`.
+### Anexo C. Controles por riesgo
+@DATOS controles | Controles del registro de riesgos con su tipo, verificación y evidencia
+@NOTA Fuente: `docs/fase-6/riesgo-cierre-brechas/riesgos-calculados.json` (85 controles). Verificación: estado del control y nivel de prueba (probado, inspeccionado, sin verificar o no efectivo).
+### Anexo D. Decisiones técnicas del proyecto
+@TABLAMD decisiones | Registro de decisiones técnicas | DECISIONES.md | 0 | * | 1.3,2.4,8.2,10.9 | Claude
+@NOTA Fuente: `DECISIONES.md`. Se omite la decisión D-03, relativa a las herramientas de coordinación del equipo, por no ser una decisión de seguridad.
+@VERTICAL
+### Anexo E. Mapa de evidencias por fase
+La {T:evidencias} remite a la carpeta de evidencia de cada fase y de cada ciclo de cierre. Cada carpeta contiene un archivo `LEAME.md` con su índice. El manifiesto `evidence/MANIFEST.sha256` permite verificar la integridad de los 930 archivos.
+@TABLA evidencias | Ubicación de las evidencias en el repositorio
+@ANCHOS 3.3,6.0,7.2
+| Fase o ciclo | Carpeta | Contenido principal |
+|---|---|---|
+| Fase 1 | `docs/fase-1/`, `evidence/fase-1/` y `evidence/cierre-brechas-2026-11-24/14-threat-dragon/` | Modelado, DFD en Threat Dragon y validación del esquema |
+| Fase 2 | `infra/terraform/` y `evidence/fase-2/` | Terraform, `terraform plan` y Checkov inicial y final |
+| Fase 3 | `evidence/fase-3/` | Semgrep (SARIF), npm audit, OSV, Grype, SBOM y Gitleaks |
+| Fase 4 | `evidence/fase-4/` | Nmap, ZAP, sqlmap, casos A1-A11 antes y BOLA |
+| Fase 5 | `evidence/fase-5/` | Trivy, Hadolint y Checkov antes y después; `docker inspect` |
+| Fase 6 (2026-11-10) | `evidence/fase-6/validacion-2026-11-10/` | Escenarios del RASP, WAF + RASP + SIEM y falsos positivos |
+| Cierre local (2026-11-20/21) | `evidence/cierre-2026-11-20/` y `evidence/fase-6/cierre-final-2026-11-21/` | Variante corregida, familias del WAF, modos del RASP y SIEM |
+| Cierre técnico (2026-11-23) | `evidence/cierre-tecnico-2026-11-23/` | Parches 11-13, pipeline de release, ZAP final y primer despliegue cloud |
+| Cierre de brechas (2026-11-24/25) | `evidence/cierre-brechas-2026-11-24/` | Imagen Alpine, XSS en navegador, IaC de Render, SIEM cloud, validación en Render, CI, 2FA, alertas cloud y Threat Dragon |
+| Riesgo | `docs/fase-6/riesgo-cierre-brechas/` | Registro, validación (382 comprobaciones) y mapas de calor |
+| Bitácora e integridad | `evidence/bitacora.md` y `evidence/MANIFEST.sha256` | Registro de ejecuciones y hashes SHA-256 |
+@NOTA Elaboración propia a partir de `evidence/cierre-brechas-2026-11-24/LEAME.md` y de la estructura del repositorio.
+### Anexo F. Requisitos no completados y pendientes de terceros
+La {T:pendientes} recoge los requisitos que no pudieron completarse en el entorno gratuito o que dependen de una acción ajena al trabajo técnico, con su justificación.
+@TABLA pendientes | Requisitos no completados y su justificación
+@ANCHOS 4.6,6.6,5.3
+| Requisito | Motivo | Acción mínima |
+|---|---|---|
+| CDN con caché, WAF gestionado y TLS 1.3 exclusivo | Requieren un dominio propio (costo) o un plan de pago de Render | Con un dominio, Cloudflare Free delante de Render |
+| MFA de las cuentas de GitHub y Render | Configuración personal de cada integrante; no hay evidencia técnica accesible | Activar y declarar el doble factor en ambas cuentas |
+| Cifrado en reposo verificable | Solo el proveedor puede demostrarlo | Mantenerlo como declarado (responsabilidad compartida) |
+| Monitoreo cloud de 24 horas | El colector corre en el equipo local; un servicio permanente tendría costo | Mantener el colector activo durante las demostraciones |
+| Revisión del modelo de Threat Dragon | El campo de revisor indica «pendiente de revisión por el equipo» | Revisión y firma por el equipo |
+| Evidencia de Burp Suite | La prueba manual se asignó al equipo; `evidence/fase-4/burp/` no existe | Ejecutarla y versionar las capturas, o retirarla del alcance |
+| Docker Bench for Security | Requiere acceso privilegiado al daemon del equipo | Ejecutarlo con autorización; los controles se verificaron con `docker inspect` |
+| Aceptación de Juice Shop como Opción B | No consta en el repositorio | Confirmación del catedrático |
+| Aprobación formal de las excepciones y aceptaciones | Registradas por rol, con vencimiento; la reducción de la imagen cloud figura como decisión propuesta | Registro de la aprobación del dueño del riesgo |
+@NOTA Elaboración propia a partir de `docs/cierre-tecnico/MATRIZ_CUMPLIMIENTO_SEIS_FASES.md`, `docs/cierre-tecnico/TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md` y `docs/fase-4/fase4-pruebas-seguridad.md`.
+### Anexo G. Reproducción de los resultados
+Los resultados pueden reproducirse con Docker Desktop y las órdenes de la {T:reproduccion}.
+@TABLA reproduccion | Órdenes para reproducir los resultados
+@ANCHOS 6.2,10.3
+| Orden | Propósito |
+|---|---|
+| `git clone --recurse-submodules https://github.com/jmolinap1-universidad/juice-shop-lab.git` | Obtener el repositorio con Juice Shop fijado |
+| `make lab-up` | Laboratorio vulnerable en 127.0.0.1:3000 |
+| `make attack` | Casos A1-A12 contra el laboratorio |
+| `make corregida-build` | Construir y verificar la variante corregida |
+| `make ops-corregido-up` | Variante corregida con WAF, RASP y SIEM |
+| `make validar-artefacto` | Regresión funcional y de seguridad |
+| `make release-cloud` | Puerta de release de la imagen cloud |
+| `make iac-render` | Validación de `render.yaml` |
+| `make xss-navegador` | XSS en Chromium |
+| `make risk-cierre-brechas` | Registro de riesgos y mapas de calor |
+| `make threat-dragon` | Modelo de amenazas y su validación |
+@NOTA Fuente: `README.md` y `Makefile`. En Windows sin `make`, los scripts equivalentes se ejecutan desde Git Bash.
+## 6.6 Referencias
+@REF Aikido Security. (s.f.). *Zen by Aikido for Node.js* [Software]. GitHub. https://github.com/AikidoSec/firewall-node
+@REF Anchore. (s.f.-a). *Grype* [Software]. GitHub. https://github.com/anchore/grype
+@REF Anchore. (s.f.-b). *Syft* [Software]. GitHub. https://github.com/anchore/syft
+@REF Aqua Security. (s.f.). *Trivy documentation*. https://trivy.dev/
+@REF Damele, B., y Stampar, M. (s.f.). *sqlmap: Automatic SQL injection and database takeover tool* [Software]. https://sqlmap.org/
+@REF Ecma International. (2024). *ECMA-424: CycloneDX Bill of Materials specification* (1.ª ed.). https://ecma-international.org/publications-and-standards/standards/ecma-424/
+@REF GitHub. (s.f.). *CodeQL documentation*. https://codeql.github.com/docs/
+@REF Google. (s.f.). *OSV-Scanner* [Software]. https://google.github.io/osv-scanner/
+@REF Grafana Labs. (s.f.). *Grafana Loki documentation*. https://grafana.com/docs/loki/latest/
+@REF Hadolint. (s.f.). *Hadolint: Haskell Dockerfile Linter* [Software]. GitHub. https://github.com/hadolint/hadolint
+@REF Howard, M., y LeBlanc, D. (2003). *Writing secure code* (2.ª ed.). Microsoft Press.
+@REF International Organization for Standardization e International Electrotechnical Commission. (2022a). *Information security, cybersecurity and privacy protection — Information security management systems — Requirements* (ISO/IEC 27001:2022). ISO.
+@REF International Organization for Standardization e International Electrotechnical Commission. (2022b). *Information security, cybersecurity and privacy protection — Information security controls* (ISO/IEC 27002:2022). ISO.
+@REF International Organization for Standardization e International Electrotechnical Commission. (2022c). *Information security, cybersecurity and privacy protection — Guidance on managing information security risks* (ISO/IEC 27005:2022). ISO.
+@REF Joint Task Force Transformation Initiative. (2012). *Guide for conducting risk assessments* (NIST Special Publication 800-30 Rev. 1). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-30r1
+@REF Kent, K., y Souppaya, M. (2006). *Guide to computer security log management* (NIST Special Publication 800-92). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-92
+@REF Kimminich, B. (s.f.-a). *OWASP Juice Shop* [Software]. OWASP Foundation. https://github.com/juice-shop/juice-shop
+@REF Kimminich, B. (s.f.-b). *Pwning OWASP Juice Shop*. https://pwning.owasp-juice.shop/
+@REF Lyon, G. F. (2009). *Nmap network scanning: The official Nmap project guide to network discovery and security scanning*. Insecure.Com LLC.
+@REF National Institute of Standards and Technology. (2023). *Advanced Encryption Standard (AES)* (Federal Information Processing Standards Publication 197, actualizada). https://doi.org/10.6028/NIST.FIPS.197-upd1
+@REF OWASP CRS Project. (s.f.). *OWASP CRS documentation*. https://coreruleset.org/docs/
+@REF OWASP Foundation. (2023). *OWASP API Security Top 10 2023*. https://owasp.org/API-Security/editions/2023/en/0x11-t10/
+@REF OWASP Foundation. (2025a). *OWASP Top 10:2025*. https://owasp.org/Top10/2025/
+@REF OWASP Foundation. (2025b). *OWASP Application Security Verification Standard 5.0.0*. https://owasp.org/www-project-application-security-verification-standard/
+@REF OWASP Foundation. (s.f.). *OWASP Threat Dragon*. https://owasp.org/www-project-threat-dragon/
+@REF OWASP ModSecurity. (s.f.). *ModSecurity* [Software]. GitHub. https://github.com/owasp-modsecurity/ModSecurity
+@REF Palo Alto Networks. (s.f.). *Checkov documentation*. https://www.checkov.io/
+@REF PCI Security Standards Council. (2024). *Payment Card Industry Data Security Standard: Requirements and testing procedures* (versión 4.0.1). https://www.pcisecuritystandards.org/
+@REF Render. (s.f.-a). *Render Postgres*. https://render.com/docs/databases
+@REF Render. (s.f.-b). *Blueprint YAML reference*. https://render.com/docs/blueprint-spec
+@REF Rescorla, E. (2018). *The Transport Layer Security (TLS) protocol version 1.3* (RFC 8446). Internet Engineering Task Force. https://doi.org/10.17487/RFC8446
+@REF Scarfone, K., Souppaya, M., Cody, A., y Orebaugh, A. (2008). *Technical guide to information security testing and assessment* (NIST Special Publication 800-115). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-115
+@REF Semgrep. (s.f.). *Semgrep documentation*. https://semgrep.dev/docs/
+@REF Shostack, A. (2014). *Threat modeling: Designing for security*. Wiley.
+@REF Souppaya, M., Morello, J., y Scarfone, K. (2017). *Application container security guide* (NIST Special Publication 800-190). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-190
+@REF Souppaya, M., Scarfone, K., y Dodson, D. (2022). *Secure software development framework (SSDF) version 1.1: Recommendations for mitigating the risk of software vulnerabilities* (NIST Special Publication 800-218). National Institute of Standards and Technology. https://doi.org/10.6028/NIST.SP.800-218
+@REF ZAP Dev Team. (s.f.). *ZAP baseline scan*. https://www.zaproxy.org/docs/docker/baseline-scan/

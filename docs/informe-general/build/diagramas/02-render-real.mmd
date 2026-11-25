@@ -1,0 +1,10 @@
+flowchart TB
+  U([Navegador]) -->|"HTTPS TLS 1.2/1.3<br/>certificado Google Trust Services"| CF["Borde de Render<br/>Cloudflare + balanceador"]
+  CF -->|"HTTP interno, X-Forwarded-For"| W
+  subgraph C["Contenedor único Alpine · plan free 512 MB / 0,1 vCPU"]
+    W["nginx + ModSecurity 3.0.17<br/>OWASP CRS 4.25.2<br/>puerta /__acceso, cabeceras, límite 5/min"] -->|"127.0.0.1:3000"| A["Juice Shop corregido<br/>parches 01-14 + RASP Aikido Zen<br/>clave JWT efímera"]
+  end
+  A -->|"red privada de Render, TLS obligatorio"| DB[("PostgreSQL 17 free<br/>sin acceso externo<br/>AES-256 en reposo declarado por Render")]
+  C -. "stdout" .-> L["Logs de Render<br/>retención 7 días"]
+  K["colector-render local<br/>API key de solo lectura"] -->|"HTTPS GET /v1/logs cada 60 s"| L
+  K -->|"red interna"| S["SIEM local Loki/Grafana<br/>entorno=cloud"]

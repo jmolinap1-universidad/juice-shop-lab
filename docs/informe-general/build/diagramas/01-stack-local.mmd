@@ -1,0 +1,13 @@
+flowchart TB
+  C([Cliente / arnés de pruebas]) -->|"HTTP 127.0.0.1:8088"| W
+  subgraph INT["Red Docker interna (sin puertos publicados)"]
+    W["WAF<br/>nginx + ModSecurity 3.0.17<br/>OWASP CRS 4.25.2, PL1, bloqueo<br/>límite 5 logins/min, cabeceras"] -->|"HTTP interno"| A["Juice Shop corregido<br/>parches 01-14<br/>RASP Aikido Zen + rasp-guard<br/>FS solo lectura, cap_drop ALL, no root"]
+  end
+  subgraph SIEM["Red SIEM"]
+    AL["Grafana Alloy<br/>sin root, sin socket<br/>redacción de tokens"] --> LO["Loki 3.5.5<br/>reglas de alerta"]
+    LO --> GR["Grafana 12.1.1<br/>127.0.0.1:3001"]
+    LO --> AM["Alertmanager v0.28.1"] --> NO["Notificador local"]
+    CR["colector-render<br/>API de Render, clave de solo lectura"] -->|"entorno=cloud"| LO
+  end
+  W -. "audit log y access log JSON" .-> AL
+  A -. "stdout app + RASP" .-> SP["docker-socket-proxy<br/>API de solo lectura"] -.-> AL

@@ -1,0 +1,24 @@
+sequenceDiagram
+  autonumber
+  participant N as Navegador
+  participant B as Borde Render
+  participant G as nginx (puerta)
+  participant M as ModSecurity
+  participant J as Juice Shop
+  participant P as PostgreSQL
+  N->>B: HTTPS (TLS 1.3)
+  B->>G: HTTP interno + XFF
+  alt sin cookie de acceso
+    G-->>N: 302 a /__acceso
+  else cookie válida
+    G->>M: límite por IP real
+    alt firma de ataque
+      M-->>N: 403 + auditoría
+    else legítima
+      M->>J: 127.0.0.1:3000
+      J->>J: JWT y RASP
+      J->>P: SQL parametrizado (TLS)
+      P-->>J: filas del dueño
+      J-->>N: respuesta + CSP/HSTS
+    end
+  end
