@@ -1,9 +1,14 @@
-# Imagen CLOUD (DigitalOcean App Platform) — cierre técnico 2026-11-23.
+# Imagen CLOUD (Render) — cierre técnico 2026-11-23, base Alpine desde el cierre de brechas 2026-11-24.
 # Un solo contenedor (plan de 512 MB): WAF nginx + ModSecurity 3 + OWASP CRS 4.25.2 delante de la VARIANTE CORREGIDA
-# de Juice Shop (parches 01-13) con el RASP Aikido Zen. La plataforma la construye desde este repositorio:
+# de Juice Shop (parches 01-14) con el RASP Aikido Zen. La plataforma la construye desde este repositorio:
 #   - la fuente se reconstruye aquí desde el tag oficial fijado y se COMPRUEBA contra el diff auditado
-#     (app-hardened/patches/v2/correcciones-cierre-tecnico.patch); si no coincide, la construcción falla.
-#   - todas las imágenes base fijadas por digest; secretos solo en variables SECRET de la plataforma.
+#     (app-hardened/patches/v2/correcciones-cierre-brechas.patch); si no coincide, la construcción falla.
+#   - todas las imágenes base fijadas por digest; secretos solo en variables secretas de la plataforma.
+# Por qué Alpine (2026-11-24): la puerta de release BLOQUEABA la imagen con base Debian por paquetes del sistema SIN
+# corrección publicada (61 HIGH tras retirar lo no usado; ver evidence/cierre-brechas-2026-11-24/01-imagen-cloud/).
+# La variante Alpine de la MISMA versión del WAF (CRS 4.25.2) tiene 0 CRITICAL y 1 HIGH con corrección (medido con Trivy).
+# Como Alpine usa musl, la app se compila en node:24-alpine (misma versión de Node, 24.22.3, que la imagen distroless).
+# La imagen Debian anterior queda documentada en la evidencia y en el historial del repositorio.
 # Contexto de construcción: raíz del repositorio (ver .dockerignore: solo entra lo necesario).
 # hadolint global ignore=DL3016
 
@@ -13,15 +18,19 @@ COPY app-hardened/patches /h/patches
 COPY deploy/cloud/preparar-fuente.sh /h/preparar-fuente.sh
 RUN bash /h/preparar-fuente.sh git
 
-# ---- 2) Parches 01/03/04/09-13 (reemplazos literales verificados) y comprobación contra el diff auditado ----
+# ---- 2) Parches 01/03/04/09-14 (reemplazos literales verificados) y comprobación contra el diff auditado ----
 FROM python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b AS parches
 COPY --from=fuente /w /w
 COPY app-hardened/aplicar_v2.py app-hardened/aplicar_fase6.py app-hardened/aplicar_cierre_tecnico.py app-hardened/aplicar_cierre_brechas.py /h/
 COPY app-hardened/patches/v2/correcciones-cierre-brechas.patch deploy/cloud/preparar-fuente.sh /h/
 RUN bash /h/preparar-fuente.sh python
 
-# ---- 3) Compilación (mismos pasos que app-hardened/Dockerfile) ----
-FROM node:24-bookworm-slim@sha256:c86ecead9e55a5210ac1727de38a4ca840bf03dcaf34dc9749addbf383b1920c AS installer
+# ---- 3) Compilación para musl (mismos pasos npm que app-hardened/Dockerfile) ----
+# Herramientas de compilación de los módulos nativos (sqlite3, libxmljs2): solo en esta etapa, no llegan a la imagen final.
+# DL3018: no se fijan versiones de apk en una etapa de compilación desechable (la base sí está fijada por digest).
+FROM node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS installer
+# hadolint ignore=DL3018
+RUN apk add --no-cache python3 make g++
 COPY --from=parches /w/src /juice-shop
 WORKDIR /juice-shop
 ARG CYCLONEDX_NPM_VERSION='^4.0.0'
@@ -36,42 +45,28 @@ RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"$CYCLONEDX_NPM_VE
     find frontend/src -name '*.spec.ts' -delete
 
 # ---- 4) Agente RASP (versión exacta, sin scripts de instalación) ----
-FROM node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9 AS rasp
+FROM node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 AS rasp
 WORKDIR /rasp
 RUN npm init -y >/dev/null \
  && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
 
-# ---- 5) Runtime de Node (el mismo de la imagen distroless del artefacto local: Node 24.22.3) ----
-FROM gcr.io/distroless/nodejs24-debian13@sha256:ba59ac9916b424cdfaaa8299695530251535843623a6d8f93d40b0a2ef69e390 AS node
-
-# ---- 6) Imagen final: WAF oficial (Debian 13, usuario nginx) + Node + app ----
-# 2026-11-24: base 4.25.2-nginx-202611190211-lts (misma versión de CRS, Debian 13.7 más reciente: corrige brotli CRITICAL,
-# apt y zlib). Anterior: sha256:d69bfa07bbaeecd15f46188c2b624a4a365aeabf8c70b22e4aba32d72417d2d5 (202610180210).
-FROM owasp/modsecurity-crs@sha256:98d448750b86f5f94ca570590dd1461e3ab24efc97e7c41b271a55ac33b331fe
-# Parches de seguridad de Debian publicados después de la base (p. ej. krb5 deb13u2), en la misma capa que limpia las listas.
-# Hallazgo del escaneo de la imagen cloud (2026-11-24): con la base sola quedaban 60 CRITICAL/HIGH con corrección disponible.
-# Contrapartida: la capa depende del día de construcción (la base sí está fijada por digest); se documenta en la evidencia.
-# 2026-11-24 (cierre de brechas): además se RETIRAN paquetes que la configuración no usa y que arrastraban CVE HIGH sin
-# corrección: módulos nginx image-filter, xslt, njs y geoip (solo se cargan modsecurity y headers-more) con sus librerías
-# gráficas (gd, tiff, x11, fontconfig, expat), la herramienta curl con libcurl4 (ModSecurity usa libcurl-gnutls, que se
-# conserva; el chequeo de salud pasa a Node) y perl no esencial (con moreutils, que nada usa). Se comprobó que ningún script
-# de arranque los invoca. Lo que queda sin corrección es esencial para Debian o lo enlaza ModSecurity (libxml2, libssl,
-# libcurl-gnutls): ver docs/cierre-tecnico/TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md.
+# ---- 5) Imagen final: WAF oficial (variante Alpine, usuario nginx 101) + Node + app ----
+# owasp/modsecurity-crs:4.25.2-nginx-alpine-202611190211-lts. Se aplican las actualizaciones de Alpine publicadas después
+# de la base y se retiran los módulos de nginx que no se cargan (solo modsecurity y headers-more).
+FROM owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
 USER 0
-# hadolint ignore=DL3005
-RUN apt-get update && apt-get -y --no-install-recommends upgrade \
- && apt-get -y purge nginx-module-image-filter nginx-module-xslt nginx-module-njs nginx-module-geoip libgd3 libfontconfig1 \
-      fontconfig-config libxslt1.1 libtiff6 libxpm4 libx11-6 libx11-data libexpat1 curl libcurl4t64 perl libperl5.40 \
-      perl-modules-5.40 libio-pty-perl libipc-run-perl libtimedate-perl libtime-duration-perl moreutils \
+# DL3017/DL3018: actualización de seguridad de la base fijada; la capa depende del día de construcción (documentado).
+# hadolint ignore=DL3017,DL3018
+RUN apk upgrade --no-cache \
  && rm -f /usr/lib/nginx/modules/ngx_http_image_filter_module* /usr/lib/nginx/modules/ngx_http_xslt_filter_module* \
-      /usr/lib/nginx/modules/ngx_*_js_module* /usr/lib/nginx/modules/ngx_*_geoip_module* \
- && apt-get clean && rm -rf /var/lib/apt/lists/*
+      /usr/lib/nginx/modules/ngx_*_js_module* /usr/lib/nginx/modules/ngx_*_geoip_module*
 LABEL org.opencontainers.image.title="OWASP Juice Shop corregido + WAF + RASP (cloud)" \
-      org.opencontainers.image.version="20.3.0-corregida-cierre-tecnico" \
+      org.opencontainers.image.version="20.3.0-corregida-cierre-brechas" \
       org.opencontainers.image.vendor="MASI-UMG-2026" \
       org.opencontainers.image.source="https://github.com/jmolinap1-universidad/juice-shop-lab" \
-      masi.variante="corregida-cierre-tecnico+rasp+waf-cloud"
-COPY --from=node /nodejs /nodejs
+      masi.variante="corregida-cierre-brechas+rasp+waf-cloud-alpine"
+# Node 24.22.3 para musl en la misma ruta que la imagen distroless (/nodejs/bin/node): iniciar.sh y el chequeo no cambian
+COPY --from=installer /usr/local/bin/node /nodejs/bin/node
 COPY --from=installer --chown=101:0 /juice-shop /juice-shop
 COPY --from=rasp --chown=101:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
 COPY --from=parches /w/FUENTE_DIFF_SHA256 /w/APP_COMMIT /juice-shop/.masi/

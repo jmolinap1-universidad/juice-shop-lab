@@ -2,7 +2,7 @@
 
 > Generado por `datos/generar_inventario.py` desde `datos/inventario.json` (validado). Versión descargable: [`INVENTARIO_ACTIVOS_ISO27001.csv`](INVENTARIO_ACTIVOS_ISO27001.csv).
 
-**Alcance:** Laboratorio OWASP Juice Shop v20.3.0 (MASI-UMG 2026): instancia vulnerable local (127.0.0.1), entorno endurecido local (WAF, RASP, SIEM), variante corregida (hito A), repositorio y CI en GitHub, y arquitectura AWS solo DISEÑADA. Inventario con criterios de ISO/IEC 27001:2022 (control 5.9, inventario de información y otros activos asociados).
+**Alcance:** Laboratorio OWASP Juice Shop v20.3.0 (MASI-UMG 2026): instancia vulnerable local (127.0.0.1), entorno endurecido local (WAF, RASP, SIEM), variante corregida (parches 01-14), repositorio y CI en GitHub, despliegue REAL en Render (capa gratuita, acceso restringido) y arquitectura AWS solo DISEÑADA. Inventario con criterios de ISO/IEC 27001:2022 (control 5.9). Actualizado el 2026-11-24 con la infraestructura cloud real.
 
 ## 1. Regla de valoración CIA (reproducible)
 | Dimensión | Alta (3) | Media (2) | Baja (1) |
@@ -50,7 +50,7 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 | SW-08 | nuevo | WAF (Nginx + ModSecurity 3.0.17 + OWASP CRS 4.25.2) | Software | Local | Implementado | Protección perimetral | M | A | A | 8 Alta | PROP | SEC |
 | SW-09 | nuevo | RASP (Aikido Zen 1.8.46 + integración rasp-guard) | Software | Local | Implementado | Protección en ejecución | B | A | A | 7 Alta | PROP | SEC |
 | SW-10 | nuevo | SIEM (Alloy, Loki, Grafana) y proxy del socket de Docker | Software | Local | Implementado | Detección y monitoreo | M | A | M | 7 Alta | PROP | SEC |
-| SW-11 | nuevo | Variante corregida de Juice Shop (parches v2) | Software | Local | Implementado sin publicar | Remediación | B | A | A | 7 Alta | PROP | DEV |
+| SW-11 | nuevo | Variante corregida de Juice Shop (parches 01-14) | Software | Local | Implementado | Remediación | B | A | A | 7 Alta | PROP | DEV |
 | SRV-01 | A16 | Servicio web de la tienda | Servicios | Local | Implementado | Venta en línea | B | M | A | 6 Media | PROP | OPS |
 | SRV-02 | A15 (parte) | GitHub: repositorio y GitHub Actions | Servicios | Cloud | Implementado | Desarrollo y CI/CD | M | A | M | 7 Alta | PROP | DEV |
 | SRV-03 | A14 (parte) | Motor de contenedores (Docker Desktop 29.9.2, WSL2) | Servicios | Local | Implementado | Ejecución | M | A | A | 8 Alta | PROP | OPS |
@@ -60,6 +60,13 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 | PER-01 | nuevo | Equipo del proyecto | Personal | Local | Implementado | Gestión del proyecto | M | A | M | 7 Alta | PROP | PROP |
 | PER-02 | nuevo | Usuarios finales (cuentas de prueba) | Personal | Local | Implementado | Uso de la tienda | M | M | B | 5 Media | PROP | DEV |
 | EMP-01 | nuevo | Reputación y cumplimiento de la tienda (escenario simulado) | Empresa | Local | Implementado | Gobierno | B | A | M | 6 Media | PROP | PROP |
+| SRV-06 | nuevo | Render: servicio web juice-lab-masi-staging (contenedor WAF + app corregida + RASP) | Servicios | Cloud | Implementado | Venta en línea (demostración con acceso restringido) | A | A | M | 8 Alta | PROP | OPS |
+| SRV-07 | A13 (cloud) | Render PostgreSQL 17 (juice-lab-db, plan free) | Servicios | Cloud | Implementado | Persistencia de datos de la tienda | A | A | M | 8 Alta | PROP | OPS |
+| SRV-08 | nuevo | Borde de Render (Cloudflare + balanceador con TLS) | Servicios | Cloud | Implementado | Terminación TLS y enrutamiento | M | A | A | 8 Alta | PROP | OPS |
+| SRV-09 | nuevo | Cuenta y workspace de Render, Blueprint render.yaml | Servicios | Cloud | Implementado | Gestión de la infraestructura cloud (IaC) | A | A | M | 8 Alta | PROP | OPS |
+| INF-16 | nuevo | Secretos de la nube (usuarios de la puerta, clave JWT efímera, API key de Render) | Información | Cloud | Implementado | Control de acceso a la demostración y a la API | A | A | M | 8 Alta | PROP | OPS |
+| INF-17 | nuevo | Registros de la nube (logs de Render y eventos con entorno=cloud en Loki) | Información | Cloud | Implementado | Monitoreo y respuesta a incidentes | M | A | M | 7 Alta | PROP | SEC |
+| SW-12 | nuevo | Colector de eventos de Render (colector-render) | Software | Local | Implementado | Centralización de eventos cloud en el SIEM | A | M | B | 6 Media | PROP | SEC |
 
 ## 4. Descripción, justificación CIA, acceso real y relaciones
 ### INF-01 — Credenciales de usuario
@@ -171,7 +178,7 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 - **Relación:** Usa SW-04, SW-05 e INF-02
 
 ### SW-04 — Base de datos SQLite (motor embebido y archivo)
-- **Descripción:** Motor embebido en el proceso Node; archivo data/juiceshop.sqlite sin cifrado en reposo.
+- **Descripción:** SQLite embebida: motor de la instancia vulnerable y del laboratorio local. En la nube la sustituye PostgreSQL (SRV-07) vía DATABASE_URL (parche 13).
 - **Justificación CIA (A/A/A):** Contiene credenciales, datos personales y pedidos (C, I altas); sin ella no hay servicio (D alta).
 - **Usuarios con acceso (según configuración):** Solo el proceso Node (no hay servicio de red de base de datos); operadores del host a través de Docker
 - **Relación:** Almacena INF-01 a INF-09
@@ -212,8 +219,8 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 - **Usuarios con acceso (según configuración):** Usuarios locales del host (Grafana anónimo solo lectura; Loki sin autenticación)
 - **Relación:** Centraliza INF-14
 
-### SW-11 — Variante corregida de Juice Shop (parches v2)
-- **Descripción:** Código de app/ con los parches 02, 05-08 y las correcciones v2 01, 03, 04 y 09 (hito A).
+### SW-11 — Variante corregida de Juice Shop (parches 01-14)
+- **Descripción:** Variante corregida-cierre-brechas: parches 01-14 verificados contra app-hardened/patches/v2/correcciones-cierre-brechas.patch (22 archivos). Publicada en Render (SRV-06) y en la imagen local juice-corregida-rasp:local.
 - **Justificación CIA (B/A/A):** Es la versión que elimina causas raíz; su integridad es esencial (I alta).
 - **Usuarios con acceso (según configuración):** Integrantes del equipo (local)
 - **Relación:** Derivada de SW-01
@@ -225,7 +232,7 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 - **Relación:** Prestado por SW-03, SW-07 y SW-08
 
 ### SRV-02 — GitHub: repositorio y GitHub Actions
-- **Descripción:** Repositorio jmolinap1-universidad/juice-shop-lab y pipeline devsecops.yml (7 jobs).
+- **Descripción:** Repositorio jmolinap1-universidad/juice-shop-lab; devsecops.yml (política de informe del laboratorio) y release.yml (política de release: IaC de Render, puerta de la imagen de la app y de la imagen cloud).
 - **Justificación CIA (M/A/M):** Su alteración compromete código, evidencias y pipeline (I alta).
 - **Usuarios con acceso (según configuración):** Cuenta propietaria e integrantes según la configuración de GitHub (no verificada en esta auditoría)
 - **Relación:** Versiona SW-01, SW-11 e INF-15
@@ -243,7 +250,7 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 - **Relación:** Origen de SW-07 y SW-08
 
 ### SRV-05 — Infraestructura AWS (VPC, ALB, WAFv2, ECS, KMS, CloudWatch)
-- **Descripción:** Diseño en Terraform validado de forma estática (plan sin conexión y Checkov 144/0).
+- **Descripción:** Diseño AWS de la Fase 2 (Terraform, solo plan + Checkov). No desplegado: el despliegue real es Render (SRV-06 a SRV-09), gratuito; AWS exigiría costos.
 - **Justificación CIA (A/A/A):** Si se desplegara, alojaría todos los activos (C, I, D altas). Hoy no existe.
 - **Usuarios con acceso (según configuración):** Nadie (no desplegado; sin credenciales AWS en el entorno)
 - **Relación:** Alojaría SW-03, SW-04 e INF-01 a INF-09
@@ -272,9 +279,51 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 - **Usuarios con acceso (según configuración):** No aplica
 - **Relación:** Afectado por INF-01 a INF-04
 
+### SRV-06 — Render: servicio web juice-lab-masi-staging (contenedor WAF + app corregida + RASP)
+- **Descripción:** Plan free (512 MB, 0,1 vCPU, región virginia), construido por Render desde main con deploy/cloud/Dockerfile; fuente verificada contra el diff auditado; puerta /__acceso; https://juice-lab-masi-staging.onrender.com.
+- **Justificación CIA (A/A/M):** Procesa credenciales y datos (sintéticos) de las cuentas y aloja la defensa del perímetro (C, I altas); es una demostración sin compromiso de disponibilidad y se suspende sin tráfico (D media).
+- **Usuarios con acceso (según configuración):** Público solo hasta la puerta de acceso; dentro, usuarios del htpasswd (hoy: verificador); administración por la cuenta de Render del equipo
+- **Relación:** Ejecuta SW-11 con SW-08 y SW-09; usa SRV-07; detrás de SRV-08; gobernado por SRV-09
+
+### SRV-07 — Render PostgreSQL 17 (juice-lab-db, plan free)
+- **Descripción:** BD administrada del parche 13 (DATABASE_URL por referencia del Blueprint); ipAllowList vacía (sin acceso externo); TLS en la red privada sin verificar el certificado; cifrado en reposo AES-256 según Render; vence el 2026-12-24.
+- **Justificación CIA (A/A/M):** Contiene INF-01 a INF-09 de la demostración (C, I altas); Juice Shop la resiembra al arrancar y es una demostración (D media).
+- **Usuarios con acceso (según configuración):** Solo el servicio SRV-06 por la red privada de Render; panel de Render (cuenta del equipo)
+- **Relación:** Almacena INF-01 a INF-09 para SRV-06; sustituye a SW-04 en la nube
+
+### SRV-08 — Borde de Render (Cloudflare + balanceador con TLS)
+- **Descripción:** Certificado de Google Trust Services (*.onrender.com); TLS 1.2 y 1.3 aceptadas, 1.0/1.1 rechazadas (medido); HTTP→HTTPS 301; protección DDoS de la plataforma; reescribe la cabecera Server (cloudflare). Lo gestiona Render (responsabilidad compartida).
+- **Justificación CIA (M/A/A):** Todo el tráfico pasa por él; un fallo o una configuración insegura detiene o expone el servicio (I, D altas); no almacena datos (C media).
+- **Usuarios con acceso (según configuración):** Render (proveedor); el equipo solo configura dominios en el panel
+- **Relación:** Delante de SRV-06
+
+### SRV-09 — Cuenta y workspace de Render, Blueprint render.yaml
+- **Descripción:** Workspace del equipo con el Blueprint juice-lab-masi-staging (sincronizado desde main), variables de entorno y secretos (sync:false), despliegue manual; validado con security/iac/validar-render.py (15/15).
+- **Justificación CIA (A/A/M):** Controla el despliegue, los secretos y la BD: comprometerla equivale a controlar el servicio (C, I altas).
+- **Usuarios con acceso (según configuración):** Integrante propietario de la cuenta (inicio de sesión con GitHub); API key de solo lectura de Monitoring
+- **Relación:** Gobierna SRV-06 y SRV-07; versionado en SRV-02
+
+### INF-16 — Secretos de la nube (usuarios de la puerta, clave JWT efímera, API key de Render)
+- **Descripción:** BASIC_AUTH_HTPASSWD (hashes bcrypt, secreto de Render); clave JWT generada en el contenedor en cada arranque (D-21); API key de Render de solo lectura (Monitoring) en un archivo local ignorado por git, montada como secreto de Docker.
+- **Justificación CIA (A/A/M):** Su divulgación abre la puerta o la API de logs (C alta); su alteración permite suplantar o bloquear (I alta).
+- **Usuarios con acceso (según configuración):** Panel de Render (equipo); contenedor SRV-06; host local del laboratorio (API key)
+- **Relación:** Protege SRV-06 y SRV-09; usada por SW-12
+
+### INF-17 — Registros de la nube (logs de Render y eventos con entorno=cloud en Loki)
+- **Descripción:** Salida del contenedor en Render (auditoría del WAF sin cabeceras ni cuerpos, accesos, app + RASP); retención de 7 días en Render; copia en el Loki local con entorno=cloud mediante SW-12.
+- **Justificación CIA (M/A/M):** Son la prueba forense de lo ocurrido en la nube (I alta); se redactan antes de guardarse (C media).
+- **Usuarios con acceso (según configuración):** Panel de Render; API de logs con la clave de solo lectura; Grafana local (127.0.0.1)
+- **Relación:** Producidos por SRV-06; centralizados por SW-12 en SW-10
+
+### SW-12 — Colector de eventos de Render (colector-render)
+- **Descripción:** deploy/hardened/siem/colector-render.py: consulta GET /v1/logs con Bearer (clave de solo lectura), redacta, conserva un cursor y escribe en Loki por la red interna; sin root, sistema de archivos de solo lectura, sin capacidades.
+- **Justificación CIA (A/M/B):** Maneja la API key (C alta); un fallo deja de copiar eventos, pero Render los conserva 7 días (I media, D baja).
+- **Usuarios con acceso (según configuración):** Proceso del contenedor (uid 65534); operadores de Docker en el host
+- **Relación:** Usa INF-16; alimenta INF-17 en SW-10
+
 ## 5. Resumen
-- **35 activos** (los 16 de la Fase 1, todos con correspondencia, más los activos de infraestructura, servicio, personal y organización que la Fase 1 no individualizaba).
-- **Por tipo:** Información: 15 · Software: 11 · Servicios: 5 · Personal: 2 · Físico: 1 · Empresa: 1.
-- **Por criticidad:** Crítica: 2 · Alta: 22 · Media: 9 · Baja: 2.
+- **42 activos** (los 16 de la Fase 1, todos con correspondencia, más los activos de infraestructura, servicio, personal y organización que la Fase 1 no individualizaba).
+- **Por tipo:** Información: 17 · Software: 12 · Servicios: 9 · Personal: 2 · Físico: 1 · Empresa: 1.
+- **Por criticidad:** Crítica: 2 · Alta: 28 · Media: 10 · Baja: 2.
 - Activo de información frente a activo tecnológico: la información (INF-xx) se valora por sí misma y la columna *Relación* indica el activo tecnológico que la almacena o procesa (SW-xx, SRV-xx), para no contar dos veces el mismo riesgo.
 - La nube (SRV-05) figura como **propuesta, no desplegada**: se valora por el impacto que tendría, pero hoy no existe.

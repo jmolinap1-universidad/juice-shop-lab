@@ -13,7 +13,12 @@ import sys
 ROOT = sys.argv[1] if len(sys.argv) > 1 else "."
 A = os.path.join(ROOT, "docs", "auditoria-final-2026-11-20")
 T = json.load(open(os.path.join(A, "datos", "trazabilidad.json"), encoding="utf-8"))
-R = {r["id"]: r for r in json.load(open(os.path.join(ROOT, "docs", "fase-6", "datos", "riesgos-calculados.json"), encoding="utf-8"))["riesgos"]}
+# Registro vigente: el más reciente que exista (cierre de brechas → cierre técnico → Fase 6 histórico). REGISTRO lo fuerza.
+_REG = os.environ.get("REGISTRO") or next(p for p in (
+    os.path.join(ROOT, "docs", "fase-6", "riesgo-cierre-brechas", "riesgos-calculados.json"),
+    os.path.join(ROOT, "docs", "fase-6", "riesgo-cierre-tecnico", "riesgos-calculados.json"),
+    os.path.join(ROOT, "docs", "fase-6", "datos", "riesgos-calculados.json")) if os.path.exists(p))
+R = {r["id"]: r for r in json.load(open(_REG, encoding="utf-8"))["riesgos"]}
 DREAD = {f"T{int(rid[1:]):02d}": R[rid] for rid in R if int(rid[1:]) <= 20}
 RAW = {r["id"]: r for r in json.load(open(os.path.join(ROOT, "docs", "fase-6", "datos", "riesgos.json"), encoding="utf-8"))["riesgos"]}
 # Ruta principal de cada caso en http.tsv (para validar que hubo respuesta real)
@@ -123,5 +128,31 @@ for k, v in cap.items():
     w(f"| {k} {v} | {', '.join(rs) if rs else '—'} | {'; '.join(ctrl[:6]) + (' …' if len(ctrl) > 6 else '') if ctrl else ('Ver nota' if k == '6' else 'Ninguno probado')} |")
 w("")
 w(f"**Capa 6:** {T['capa_6_nota']}")
+if T.get("capa_5_nota"):
+    w("")
+    w(f"**Capa 5:** {T['capa_5_nota']}")
+if T.get("amenazas_cloud"):
+    w("")
+    w("## 6. Infraestructura cloud real (Render + PostgreSQL): amenazas STRIDE y DREAD")
+    w("Amenazas del despliegue real (no del diseño AWS). DREAD con la misma escala y orden (D, R, E, A, Di); valoración del equipo.")
+    w("")
+    w("| Amenaza | Elemento | STRIDE | Descripción | D | R | E | A | Di | Promedio | Nivel | Riesgo (residual vigente) | Control | Evidencia |")
+    w("|---|---|---|---|---|---|---|---|---|---|---|---|---|---|")
+    faltan = []
+    for a in T["amenazas_cloud"]:
+        d = a["dread"]
+        prom = sum(d) / 5
+        r = R[a["riesgo"]]
+        if not os.path.exists(os.path.join(ROOT, a["evidencia"])):
+            faltan.append(a["evidencia"])
+        w(f"| {a['id']} | {a['elemento']} | {a['stride']} | {a['amenaza']} | {' | '.join(str(x) for x in d)} | {prom:.1f} | {nivel(prom)} | "
+          f"{a['riesgo']} ({r['P_res']}×{r['I_res']} {r['N_res']}) | {a['control']} | `{a['evidencia']}` |")
+    cubiertas = {c for a in T["amenazas_cloud"] for c in [x.strip() for x in a["stride"].split(",")]}
+    w("")
+    w(f"Clases STRIDE cubiertas en la nube: {', '.join(sorted(cubiertas))} ({len(cubiertas)} de 6).")
+    if faltan:
+        raise SystemExit(f"FALLO: evidencia inexistente en amenazas cloud: {faltan}")
+w("")
+w(f"Registro de riesgos usado: `{os.path.relpath(_REG, ROOT)}`.")
 open(os.path.join(A, "TRAZABILIDAD_STRIDE_DREAD_7_CAPAS.md"), "w", encoding="utf-8").write("\n".join(L) + "\n")
 print("OK trazabilidad:", {e["clave"]: resultados[e["clave"]] for e in ESC})

@@ -1,0 +1,676 @@
+2026-11-24T23:13:44-06:00
+#0 building with "desktop-linux" instance using docker driver
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 7.26kB done
+#1 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#2 DONE 0.1s
+
+#3 [internal] load metadata for docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496
+#3 DONE 0.1s
+
+#4 [internal] load metadata for docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#4 DONE 0.1s
+
+#5 [internal] load metadata for docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#5 DONE 0.9s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 641B 0.0s done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.92kB 0.0s done
+#7 DONE 0.0s
+
+#8 [parches 1/5] FROM docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b
+#8 resolve docker.io/library/python:3.12-slim@sha256:5e2bdb1b0d542d5039cffb8181c65930093949194a65c365dfb1b0fe13a4fa5b 0.1s done
+#8 DONE 0.1s
+
+#9 [fuente 1/4] FROM docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496
+#9 resolve docker.io/library/node:24-bookworm@sha256:9d266751ca3d7fdbe651c878ffd5ad0a42fed49a18c283509267c97f025b7496 0.1s done
+#9 DONE 0.1s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 resolve docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5 0.1s done
+#10 DONE 0.5s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 resolve docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089 0.1s done
+#11 ...
+
+#12 [parches 3/5] COPY app-hardened/aplicar_v2.py app-hardened/aplicar_fase6.py app-hardened/aplicar_cierre_tecnico.py app-hardened/aplicar_cierre_brechas.py /h/
+#12 CACHED
+
+#13 [parches 4/5] COPY app-hardened/patches/v2/correcciones-cierre-brechas.patch deploy/cloud/preparar-fuente.sh /h/
+#13 CACHED
+
+#14 [fuente 2/4] COPY app-hardened/patches /h/patches
+#14 CACHED
+
+#15 [fuente 3/4] COPY deploy/cloud/preparar-fuente.sh /h/preparar-fuente.sh
+#15 CACHED
+
+#16 [fuente 4/4] RUN bash /h/preparar-fuente.sh git
+#16 CACHED
+
+#17 [parches 2/5] COPY --from=fuente /w /w
+#17 CACHED
+
+#18 [parches 5/5] RUN bash /h/preparar-fuente.sh python
+#18 CACHED
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 extracting sha256:881fc932939efef04ca120ad44bbd2c0917851eb247aa4995428afb1e80ede17 0.2s done
+#10 DONE 0.7s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 DONE 1.5s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 extracting sha256:86781d25d3989ead8f09c45716da0159c1dd0be2c753a51f15b6c60f4b9a97db
+#10 ...
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:cffa9d88ea6185b990c5d44e7bf8d0bbe5b1de34da4013833e9a5894ea1c9f46 0.2s done
+#11 DONE 1.7s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:5ee1503dc185cc8fa86fdff02ba1e95028089568a348a2d1fcbfd90153983b1b 0.1s done
+#11 extracting sha256:bf0722393d9638f82411656ac185bbc0188dd127c12dc50be12ab3b6183bf67b 0.0s done
+#11 extracting sha256:4ee3e7e817a08fa2d1bc77e57128bed261ab03847495094dbed73b679f1d4058 0.0s done
+#11 DONE 1.9s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 ...
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:649c5bf9056db4072dc649cffb04fc180ddb31969a3aed54139fcaf88a706ff3 0.0s done
+#11 extracting sha256:16131dab6afa6d3fc771f46649aa278e8de00d6ad3d8e847ce8d26435ecd78de 0.0s done
+#11 extracting sha256:f8f6965c0243ea05a8caac41466b70274854a2b2d5c734c53831560e5bb0d63a 0.1s done
+#11 DONE 2.0s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:df31fb132eefc2c6ba7c2f2bc28eef14984bf44a1ec0b8cd47f812bdb444c397
+#11 extracting sha256:df31fb132eefc2c6ba7c2f2bc28eef14984bf44a1ec0b8cd47f812bdb444c397 0.6s done
+#11 DONE 2.6s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 ...
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:182fef519e246ac80586b7ccbd87b79143aece8e643a117eef6c0cb3a2468d7f 0.0s done
+#11 extracting sha256:f26a48f00f104a9049958d0e0578b0a935794b041d2306df1def1f7b03cfc6f6 0.0s done
+#11 extracting sha256:47fe29998cbc5c6aa331d62677721911c9c7697740e83051265c40c6a68d42a1 0.0s done
+#11 DONE 2.7s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:8c1eb3eb8c32b2a76a3219b8765616949098ec4414002ad46739eec7ee7d5283 0.0s done
+#11 extracting sha256:9a4fd7857e785241bdf43a474b99245910b29a765e3377fa749f4c5f6c9237df 0.0s done
+#11 extracting sha256:9158b18fe711a7b40d936e47c1d2db4aa058987c901b2a714ee258860b5fedab 0.0s done
+#11 extracting sha256:778f5be7b1a36efbd9207a451b095c8ac8e62b29f9026508cd9337f612792735 0.0s done
+#11 DONE 2.8s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 ...
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:d24beb12eeca8351a65480c6d3e0365b0bf1e93b9db56d939279db0f76d06365 0.0s done
+#11 extracting sha256:e95152e3955500fb1ba213c8e153220e85c4fd1d7b72a6cb8db6ab41c8c10cab 0.0s done
+#11 extracting sha256:ed4f01ff539c7538548ec75f7bec9b9d52a367c42fe9dcacc6a01738b7a11aa6 0.0s done
+#11 extracting sha256:150918a3e79391a9634a6e24589c5d90a137ded9fd83b7c797adfaf82ccbf47e 0.0s done
+#11 extracting sha256:91bd251d9a28fbea51e00f4eb84f7cc712dcb3156d1572b99cb781025e56d9ed 0.0s done
+#11 DONE 3.0s
+
+#10 [rasp 1/3] FROM docker.io/library/node:24-alpine@sha256:116b800c3754b440ee0aa3ed2f20f5bf3d99a554bfd9adeea09ea8017f6e85f5
+#10 extracting sha256:86781d25d3989ead8f09c45716da0159c1dd0be2c753a51f15b6c60f4b9a97db 2.3s done
+#10 extracting sha256:7eb569707982863466c2b0bcfddda86fb4842fccfaec088d1354f6a29e2856bb 0.1s done
+#10 extracting sha256:7bb632bc9bd793a348866a7dd7920cf89dfc87205c6d38cda182ea6d8065b8e5 0.0s done
+#10 DONE 3.1s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:f33abe93a28b6c69bb2e2bdac4d6ca5b98b6baf696e00a696522ac0407095651 0.1s done
+#11 extracting sha256:31dc98409a764fe42dbefb24548f3f2dc8a23ee2e93b5d978432464371c699d9 0.0s done
+#11 extracting sha256:bd65782e80cc36af1039f7bcdcfb1aaf554ca16e98510b105329b947823e9d90
+#11 ...
+
+#19 [rasp 2/3] WORKDIR /rasp
+#19 DONE 0.3s
+
+#20 [rasp 3/3] RUN npm init -y >/dev/null  && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
+#20 ...
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:bd65782e80cc36af1039f7bcdcfb1aaf554ca16e98510b105329b947823e9d90 1.0s done
+#11 DONE 4.0s
+
+#11 [stage-4  1/13] FROM docker.io/owasp/modsecurity-crs@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
+#11 extracting sha256:cd78ab60e636bc02e9359f3641d439230517b2608b030f9599b8567742edfb48 0.1s done
+#11 extracting sha256:19a351f7120db36e2572bdc3f3dcab83fea806ae21989c91d4af1a180d4c69a0 0.0s done
+#11 extracting sha256:4f4fb700ef54461cfa02571ae0db9a0dc1e0cdb5577484a6d75e68dc38e8acc1 0.0s done
+#11 DONE 4.1s
+
+#21 [installer 2/5] RUN apk add --no-cache python3 make g++
+#21 1.695 ( 1/30) Installing libstdc++-dev (15.2.0-r5)
+#21 2.276 ( 2/30) Installing jansson (2.15.0-r0)
+#21 2.334 ( 3/30) Installing zstd-libs (1.6.0-r1)
+#21 2.410 ( 4/30) Installing binutils (2.45.1-r1)
+#21 2.780 ( 5/30) Installing libgcc-static (15.2.0-r5)
+#21 ...
+
+#22 [stage-4  2/13] RUN apk upgrade --no-cache  && rm -f /usr/lib/nginx/modules/ngx_http_image_filter_module* /usr/lib/nginx/modules/ngx_http_xslt_filter_module*       /usr/lib/nginx/modules/ngx_*_js_module* /usr/lib/nginx/modules/ngx_*_geoip_module*
+#22 1.459 (1/2) Upgrading zstd-libs (1.5.7-r2 -> 1.6.0-r1)
+#22 1.590 (2/2) Upgrading libxml2 (2.13.9-r2 -> 2.13.9-r3)
+#22 1.718 OK: 91.9 MiB in 90 packages
+#22 DONE 1.9s
+
+#21 [installer 2/5] RUN apk add --no-cache python3 make g++
+#21 3.023 ( 6/30) Installing libgomp (15.2.0-r5)
+#21 3.081 ( 7/30) Installing gmp (6.3.0-r4)
+#21 3.141 ( 8/30) Installing isl26 (0.26-r2)
+#21 3.257 ( 9/30) Installing mpfr4 (4.2.2-r0)
+#21 3.319 (10/30) Installing mpc1 (1.3.1-r1)
+#21 3.367 (11/30) Installing gcc (15.2.0-r5)
+#21 ...
+
+#20 [rasp 3/3] RUN npm init -y >/dev/null  && npm install --save-exact --omit=dev --ignore-scripts --no-audit --no-fund @aikidosec/firewall@1.8.46
+#20 5.766 
+#20 5.766 added 1 package in 4s
+#20 DONE 5.9s
+
+#21 [installer 2/5] RUN apk add --no-cache python3 make g++
+#21 8.508 (12/30) Installing musl-dev (1.2.6-r3)
+#21 8.768 (13/30) Installing g++ (15.2.0-r5)
+#21 10.11 (14/30) Installing make (4.4.1-r4)
+#21 10.16 (15/30) Installing libexpat (2.10.0-r0)
+#21 10.21 (16/30) Installing libbz2 (1.0.8-r6)
+#21 10.26 (17/30) Installing libffi (3.8.1-r0)
+#21 10.31 (18/30) Installing xz-libs (5.8.4-r0)
+#21 10.37 (19/30) Installing mpdecimal (4.0.1-r0)
+#21 10.42 (20/30) Installing ncurses-terminfo-base (6.6_p20260516-r0)
+#21 10.48 (21/30) Installing libncursesw (6.6_p20260516-r0)
+#21 10.54 (22/30) Installing libpanelw (6.6_p20260516-r0)
+#21 10.58 (23/30) Installing readline (8.3.3-r1)
+#21 10.64 (24/30) Installing sqlite-libs (3.53.4-r0)
+#21 10.73 (25/30) Installing python3 (3.14.10-r2)
+#21 11.44 (26/30) Installing gdbm (1.26-r0)
+#21 11.49 (27/30) Installing python3-ndbm (3.14.10-r3)
+#21 11.53 (28/30) Installing python3-pycache-pyc0 (3.14.10-r2)
+#21 11.93 (29/30) Installing pyc (3.14.10-r2)
+#21 11.93 (30/30) Installing python3-pyc (3.14.10-r2)
+#21 11.93 Executing busybox-1.37.0-r31.trigger
+#21 11.94 OK: 302.4 MiB in 49 packages
+#21 DONE 12.1s
+
+#23 [installer 3/5] COPY --from=parches /w/src /juice-shop
+#23 DONE 0.6s
+
+#24 [installer 4/5] WORKDIR /juice-shop
+#24 DONE 0.1s
+
+#25 [installer 5/5] RUN npm install -g typescript@^6.0.3 @cyclonedx/cyclonedx-npm@"^4.0.0" &&     npm install --omit=dev &&     npm dedupe --omit=dev &&     npm run sbom &&     rm -rf frontend/node_modules frontend/.angular frontend/src/assets &&     mkdir -p logs &&     rm -f ftp/legal.md i18n/*.json &&     rm -rf infrastructure &&     find frontend/src -name '*.spec.ts' -delete
+#25 9.919 npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+#25 10.77 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#25 14.10 
+#25 14.10 added 177 packages in 14s
+#25 14.10 
+#25 14.10 34 packages are looking for funding
+#25 14.10   run `npm fund` for details
+#25 14.11 npm warn install-scripts 1 package has install scripts not yet covered by allowScripts:
+#25 14.11 npm warn install-scripts   libxmljs2@0.37.0 (install: prebuild-install || node-gyp rebuild)
+#25 14.11 npm warn install-scripts
+#25 14.11 npm warn install-scripts Run `npm install -g --allow-scripts=libxmljs2` to allow these scripts once, or `npm config set allow-scripts=libxmljs2 --location=user` to allow them for all global installs.
+#25 14.11 npm notice
+#25 14.11 npm notice New major version of npm available! 11.19.1 -> 12.2.3
+#25 14.11 npm notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.3
+#25 14.11 npm notice To update run: npm install -g npm@12.2.3
+#25 14.11 npm notice
+#25 63.44 npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+#25 63.59 npm warn deprecated npmlog@6.0.2: This package is no longer supported.
+#25 63.68 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+#25 63.91 npm warn deprecated prebuild-install@7.1.3: No longer maintained. Please contact the author of the relevant native addon; alternatives are available.
+#25 64.22 npm warn deprecated are-we-there-yet@3.0.1: This package is no longer supported.
+#25 65.11 npm warn deprecated dottie@2.0.7: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+#25 66.09 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+#25 67.87 npm warn deprecated gauge@4.0.4: This package is no longer supported.
+#25 69.00 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#25 69.07 npm warn deprecated messageformat@2.3.0: Package renamed as '@messageformat/core', see messageformat.github.io for more details. 'messageformat@4' will eventually provide a polyfill for Intl.MessageFormat, once it's been defined by Unicode & ECMA.
+#25 69.12 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#25 69.23 npm warn deprecated notevil@1.3.3: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
+#25 69.93 npm warn deprecated crypto-js@4.2.0: Active development of CryptoJS has been discontinued. This library is no longer maintained.
+#25 70.82 npm warn deprecated prom-client@15.1.3: prom-client has been replaced by @prometheus-io/client
+#25 71.63 npm warn deprecated uuid@8.3.2: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
+#25 71.94 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+#25 78.30 
+#25 78.30 > juice-shop@20.3.0 postinstall
+#25 78.30 > cd frontend && npm install && cd .. && npm run build:frontend && (npm run --silent build:server || cd .)
+#25 78.30 
+#25 145.8 
+#25 145.8 added 485 packages, and audited 486 packages in 1m
+#25 145.8 
+#25 145.8 134 packages are looking for funding
+#25 145.8   run `npm fund` for details
+#25 145.8 
+#25 145.8 15 vulnerabilities (12 low, 2 moderate, 1 high)
+#25 145.8 
+#25 145.8 To address all issues, run:
+#25 145.8   npm audit fix
+#25 145.8 
+#25 145.8 Run `npm audit` for details.
+#25 145.8 npm warn install-scripts 4 packages have install scripts not yet covered by allowScripts:
+#25 145.8 npm warn install-scripts   @parcel/watcher@2.6.0 (install: node scripts/build-from-source.js)
+#25 145.8 npm warn install-scripts   esbuild@0.28.2 (postinstall: node install.js)
+#25 145.8 npm warn install-scripts   lmdb@3.5.9 (install: node-gyp-build-optional-packages)
+#25 145.8 npm warn install-scripts   msgpackr-extract@3.0.7 (install: node-gyp-build-optional-packages)
+#25 145.8 npm warn install-scripts
+#25 145.8 npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+#25 146.2 
+#25 146.2 > juice-shop@20.3.0 build:frontend
+#25 146.2 > cd frontend && npm run build
+#25 146.2 
+#25 146.4 
+#25 146.4 > frontend@20.3.0 build
+#25 146.4 > ng build --configuration production && npm run sbom
+#25 146.4 
+#25 148.0 ❯ Building...
+#25 175.3 ✔ Building...
+#25 175.3 Initial chunk files                         | Names                           |  Raw size | Estimated transfer size
+#25 175.3 main.js                                     | main                            |   1.77 MB |               357.84 kB
+#25 175.3 styles.css                                  | styles                          | 157.53 kB |                17.21 kB
+#25 175.3 polyfills.js                                | polyfills                       |  34.59 kB |                11.33 kB
+#25 175.3 scripts.js                                  | scripts                         |  20.70 kB |                 6.09 kB
+#25 175.3 rolldown-runtime-kqx1xuJ_.js                | -                               | 262 bytes |               262 bytes
+#25 175.3 
+#25 175.3                                             | Initial total                   |   1.99 MB |               392.74 kB
+#25 175.3 
+#25 175.3 Lazy chunk files                            | Names                           |  Raw size | Estimated transfer size
+#25 175.3 chunk-BZoC1eeB.js                           | -                               | 523.27 kB |               150.42 kB
+#25 175.3 chunk-BB29ianC.js                           | -                               | 481.85 kB |               132.99 kB
+#25 175.3 recycle.component-B437CL4K.js               | recycle-component               | 100.26 kB |                19.31 kB
+#25 175.3 about.component-BKQFyQgd.js                 | about-component                 |  90.66 kB |                19.32 kB
+#25 175.3 coding-challenge-page.component-DujTSENY.js | coding-challenge-page-component |  45.20 kB |                13.42 kB
+#25 175.3 hacking-instructor-BAwYGhh3.js              | index                           |  36.65 kB |                 9.24 kB
+#25 175.3 web3-sandbox.module-CMSLOxLt.js             | web3-sandbox-module             |  17.58 kB |                 5.56 kB
+#25 175.3 faucet.module-6orgXP96.js                   | faucet-module                   |  12.44 kB |                 3.90 kB
+#25 175.3 confetti-DN5d5KdC.js                        | index                           |  11.23 kB |                 4.10 kB
+#25 175.3 chunk-6hZgLGBt.js                           | -                               |   9.28 kB |               869 bytes
+#25 175.3 wallet-web3.module-CL1g_ALT.js              | wallet-web3-module              |   7.42 kB |                 2.76 kB
+#25 175.3 
+#25 175.3 Application bundle generation complete. [27.300 seconds] - 2026-11-25T05:16:57.099Z
+#25 175.3 
+#25 175.3 Output location: /juice-shop/frontend/dist/frontend
+#25 175.3 
+#25 176.4 
+#25 176.4 > frontend@20.3.0 sbom
+#25 176.4 > cyclonedx-esbuild --output-reproducible --output-file dist/bom/bom.json dist/frontend/browser-stats.json
+#25 176.4 
+#25 178.4 LOG   | writing BOM to: dist/bom/bom.json
+#25 186.6 cypress.config.ts(1,30): error TS2307: Cannot find module 'cypress' or its corresponding type declarations.
+#25 186.6 cypress.config.ts(3,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 cypress.config.ts(36,14): error TS7006: Parameter 'product' implicitly has an 'any' type.
+#25 186.6 cypress.config.ts(54,14): error TS7006: Parameter 'product' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(28,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 data/datacreator.ts(320,56): error TS7006: Parameter 'product' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(320,65): error TS7006: Parameter 'index' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(341,75): error TS7006: Parameter 'memory' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(380,82): error TS7006: Parameter 'product' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(396,54): error TS7031: Binding element 'useForChristmasSpecialChallenge' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(397,57): error TS7031: Binding element 'keywordsForPastebinDataLeakChallenge' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(398,54): error TS7031: Binding element 'urlForProductTamperingChallenge' implicitly has an 'any' type.
+#25 186.6 data/datacreator.ts(399,63): error TS7031: Binding element 'fileForRetrieveBlueprintChallenge' implicitly has an 'any' type.
+#25 186.6 data/staticData.ts(3,26): error TS7016: Could not find a declaration file for module 'js-yaml'. '/juice-shop/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+#25 186.6 data/staticData.ts(56,10): error TS2352: Conversion of type 'string | Logger' to type 'StaticUser[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+#25 186.6   Type 'Logger' is missing the following properties from type 'StaticUser[]': length, pop, concat, join, and 18 more.
+#25 186.6 data/staticData.ts(76,10): error TS2352: Conversion of type 'string | Logger' to type 'StaticChallenge[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+#25 186.6   Type 'Logger' is missing the following properties from type 'StaticChallenge[]': length, pop, concat, join, and 18 more.
+#25 186.6 data/staticData.ts(87,10): error TS2352: Conversion of type 'string | Logger' to type 'StaticDelivery[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+#25 186.6   Type 'Logger' is missing the following properties from type 'StaticDelivery[]': length, pop, concat, join, and 18 more.
+#25 186.6 data/staticData.ts(94,10): error TS2352: Conversion of type 'string | Logger' to type 'StaticSecurityQuestions[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+#25 186.6   Type 'Logger' is missing the following properties from type 'StaticSecurityQuestions[]': length, pop, concat, join, and 18 more.
+#25 186.6 lib/antiCheat.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/antiCheat.ts(15,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 lib/challengeUtils.ts(1,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/challengeUtils.ts(5,26): error TS7016: Could not find a declaration file for module 'sanitize-html'. '/juice-shop/node_modules/sanitize-html/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/sanitize-html` if it exists or add a new declaration (.d.ts) file containing `declare module 'sanitize-html';`
+#25 186.6 lib/insecurity.ts(8,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 lib/insecurity.ts(12,17): error TS7016: Could not find a declaration file for module 'jws'. '/juice-shop/node_modules/jws/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/jws` if it exists or add a new declaration (.d.ts) file containing `declare module 'jws';`
+#25 186.6 lib/insecurity.ts(13,29): error TS7016: Could not find a declaration file for module 'sanitize-html'. '/juice-shop/node_modules/sanitize-html/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/sanitize-html` if it exists or add a new declaration (.d.ts) file containing `declare module 'sanitize-html';`
+#25 186.6 lib/scripts/lintConfig.ts(12,18): error TS7016: Could not find a declaration file for module 'js-yaml'. '/juice-shop/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+#25 186.6 lib/startup/cleanupFtpFolder.ts(8,16): error TS7016: Could not find a declaration file for module 'fs-extra'. '/juice-shop/node_modules/fs-extra/lib/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/fs-extra` if it exists or add a new declaration (.d.ts) file containing `declare module 'fs-extra';`
+#25 186.6 lib/startup/customizeApplication.ts(7,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/startup/customizeEasterEgg.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/startup/registerWebsocketEvents.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/startup/validateConfig.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/startup/validateConfig.ts(32,50): error TS2345: Argument of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[] | undefined' is not assignable to parameter of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(33,54): error TS2345: Argument of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[] | undefined' is not assignable to parameter of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(34,42): error TS2345: Argument of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[] | undefined' is not assignable to parameter of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(35,54): error TS2345: Argument of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[] | undefined' is not assignable to parameter of type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ name: string; price: number; description: string; image: string; alternateImages?: ({ file: string; format: string; density: string; } | { file: string; format: string; width: string; })[] | undefined; ... 9 more ...; exifForBlueprintChallenge?: string[] | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(36,50): error TS2345: Argument of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[] | undefined' is not assignable to parameter of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(37,54): error TS2345: Argument of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[] | undefined' is not assignable to parameter of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(38,42): error TS2345: Argument of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[] | undefined' is not assignable to parameter of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6 lib/startup/validateConfig.ts(39,54): error TS2345: Argument of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[] | undefined' is not assignable to parameter of type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6   Type 'undefined' is not assignable to type '{ image: string; caption: string; user?: string | undefined; geoStalkingMetaSecurityQuestion?: number | undefined; geoStalkingMetaSecurityAnswer?: string | undefined; geoStalkingVisualSecurityQuestion?: number | undefined; geoStalkingVisualSecurityAnswer?: string | undefined; }[]'.
+#25 186.6 lib/startup/validatePreconditions.ts(7,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/startup/validatePreconditions.ts(13,20): error TS7016: Could not find a declaration file for module 'semver'. '/juice-shop/node_modules/semver/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/semver` if it exists or add a new declaration (.d.ts) file containing `declare module 'semver';`
+#25 186.6 lib/startup/validatePreconditions.ts(14,25): error TS7016: Could not find a declaration file for module 'portscanner'. '/juice-shop/node_modules/portscanner/lib/portscanner.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/portscanner` if it exists or add a new declaration (.d.ts) file containing `declare module 'portscanner';`
+#25 186.6 lib/terraformCustomization.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/utils.ts(9,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 lib/utils.ts(11,22): error TS7016: Could not find a declaration file for module 'clarinet'. '/juice-shop/node_modules/clarinet/clarinet.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/clarinet` if it exists or add a new declaration (.d.ts) file containing `declare module 'clarinet';`
+#25 186.6 lib/webhook.ts(7,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 models/user.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/2fa.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/2fa.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/address.ts(6,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/angular.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/appConfiguration.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/appConfiguration.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/appVersion.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/appVersion.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/authenticatedUsers.ts(5,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/b2bOrder.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/basket.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/basketItems.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/captcha.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/changePassword.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/chat.ts(6,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/chat.ts(7,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/checkKeys.ts(1,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/continueCode.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/countryMapping.ts(6,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/countryMapping.ts(8,26): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/coupon.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/createProductReviews.ts(6,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/currentUser.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/dataErasure.ts(5,73): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/dataErasure.ts(7,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/dataErasure.ts(110,15): error TS7006: Parameter 'error' implicitly has an 'any' type.
+#25 186.6 routes/dataErasure.ts(110,22): error TS7006: Parameter 'html' implicitly has an 'any' type.
+#25 186.6 routes/dataExport.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/delivery.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/deluxe.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/easterEgg.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/fileServer.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/fileUpload.ts(10,18): error TS7016: Could not find a declaration file for module 'js-yaml'. '/juice-shop/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+#25 186.6 routes/fileUpload.ts(11,22): error TS7016: Could not find a declaration file for module 'unzipper'. '/juice-shop/node_modules/unzipper/unzip.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/unzipper` if it exists or add a new declaration (.d.ts) file containing `declare module 'unzipper';`
+#25 186.6 routes/fileUpload.ts(12,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/imageCaptcha.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/keyServer.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/languages.ts(8,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/likeProductReviews.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/logfileServer.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/login.ts(5,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/login.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/memory.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/metrics.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/metrics.ts(16,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/metrics.ts(23,24): error TS7016: Could not find a declaration file for module 'on-finished'. '/juice-shop/node_modules/on-finished/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/on-finished` if it exists or add a new declaration (.d.ts) file containing `declare module 'on-finished';`
+#25 186.6 routes/metrics.ts(89,39): error TS7006: Parameter 'ignoredUserAgent' implicitly has an 'any' type.
+#25 186.6 routes/nftMint.ts(1,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/order.ts(8,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/order.ts(9,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/order.ts(42,57): error TS7016: Could not find a declaration file for module 'pdfkit'. '/juice-shop/node_modules/pdfkit/js/pdfkit.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/pdfkit` if it exists or add a new declaration (.d.ts) file containing `declare module 'pdfkit';`
+#25 186.6 routes/orderHistory.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/payment.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/premiumReward.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/privacyPolicyProof.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/profileImageFileUpload.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/profileImageUrlUpload.ts(9,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/quarantineServer.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/recycles.ts(6,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/redirect.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/repeatNotification.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/resetPassword.ts(6,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/resetPassword.ts(7,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/restoreProgress.ts(7,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/saveLoginIp.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/search.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/search.ts(23,231): error TS2339: Property 'QueryTypes' does not exist on type 'Sequelize'.
+#25 186.6 routes/securityQuestion.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/showProductReviews.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/trackOrder.ts(8,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/updateProductReviews.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/updateUserProfile.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/updateUserProfile.ts(13,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/userProfile.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/userProfile.ts(8,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/userProfile.ts(89,33): error TS7016: Could not find a declaration file for module 'pug'. '/juice-shop/node_modules/pug/lib/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/pug` if it exists or add a new declaration (.d.ts) file containing `declare module 'pug';`
+#25 186.6 routes/verify.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.6 routes/verify.ts(9,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.6 routes/verify.ts(10,17): error TS7016: Could not find a declaration file for module 'jws'. '/juice-shop/node_modules/jws/index.js' implicitly has an 'any' type.
+#25 186.6   Try `npm i --save-dev @types/jws` if it exists or add a new declaration (.d.ts) file containing `declare module 'jws';`
+#25 186.6 routes/verify.ts(356,15): error TS7006: Parameter 'product' implicitly has an 'any' type.
+#25 186.7 routes/verify.ts(358,11): error TS7006: Parameter 'keyword' implicitly has an 'any' type.
+#25 186.7 routes/videoHandler.ts(7,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.7 routes/videoHandler.ts(8,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 routes/videoHandler.ts(68,33): error TS7016: Could not find a declaration file for module 'pug'. '/juice-shop/node_modules/pug/lib/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/pug` if it exists or add a new declaration (.d.ts) file containing `declare module 'pug';`
+#25 186.7 routes/vulnCodeFixes.ts(2,18): error TS7016: Could not find a declaration file for module 'js-yaml'. '/juice-shop/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+#25 186.7 routes/vulnCodeFixes.ts(3,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 routes/vulnCodeSnippet.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 routes/vulnCodeSnippet.ts(7,18): error TS7016: Could not find a declaration file for module 'js-yaml'. '/juice-shop/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+#25 186.7 routes/wallet.ts(6,64): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 routes/web3Wallet.ts(1,45): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 server.ts(5,18): error TS7016: Could not find a declaration file for module 'i18n'. '/juice-shop/node_modules/i18n/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/i18n` if it exists or add a new declaration (.d.ts) file containing `declare module 'i18n';`
+#25 186.7 server.ts(8,18): error TS7016: Could not find a declaration file for module 'js-yaml'. '/juice-shop/node_modules/js-yaml/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/js-yaml` if it exists or add a new declaration (.d.ts) file containing `declare module 'js-yaml';`
+#25 186.7 server.ts(9,20): error TS7016: Could not find a declaration file for module 'config'. '/juice-shop/node_modules/config/lib/config.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/config` if it exists or add a new declaration (.d.ts) file containing `declare module 'config';`
+#25 186.7 server.ts(10,20): error TS7016: Could not find a declaration file for module 'morgan'. '/juice-shop/node_modules/morgan/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/morgan` if it exists or add a new declaration (.d.ts) file containing `declare module 'morgan';`
+#25 186.7 server.ts(11,20): error TS7016: Could not find a declaration file for module 'multer'. '/juice-shop/node_modules/multer/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/multer` if it exists or add a new declaration (.d.ts) file containing `declare module 'multer';`
+#25 186.7 server.ts(15,21): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 server.ts(17,24): error TS7016: Could not find a declaration file for module 'serve-index'. '/juice-shop/node_modules/serve-index/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/serve-index` if it exists or add a new declaration (.d.ts) file containing `declare module 'serve-index';`
+#25 186.7 server.ts(18,24): error TS7016: Could not find a declaration file for module 'body-parser'. '/juice-shop/node_modules/body-parser/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/body-parser` if it exists or add a new declaration (.d.ts) file containing `declare module 'body-parser';`
+#25 186.7 server.ts(21,25): error TS7016: Could not find a declaration file for module 'compression'. '/juice-shop/node_modules/compression/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/compression` if it exists or add a new declaration (.d.ts) file containing `declare module 'compression';`
+#25 186.7 server.ts(24,26): error TS7016: Could not find a declaration file for module 'cookie-parser'. '/juice-shop/node_modules/cookie-parser/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/cookie-parser` if it exists or add a new declaration (.d.ts) file containing `declare module 'cookie-parser';`
+#25 186.7 server.ts(26,23): error TS7016: Could not find a declaration file for module 'swagger-ui-express'. '/juice-shop/node_modules/swagger-ui-express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/swagger-ui-express` if it exists or add a new declaration (.d.ts) file containing `declare module 'swagger-ui-express';`
+#25 186.7 server.ts(33,54): error TS7016: Could not find a declaration file for module 'express'. '/juice-shop/node_modules/express/index.js' implicitly has an 'any' type.
+#25 186.7   Try `npm i --save-dev @types/express` if it exists or add a new declaration (.d.ts) file containing `declare module 'express';`
+#25 186.7 server.ts(244,5): error TS2578: Unused '@ts-expect-error' directive.
+#25 186.7 server.ts(262,7): error TS2578: Unused '@ts-expect-error' directive.
+#25 186.7 server.ts(269,122): error TS7006: Parameter 'filename' implicitly has an 'any' type.
+#25 186.7 server.ts(357,5): error TS2578: Unused '@ts-expect-error' directive.
+#25 187.5 
+#25 187.5 added 654 packages, and audited 655 packages in 3m
+#25 187.5 
+#25 187.5 113 packages are looking for funding
+#25 187.5   run `npm fund` for details
+#25 187.5 
+#25 187.5 13 vulnerabilities (5 low, 7 moderate, 1 critical)
+#25 187.5 
+#25 187.5 To address all issues possible (including breaking changes), run:
+#25 187.5   npm audit fix --force
+#25 187.5 
+#25 187.5 Some issues need review, and may require choosing
+#25 187.5 a different dependency.
+#25 187.5 
+#25 187.5 Run `npm audit` for details.
+#25 200.8 
+#25 200.8 removed 2 packages, changed 2 packages, and audited 653 packages in 13s
+#25 200.8 
+#25 200.8 113 packages are looking for funding
+#25 200.8   run `npm fund` for details
+#25 200.8 
+#25 200.8 13 vulnerabilities (5 low, 7 moderate, 1 critical)
+#25 200.8 
+#25 200.8 To address all issues possible (including breaking changes), run:
+#25 200.8   npm audit fix --force
+#25 200.8 
+#25 200.8 Some issues need review, and may require choosing
+#25 200.8 a different dependency.
+#25 200.8 
+#25 200.8 Run `npm audit` for details.
+#25 201.0 
+#25 201.0 > juice-shop@20.3.0 sbom
+#25 201.0 > cyclonedx-npm --omit=dev --output-format=JSON --output-file=bom.json
+#25 201.0 
+#25 DONE 205.7s
+
+#26 [stage-4  3/13] COPY --from=installer /usr/local/bin/node /nodejs/bin/node
+#26 DONE 0.2s
+
+#27 [stage-4  4/13] COPY --from=installer --chown=101:0 /juice-shop /juice-shop
+#27 DONE 3.1s
+
+#28 [stage-4  5/13] COPY --from=rasp --chown=101:0 /rasp/node_modules/@aikidosec /juice-shop/node_modules/@aikidosec
+#28 DONE 0.3s
+
+#29 [stage-4  6/13] COPY --from=parches /w/FUENTE_DIFF_SHA256 /w/APP_COMMIT /juice-shop/.masi/
+#29 DONE 0.1s
+
+#30 [stage-4  7/13] COPY --chown=101:0 deploy/hardened/rasp/rasp-guard.js /juice-shop/rasp/rasp-guard.js
+#30 DONE 0.0s
+
+#31 [stage-4  8/13] COPY deploy/cloud/default.conf.template /etc/nginx/templates/conf.d/default.conf.template
+#31 DONE 0.0s
+
+#32 [stage-4  9/13] COPY deploy/cloud/acceso.html deploy/cloud/ok.txt /etc/nginx/
+#32 DONE 0.1s
+
+#33 [stage-4 10/13] COPY deploy/hardened/waf/rules/99-virtual-patches.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-999-VIRTUAL-PATCHES.conf
+#33 DONE 0.0s
+
+#34 [stage-4 11/13] COPY deploy/hardened/waf/rules/98-exclusiones-fase6.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-998-EXCLUSIONES-FASE6.conf
+#34 DONE 0.0s
+
+#35 [stage-4 12/13] COPY deploy/hardened/waf/rules/97-exclusiones-antes-crs.conf /etc/modsecurity.d/owasp-crs/rules/REQUEST-900-EXCLUSION-RULES-BEFORE-CRS.conf
+#35 DONE 0.0s
+
+#36 [stage-4 13/13] COPY --chmod=755 deploy/cloud/iniciar.sh /usr/local/bin/iniciar.sh
+#36 DONE 0.1s
+
+#37 exporting to image
+#37 exporting layers
+#37 exporting layers 12.0s done
+#37 exporting manifest sha256:35008a2962583df532041326613392fae33be3ad22160003427141476eab7104 0.0s done
+#37 exporting config sha256:85aac9951d6d867384ec67df75917570b85f429956113795dcf02c4e0b643747 0.0s done
+#37 exporting attestation manifest sha256:939504e5ea8994be95d872d4a4192a073278ecb0c9797d17b8a6c1e5d84e85f5 0.0s done
+#37 exporting manifest list sha256:272c0dea15a753ed94532e457d0124ded63ea372ffc0a97f79274ea1df63b4ea 0.0s done
+#37 naming to docker.io/library/juice-cloud:alpine done
+#37 unpacking to docker.io/library/juice-cloud:alpine
+#37 unpacking to docker.io/library/juice-cloud:alpine 6.6s done
+#37 DONE 18.8s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/o5rz7pebj4nrusl5ftkac92iq

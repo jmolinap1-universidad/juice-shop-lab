@@ -27,6 +27,10 @@ services:
       siem.variante: "corregida"
 
   waf:
+    # Cierre de brechas (2026-11-24): misma versión del WAF (CRS 4.25.2) en su variante ALPINE, fijada por digest. La base
+    # Debian (202610180210) arrastraba ~130 HIGH sin corrección (docs/cierre-tecnico/TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md).
+    # El stack histórico (docker-compose.yml + ops) conserva su imagen original para no alterar la línea base.
+    image: owasp/modsecurity-crs:4.25.2-nginx-alpine-202611190211-lts@sha256:d7dee7afff5b7983bf6705f143b82494cf258ad2dacc37d580b1278d508b6089
     environment:
       # Falso positivo hallado en el cierre de la Fase 6 (evidence/fase-6/cierre-final-2026-11-21/07-waf/): con la lista
       # por defecto del CRS (GET HEAD POST OPTIONS), la regla 911100 + 920350 bloqueaban (puntuación 8 ≥ 5) los PUT/DELETE

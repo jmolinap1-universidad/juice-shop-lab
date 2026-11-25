@@ -1,0 +1,2 @@
+memoria final 149.2MiB / 512MiB
+estado running oom=false reinicios=0 imagen sha256:272c0dea15a753ed94532e457d0124ded63ea372ffc0a97f79274ea1df63b4ea
