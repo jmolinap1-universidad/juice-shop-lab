@@ -11,7 +11,7 @@ import sys
 BASE = sys.argv[1] if len(sys.argv) > 1 else "."
 d = json.load(open(os.path.join(BASE, "datos", "inventario.json"), encoding="utf-8"))
 TIPOS = {"Información", "Software", "Físico", "Personal", "Servicios", "Empresa"}
-UBIC = {"Local", "Cloud", "Móvil", "Repositorio"}
+UBIC = {"Local", "Cloud", "Local y cloud", "Móvil", "Repositorio"}
 CAMPOS = ["id", "f1", "nombre", "tipo", "ubicacion", "estado", "proceso", "descripcion", "C", "I", "D", "just", "prop", "cust", "acceso", "rel"]
 V = d["regla_cia"]["valores"]
 ROL = d["roles"]

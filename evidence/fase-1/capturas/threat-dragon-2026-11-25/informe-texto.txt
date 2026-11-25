@@ -1,0 +1,725 @@
+ Threat Dragon v2.6.2
+English
+Logged in as local-user
+Show model diagrams
+Show mitigated threats
+Show out of scope elements
+Show empty elements
+Threat Dragon logo
+Show element properties
+ Print
+ Close
+Wed Nov 25 2026
+Threat model report for Laboratorio AppSec — OWASP Juice Shop (MASI-UMG 2026)
+Owner:
+Equipo del proyecto
+Reviewer:
+Pendiente de revisión por el equipo
+Contributors:
+Molina Pérez Juan Carlos, Sánchez Flores Juan Walter Ernesto, García Gonzalez Leopoldo Emanuel, Cambara Castillo Vanessa Odeth
+Executive Summary
+High level system description
+
+DFD y amenazas STRIDE del laboratorio: aplicación (Fase 1, variante corregida con defensa) y despliegue real en Render. Generado por security/threat-dragon/generar_modelo_td.py desde los datos versionados; no editar a mano sin regenerar.
+
+Summary
+Metric
+	
+Total
+
+Total Threats	42
+Total Mitigated	27
+Total Open	15
+Open / Critical Severity	0
+Open / High Severity	15
+Open / Medium Severity	0
+Open / Low Severity	0
+Aplicación — DFD de la Fase 1 (variante corregida)
+
+Límites TB0 (Internet ↔ contenedores), TB1 (proceso ↔ almacenamiento) y TB2 (recurso remoto).
+
+TB0 · Internet ↔ contenedores (WAF + Juice Shop corregido)
+TB1 · proceso ↔ almacenamiento
+Cliente / navegador
+Atacante externo
+Administrador
+WAF nginx +ModSecurity/CRS
+Frontend Angular
+API Express/rest /api /b2b
+AutenticaciónJWT
+Carga dearchivos
+Estáticos ylistados
+/metrics
+SQLite / PostgreSQLUsers, Cards…
+MarsDBreseñas, pedidos
+Sistema de archivosftp/ uploads/
+URL remota(imagen de perfil)
+Registros → SIEM(Alloy/Loki/Grafana)
+HTTP(S) JSON/HTML
+mismos canales
+/administration
+/ y /assets
+/rest /api /b2b
+/ftp /support/logs
+/metrics (403 del WAF)
+login / token
+consulta de login
+Sequelize
+reseñas, pedidos
+archivos
+ZIP/XML/YAML
+descarga por URL (SSRF)
+lectura
+auditoría y accesos
+DFD de la Fase 1 actualizado(variante corregida, parches 01-14,con WAF, RASP y SIEM).Amenazas T01-T20; estado segúnel residual vigente.
+Cliente / navegador (Actor) 
+Atacante externo (Actor) 
+
+Description: Mismos canales que el cliente.
+
+Administrador (Actor) 
+
+Description: Panel /administration.
+
+WAF nginx + ModSecurity/CRS (Process) 
+
+Description: Proxy inverso con OWASP CRS 4.25.2, cabeceras y límites (Fases 5-6).
+
+Frontend Angular (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+1	T13 · XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)	Tampering	High	Mitigated	DREAD 7.4 (Alto) · D,R,E,A,Di = [6, 9, 7, 7, 8]	XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)
+Código (v20.3.0 oficial): `server.ts:189`; `routes/userProfile.ts:91`
+OWASP Top 10:2025 / CWE: A05 / CWE-79
+STRIDE de la Fase 1: T, I · riesgo vinculado R13.	Controles verificados: CSP (script-src 'self') y cabeceras en el WAF: presentes en la respuesta; CRS 941 (XSS): 403 con dos vectores acotados (parámetro de búsqueda y cuerpo de una reseña); reglas 941100/941110/941160/941390 en el audit log; Parche 12: búsqueda sin bypassSecurityTrustHtml (Angular sanea el término) y sanitize-html 2.18.2; Prueba de XSS en navegador real (Chromium): 6 vectores (DOM, reflejado, 4 almacenados); corregida 0/6 con y sin el modo seguro de Juice Shop; oficial sin modo seguro 5/6; imagen cloud 0/6; Parche 14: correo, nombre de usuario y última IP saneados siempre en el servidor (V5 y V6 se ejecutaban en la corregida sin modo seguro); CSP del WAF (script-src 'self'): bloquea scripts en línea en la nube.
+Propuestos (no implementados): Codificación de salida en el frontend.
+Evidencia: app-hardened/patches/v2/correcciones-cierre-tecnico.patch, evidence/cierre-brechas-2026-11-24/02-xss-navegador/cloud/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/oficial-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/07-waf/familias-waf.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a9-security-headers.txt
+Residual vigente R13: 2×4 Medio (inherente Alto).
+2	T13 · XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)	Information disclosure	High	Mitigated	DREAD 7.4 (Alto) · D,R,E,A,Di = [6, 9, 7, 7, 8]	XSS persistente/reflejado (sin `xssFilter`, CSP débil con `unsafe-eval`)
+Código (v20.3.0 oficial): `server.ts:189`; `routes/userProfile.ts:91`
+OWASP Top 10:2025 / CWE: A05 / CWE-79
+STRIDE de la Fase 1: T, I · riesgo vinculado R13.	Controles verificados: CSP (script-src 'self') y cabeceras en el WAF: presentes en la respuesta; CRS 941 (XSS): 403 con dos vectores acotados (parámetro de búsqueda y cuerpo de una reseña); reglas 941100/941110/941160/941390 en el audit log; Parche 12: búsqueda sin bypassSecurityTrustHtml (Angular sanea el término) y sanitize-html 2.18.2; Prueba de XSS en navegador real (Chromium): 6 vectores (DOM, reflejado, 4 almacenados); corregida 0/6 con y sin el modo seguro de Juice Shop; oficial sin modo seguro 5/6; imagen cloud 0/6; Parche 14: correo, nombre de usuario y última IP saneados siempre en el servidor (V5 y V6 se ejecutaban en la corregida sin modo seguro); CSP del WAF (script-src 'self'): bloquea scripts en línea en la nube.
+Propuestos (no implementados): Codificación de salida en el frontend.
+Evidencia: app-hardened/patches/v2/correcciones-cierre-tecnico.patch, evidence/cierre-brechas-2026-11-24/02-xss-navegador/cloud/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/oficial-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/07-waf/familias-waf.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a9-security-headers.txt
+Residual vigente R13: 2×4 Medio (inherente Alto).
+API Express /rest /api /b2b (Process) 
+
+Description: Proceso Node con RASP Aikido Zen; parches 01-14 en la variante corregida.
+
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+3	T02 · Inyección SQL UNION en búsqueda extrae tablas completas (Users, Cards)	Information disclosure	High	Mitigated	DREAD 9.0 (Crítico) · D,R,E,A,Di = [10, 10, 7, 10, 8]	Inyección SQL UNION en búsqueda extrae tablas completas (Users, Cards)
+Código (v20.3.0 oficial): `routes/search.ts:23`
+OWASP Top 10:2025 / CWE: A05 / CWE-89
+STRIDE de la Fase 1: I · riesgo vinculado R02.	Controles verificados: WAF ModSecurity + CRS 942xxx (HTTP 403); RASP Aikido Zen + rasp-guard: bloqueo en sqlite3.all (query.q) con HTTP 403; Alertas SIEM de inyección (WAF y RASP); Parche 02: consulta parametrizada en la búsqueda (variante corregida); A2 y A3 sin datos sin WAF ni RASP y búsqueda legítima con resultados.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+Residual vigente R02: 1×5 Medio (inherente Crítico).
+4	T06 · Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks	Information disclosure	High	Mitigated	DREAD 8.2 (Crítico) · D,R,E,A,Di = [7, 10, 8, 8, 8]	Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks
+Código (v20.3.0 oficial): `server.ts:511-528`, `:427,631`
+OWASP Top 10:2025 / CWE: A01 Broken Access Control / CWE-639
+STRIDE de la Fase 1: I, T · riesgo vinculado R06.	Controles verificados: Heurística SIEM API_Enumeracion_Objetos_PosibleBOLA (con falsos positivos demostrados); Parche 08: verificación de propietario en /rest/basket/:id (variante corregida); A12 → 403 y la cesta propia → 200; Parche 10: verificación de propietario en artículos de cesta (GET/PUT/DELETE y lista), direcciones (PUT) y opiniones (DELETE); 0/10 accesos ajenos con éxito, 7/7 operaciones del propietario correctas; Alerta SIEM API_BOLA_AccesoAjenoDenegado (403 a objetos ajenos; inactiva con tráfico legítimo, activa con el intento cruzado); Parche 14: PUT /api/Products/:id exige sesión y rol admin (antes: sin autenticación, cualquiera modificaba el catálogo); probado: 401 sin token.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/bola/resultado-bola.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/02-bola-recursos/despues-parche10-corregida-rasp-sin-waf.md, evidence/fase-6/cierre-final-2026-11-21/10-siem/reglas-tras-disparadores.txt, evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/alertas-tras-trafico-legitimo.json
+Residual vigente R06: 2×4 Medio (inherente Crítico).
+5	T06 · Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks	Tampering	High	Mitigated	DREAD 8.2 (Crítico) · D,R,E,A,Di = [7, 10, 8, 8, 8]	Recursos `finale` sin control por propietario (IDOR) en Addresses/Cards/Baskets/Feedbacks
+Código (v20.3.0 oficial): `server.ts:511-528`, `:427,631`
+OWASP Top 10:2025 / CWE: A01 Broken Access Control / CWE-639
+STRIDE de la Fase 1: I, T · riesgo vinculado R06.	Controles verificados: Heurística SIEM API_Enumeracion_Objetos_PosibleBOLA (con falsos positivos demostrados); Parche 08: verificación de propietario en /rest/basket/:id (variante corregida); A12 → 403 y la cesta propia → 200; Parche 10: verificación de propietario en artículos de cesta (GET/PUT/DELETE y lista), direcciones (PUT) y opiniones (DELETE); 0/10 accesos ajenos con éxito, 7/7 operaciones del propietario correctas; Alerta SIEM API_BOLA_AccesoAjenoDenegado (403 a objetos ajenos; inactiva con tráfico legítimo, activa con el intento cruzado); Parche 14: PUT /api/Products/:id exige sesión y rol admin (antes: sin autenticación, cualquiera modificaba el catálogo); probado: 401 sin token.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/bola/resultado-bola.md, evidence/cierre-brechas-2026-11-24/02-xss-navegador/corregida-sms/resultados.md, evidence/fase-6/cierre-final-2026-11-21/02-bola-recursos/despues-parche10-corregida-rasp-sin-waf.md, evidence/fase-6/cierre-final-2026-11-21/10-siem/reglas-tras-disparadores.txt, evidence/fase-6/validacion-2026-11-10/04-falsos-positivos/alertas-tras-trafico-legitimo.json
+Residual vigente R06: 2×4 Medio (inherente Crítico).
+6	T07 · Registro permite fijar `role: admin` (asignación masiva)	Elevation of privilege	High	Mitigated	DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 10, 7, 5, 6]	Registro permite fijar `role: admin` (asignación masiva)
+Código (v20.3.0 oficial): `server.ts:436-448`
+OWASP Top 10:2025 / CWE: A01 / CWE-915
+STRIDE de la Fase 1: E · riesgo vinculado R07.	Controles verificados: Parche virtual ModSecurity 100001 (HTTP 403); Alerta SIEM WAF_ParcheVirtual_Activado; Parche 06: lista blanca de campos en el registro (variante corregida); role=admin ignorado (role customer) sin WAF.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+Residual vigente R07: 1×4 Bajo (inherente Alto).
+7	T09 · Ejecución de código: `eval()` y `vm.runInContext` sobre datos del usuario	Elevation of privilege	High	Open	DREAD 7.6 (Alto) · D,R,E,A,Di = [10, 8, 5, 10, 5]	Ejecución de código: `eval()` y `vm.runInContext` sobre datos del usuario
+Código (v20.3.0 oficial): `routes/userProfile.ts:65`, `routes/b2bOrder.ts:23`, `routes/captcha.ts:22`, `routes/fileUpload.ts:114`
+OWASP Top 10:2025 / CWE: A05 / CWE-95
+STRIDE de la Fase 1: E · riesgo vinculado R09.	Controles verificados: Contención: FS raíz de solo lectura (escritura bloqueada con EROFS), usuario no root, cap_drop ALL; Parche 05: eval() eliminado en routes/userProfile.ts (revisado en el diff). No ejercitable dinámicamente: Juice Shop desactiva esa rama en Docker (safetyMode auto, disabledEnv Docker).
+Evidencia: app-hardened/patches/v2/correcciones-hito-a.patch, evidence/fase-5/despues/runtime-hardening-inspect.txt
+Residual vigente R09: 3×4 Alto (inherente Alto).
+8	T14 · CORS `*` permite lectura cross-origin	Information disclosure	High	Mitigated	DREAD 6.6 (Alto) · D,R,E,A,Di = [4, 9, 6, 6, 8]	CORS `*` permite lectura cross-origin
+Código (v20.3.0 oficial): `server.ts:183-184`
+OWASP Top 10:2025 / CWE: A02 / CWE-942
+STRIDE de la Fase 1: I · riesgo vinculado R14.	Controles verificados: WAF oculta Access-Control-Allow-Origin (comprobado con Origin externo); Parche 07: CORS con origen explícito (variante corregida); sin ACAO abierto con Origin externo y sin WAF.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a8-cors-headers.txt
+Residual vigente R14: 1×3 Bajo (inherente Alto).
+9	T15 · Open redirect con lista blanca evadible (`includes`)	Spoofing	High	Open	DREAD 6.2 (Alto) · D,R,E,A,Di = [4, 9, 7, 5, 6]	Open redirect con lista blanca evadible (`includes`)
+Código (v20.3.0 oficial): `server.ts:687`; `lib/insecurity.ts:133`
+OWASP Top 10:2025 / CWE: A01 / CWE-601
+STRIDE de la Fase 1: S · riesgo vinculado R15.	Controles verificados: .
+Propuestos (no implementados): Comparación exacta de destinos permitidos.
+Evidencia: 
+Residual vigente R15: 4×3 Alto (inherente Alto).
+10	T18 · Expresiones `vm` y uploads ZIP pueden agotar CPU/memoria (timeout 2 s, límite 200 kB)	Denial of service	High	Open	DREAD 6.0 (Alto) · D,R,E,A,Di = [5, 6, 5, 10, 4]	Expresiones `vm` y uploads ZIP pueden agotar CPU/memoria (timeout 2 s, límite 200 kB)
+Código (v20.3.0 oficial): `routes/b2bOrder.ts:23`, `server.ts:722`
+OWASP Top 10:2025 / CWE: A10 Exceptional Conditions / CWE-400
+STRIDE de la Fase 1: D · riesgo vinculado R18.	Controles verificados: Límites de pids (200), memoria (1 GiB) y CPU (1.0) configurados; Parche 12: b2bOrder ya no evalúa las líneas de pedido como código (vm/notevil); el reto RCE queda sin vía de ejecución.
+Evidencia: app-hardened/patches/v2/correcciones-cierre-tecnico.patch, evidence/fase-5/despues/runtime-hardening-inspect.txt
+Residual vigente R18: 3×4 Alto (inherente Alto).
+11	T20 · Dependencias con CVE críticas (marsdb, lodash 2.4.2, crypto-js 3.3.0, tar)	Tampering	High	Open	DREAD 7.4 (Alto) · D,R,E,A,Di = [8, 6, 5, 10, 8]	Dependencias con CVE críticas (marsdb, lodash 2.4.2, crypto-js 3.3.0, tar)
+Código (v20.3.0 oficial): Fase 3: `evidence/fase-3/sca/`
+OWASP Top 10:2025 / CWE: A03 / CWE-1395
+STRIDE de la Fase 1: T · riesgo vinculado R20.	Controles verificados: SCA en CI (npm audit, OSV, Grype, Trivy) en cada push; Parches 11 y base distroless actualizada: Trivy CRITICAL 11→1 y HIGH 33→2 sobre la imagen en ejecución (misma base de datos de vulnerabilidades); el CRITICAL restante (marsdb) no tiene versión corregida; Puerta de release (scripts/pipeline-release.sh + security/release/politica-release.json): bloquea CRITICAL/HIGH sin excepción vigente; prueba negativa con la imagen oficial: BLOQUEADA (41 incumplimientos); Imagen cloud con base Alpine de la misma versión del WAF: Trivy CRITICAL 3→1 (marsdb, exceptuada) y HIGH 135→0; puerta de release APTA; Política de release en CI (GitHub Actions release.yml): IaC de Render, puerta de la imagen de la app y de la imagen cloud en cada cambio.
+Propuestos (no implementados): Actualizar dependencias vulnerables.
+Evidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md, evidence/cierre-brechas-2026-11-24/11-ci-release/resultado-ci.md, evidence/cierre-tecnico-2026-11-23/08-pipeline-release/prueba-negativa-imagen-oficial/puerta-release.md, evidence/cierre-tecnico-2026-11-23/08-pipeline-release/puerta-release.md, evidence/fase-3/sca/
+Residual vigente R20: 2×5 Alto (inherente Crítico).
+Autenticación JWT (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+12	T01 · Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)	Spoofing	High	Mitigated	DREAD 9.6 (Crítico) · D,R,E,A,Di = [10, 10, 9, 10, 9]	Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)
+Código (v20.3.0 oficial): `routes/login.ts:34` (template literal con `req.body.email`)
+OWASP Top 10:2025 / CWE: A05 Injection / CWE-89
+STRIDE de la Fase 1: S, E · riesgo vinculado R01.	Controles verificados: WAF ModSecurity + CRS 942100/949110 (HTTP 403); RASP Aikido Zen + integración rasp-guard: bloqueo en sqlite3.all con HTTP 403; Alertas SIEM WAF_InyeccionSQL_Bloqueada y RASP_Ataque_Detectado; Parche 01 v2: consulta parametrizada + verificación scrypt (variante corregida); A1 sin token y HTTP 401 sin WAF ni RASP.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+Residual vigente R01: 1×5 Medio (inherente Crítico).
+13	T01 · Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)	Elevation of privilege	High	Mitigated	DREAD 9.6 (Crítico) · D,R,E,A,Di = [10, 10, 9, 10, 9]	Inyección SQL en el login permite autenticarse como cualquier usuario (incl. admin)
+Código (v20.3.0 oficial): `routes/login.ts:34` (template literal con `req.body.email`)
+OWASP Top 10:2025 / CWE: A05 Injection / CWE-89
+STRIDE de la Fase 1: S, E · riesgo vinculado R01.	Controles verificados: WAF ModSecurity + CRS 942100/949110 (HTTP 403); RASP Aikido Zen + integración rasp-guard: bloqueo en sqlite3.all con HTTP 403; Alertas SIEM WAF_InyeccionSQL_Bloqueada y RASP_Ataque_Detectado; Parche 01 v2: consulta parametrizada + verificación scrypt (variante corregida); A1 sin token y HTTP 401 sin WAF ni RASP.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/resumen-ataques.md, evidence/fase-6/validacion-2026-11-10/02d-rasp-bloqueo-integrado/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+Residual vigente R01: 1×5 Medio (inherente Crítico).
+14	T03 · Clave privada RSA embebida: cualquiera con el código forja JWT válidos	Spoofing	High	Open	DREAD 8.6 (Crítico) · D,R,E,A,Di = [10, 10, 6, 10, 7]	Clave privada RSA embebida: cualquiera con el código forja JWT válidos
+Código (v20.3.0 oficial): `lib/insecurity.ts:21,54`
+OWASP Top 10:2025 / CWE: A04 Cryptographic Failures / CWE-798
+STRIDE de la Fase 1: S · riesgo vinculado R03.	Controles verificados: Parche 04 v2: clave privada fuera del código, cargada de un secreto montado y rotada; un token firmado con la clave antigua recibe HTTP 401; Arranque fail-closed: sin secreto la aplicación no inicia (código de salida 1); En la nube la clave JWT la genera el contenedor en cada arranque (nadie la copia ni la pega; falla cerrada si no se activa): 5 casos de arranque.
+Propuestos (no implementados): Gestor de secretos / KMS del proveedor cloud (custodia compartida, no transfiere la responsabilidad).
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/arranque-sin-secreto.txt, evidence/cierre-2026-11-20/03-corregida-sin-waf/regresion-funcional.md, evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md
+Residual vigente R03: 2×5 Alto (inherente Crítico).
+15	T04 · Bibliotecas JWT obsoletas (`jsonwebtoken` 0.4.0, `express-jwt` 0.1.3) aceptan algoritmos d	Spoofing	High	Mitigated	DREAD 7.2 (Alto) · D,R,E,A,Di = [9, 7, 5, 10, 5]	Bibliotecas JWT obsoletas (`jsonwebtoken` 0.4.0, `express-jwt` 0.1.3) aceptan algoritmos débiles/`none`
+Código (v20.3.0 oficial): `package.json`; npm audit (Fase 3)
+OWASP Top 10:2025 / CWE: A03 Supply Chain / CWE-347
+STRIDE de la Fase 1: S · riesgo vinculado R04.	Controles verificados: SCA en CI (npm audit, OSV, Grype) que identifica el componente; Parche 11: express-jwt 8.5.1 + jsonwebtoken 9.0.3 + jws 4.0.1 con RS256 fijo; alg=none y confusión HS256 con la clave pública → 401; token legítimo → 200.
+Propuestos (no implementados): Actualizar bibliotecas JWT y fijar algoritmos.
+Evidencia: evidence/cierre-tecnico-2026-11-23/04-despues-parches/jwt-algoritmos.md, evidence/fase-3/sca/
+Residual vigente R04: 1×5 Medio (inherente Alto).
+16	T16 · Fuerza bruta: sin límite de intentos en `/rest/user/login` (solo en reset)	Spoofing	High	Mitigated	DREAD 7.2 (Alto) · D,R,E,A,Di = [6, 9, 8, 5, 8]	Fuerza bruta: sin límite de intentos en `/rest/user/login` (solo en reset)
+Código (v20.3.0 oficial): `server.ts:371` vs `:624`
+OWASP Top 10:2025 / CWE: A07 Authentication Failures / CWE-307
+STRIDE de la Fase 1: S · riesgo vinculado R16.	Controles verificados: Rate limiting nginx 5/min por IP, ráfaga 3 (HTTP 429); Alerta SIEM Login_FuerzaBruta_RateLimit; Límite de intentos en la nube: 429 al 5.º intento, también con X-Forwarded-For falsificado distinto en cada petición; 2FA (TOTP) de Juice Shop probada en local y en Render (13/13): con la 2FA activa la contraseña sola no da sesión (401 totp_token_required); código erróneo y tmpToken forjado (alg none) → 401.
+Evidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md, evidence/cierre-brechas-2026-11-24/12-2fa/render.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a10-bruteforce-login.txt, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+Residual vigente R16: 3×3 Medio (inherente Alto).
+Carga de archivos (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+17	T10 · XXE: parser XML con entidades externas lee archivos locales	Information disclosure	High	Mitigated	DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 8, 5, 10, 5]	XXE: parser XML con entidades externas lee archivos locales
+Código (v20.3.0 oficial): `lib/xml.ts`, `routes/fileUpload.ts` (`handleXmlUpload`)
+OWASP Top 10:2025 / CWE: A02 Misconfiguration / CWE-611
+STRIDE de la Fase 1: I · riesgo vinculado R10.	Controles verificados: Parche 12: parser XML sin NOENT ni DTDLOAD y sin proveedores de archivos; con el modo seguro desactivado la imagen oficial resuelve /etc/hostname y la corregida no.
+Propuestos (no implementados): Parser XML sin entidades externas ni DTD.
+Evidencia: evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/xxe-dirigida.md
+Residual vigente R10: 1×5 Medio (inherente Alto).
+Estáticos y listados (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+18	T12 · Listado de directorios en `/ftp`, `/support/logs`, `/encryptionkeys`	Information disclosure	High	Open	DREAD 9.0 (Crítico) · D,R,E,A,Di = [6, 10, 10, 10, 9]	Listado de directorios en `/ftp`, `/support/logs`, `/encryptionkeys`
+Código (v20.3.0 oficial): `server.ts:290,298,302`
+OWASP Top 10:2025 / CWE: A02 / CWE-548
+STRIDE de la Fase 1: I · riesgo vinculado R12.	Controles verificados: nginx deny de rutas sensibles (HTTP 403); Alerta SIEM Acceso_Rutas_Sensibles_Denegado.
+Propuestos (no implementados): Retirar serve-index y archivos internos (Evitar).
+Evidencia: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+Residual vigente R12: 3×4 Alto (inherente Crítico).
+/metrics (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+19	T17 · `/metrics` expuesto sin autenticación	Information disclosure	High	Mitigated	DREAD 6.4 (Alto) · D,R,E,A,Di = [3, 10, 10, 2, 7]	`/metrics` expuesto sin autenticación
+Código (v20.3.0 oficial): `server.ts:759`
+OWASP Top 10:2025 / CWE: A02 / CWE-200
+STRIDE de la Fase 1: I · riesgo vinculado R17.	Controles verificados: nginx deny /metrics + parche virtual 100002 (mismo componente WAF); Alerta SIEM Acceso_Rutas_Sensibles_Denegado.
+Evidencia: evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/a6-metrics.txt, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/reglas-estado.json
+Residual vigente R17: 3×2 Medio (inherente Alto).
+SQLite / PostgreSQL Users, Cards… (Store) 
+
+Description: SQLite en local; PostgreSQL 17 administrado en Render (parche 13).
+
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+20	T05 · Contraseñas con MD5 sin sal → descifrado trivial tras fuga	Information disclosure	High	Mitigated	DREAD 7.8 (Alto) · D,R,E,A,Di = [8, 10, 6, 10, 5]	Contraseñas con MD5 sin sal → descifrado trivial tras fuga
+Código (v20.3.0 oficial): `lib/insecurity.ts:41`
+OWASP Top 10:2025 / CWE: A04 / CWE-916
+STRIDE de la Fase 1: I · riesgo vinculado R05.	Controles verificados: Bloqueo de la vía de extracción por SQLi (WAF + RASP); Parche 03 v2: scrypt con sal aleatoria (sin dependencias nuevas); 27/27 usuarios con scrypt, login y cambio de contraseña probados.
+Evidencia: evidence/cierre-2026-11-20/03-corregida-sin-waf/regresion-funcional.md, evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem/http.tsv
+Residual vigente R05: 1×5 Medio (inherente Crítico).
+MarsDB reseñas, pedidos (Store) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+21	T08 · Inyección NoSQL en actualización de reseñas (`$ne`, operadores)	Tampering	High	Mitigated	DREAD 6.6 (Alto) · D,R,E,A,Di = [5, 9, 6, 8, 5]	Inyección NoSQL en actualización de reseñas (`$ne`, operadores)
+Código (v20.3.0 oficial): `server.ts:662`; `routes/updateProductReviews.ts`
+OWASP Top 10:2025 / CWE: A05 / CWE-943
+STRIDE de la Fase 1: T · riesgo vinculado R08.	Controles verificados: Parche 12: reseñas y pedidos consultados por campo (sin $where), id sin operadores, sin actualización masiva; T1-T3 protegidos incluso con el modo seguro desactivado (la imagen oficial sí es vulnerable).
+Propuestos (no implementados): Rechazar operadores en filtros de MarsDB.
+Evidencia: evidence/cierre-tecnico-2026-11-23/05-sin-modo-seguro/corregida/resultados.md
+Residual vigente R08: 1×4 Bajo (inherente Alto).
+Sistema de archivos ftp/ uploads/ (Store) 
+URL remota (imagen de perfil) (Actor) 
+
+Description: Recurso de terceros (TB2).
+
+Registros → SIEM (Alloy/Loki/Grafana) (Store) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+22	T19 · Logs de acceso sin integridad ni centralización; sin alertas	Repudiation	High	Mitigated	DREAD 6.2 (Alto) · D,R,E,A,Di = [5, 8, 4, 10, 4]	Logs de acceso sin integridad ni centralización; sin alertas
+Código (v20.3.0 oficial): `server.ts:302-304`
+OWASP Top 10:2025 / CWE: A09 Logging & Alerting Failures / CWE-778
+STRIDE de la Fase 1: R · riesgo vinculado R19.	Controles verificados: SIEM: Alloy -> Loki -> Grafana; 3 fuentes ingestadas y 7 reglas (6 disparadas en las pruebas); Alerta Ingesta_WAF_Ausente: latido del WAF cada 30 s; con el colector detenido pasó a pending (2 min) y firing (+1 min); resuelta al reanudar, 6/6 líneas recuperadas; Descubrimiento de contenedores cada 5 s (antes 60 s): 5/5 detecciones del RASP llegan a Loki tras recrear la app; Centralización AUTOMÁTICA y AUTENTICADA de eventos cloud: colector de la API de Render (HTTPS + clave de solo lectura) → Loki con entorno=cloud, redacción y cursor; prueba extremo a extremo con marca; Alertas propias de la nube (6 reglas, entorno=cloud): SQLi bloqueada, credenciales fallidas y límite en la puerta, RASP, arranque fallido y salud del colector; 4 disparadas extremo a extremo contra Render (~1 min) sin disparar reglas locales; reglas locales acotadas a entorno=local.
+Evidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md, evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md, evidence/fase-6/cierre-final-2026-11-21/10-siem/alerta-ingesta-ausente.txt, evidence/fase-6/cierre-final-2026-11-21/10-siem/hallazgo-perdida-ingesta.txt, evidence/fase-6/validacion-2026-11-10/03b-rasp-a-siem/alertas.json
+Residual vigente R19: 2×4 Medio (inherente Alto).
+HTTP(S) JSON/HTML (Data Flow) 
+mismos canales (Data Flow) 
+/administration (Data Flow) 
+/ y /assets (Data Flow) 
+/rest /api /b2b (Data Flow) 
+/ftp /support/logs (Data Flow) 
+/metrics (403 del WAF) (Data Flow) 
+login / token (Data Flow) 
+consulta de login (Data Flow) 
+Sequelize (Data Flow) 
+reseñas, pedidos (Data Flow) 
+archivos (Data Flow) 
+ZIP/XML/YAML (Data Flow) 
+descarga por URL (SSRF) (Data Flow) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+23	T11 · SSRF: el servidor descarga URLs arbitrarias	Information disclosure	High	Mitigated	DREAD 6.2 (Alto) · D,R,E,A,Di = [7, 8, 6, 5, 5]	SSRF: el servidor descarga URLs arbitrarias
+Código (v20.3.0 oficial): `server.ts:339`; `routes/profileImageUrlUpload.ts`
+OWASP Top 10:2025 / CWE: A01 / CWE-918
+STRIDE de la Fase 1: I, E · riesgo vinculado R11.	Controles verificados: Parche 12: la URL de imagen se valida (http/https, resolución DNS solo a IP públicas, sin redirecciones); T5: la app ya no pide la URL interna (0 peticiones en el log del WAF).
+Propuestos (no implementados): Lista blanca de destinos y filtrado de egreso.
+Evidencia: evidence/cierre-tecnico-2026-11-23/06-regresion/artefacto-final/sin-waf/pruebas/resultados.md
+Residual vigente R11: 2×3 Medio (inherente Alto).
+24	T11 · SSRF: el servidor descarga URLs arbitrarias	Elevation of privilege	High	Mitigated	DREAD 6.2 (Alto) · D,R,E,A,Di = [7, 8, 6, 5, 5]	SSRF: el servidor descarga URLs arbitrarias
+Código (v20.3.0 oficial): `server.ts:339`; `routes/profileImageUrlUpload.ts`
+OWASP Top 10:2025 / CWE: A01 / CWE-918
+STRIDE de la Fase 1: I, E · riesgo vinculado R11.	Controles verificados: Parche 12: la URL de imagen se valida (http/https, resolución DNS solo a IP públicas, sin redirecciones); T5: la app ya no pide la URL interna (0 peticiones en el log del WAF).
+Propuestos (no implementados): Lista blanca de destinos y filtrado de egreso.
+Evidencia: evidence/cierre-tecnico-2026-11-23/06-regresion/artefacto-final/sin-waf/pruebas/resultados.md
+Residual vigente R11: 2×3 Medio (inherente Alto).
+lectura (Data Flow) 
+auditoría y accesos (Data Flow) 
+Despliegue real — Render + PostgreSQL
+
+Servicio web gratuito con acceso restringido, BD administrada privada y colector SIEM local.
+
+Servicio web Render · contenedor único Alpine (512 MB)
+Red privada de Render
+Equipo del laboratorio (127.0.0.1)
+Usuario autorizado(navegador)
+Atacante en Internet
+Equipo del laboratorio
+Borde de Render(Cloudflare + LB)
+nginx + ModSecuritypuerta /__acceso
+Juice Shop corregido+ RASP
+PostgreSQL 17 (free)ipAllowList vacía
+Logs de Render(7 días)
+Plano de controlRender (panel/API)
+GitHub mainrender.yaml, Dockerfile
+Construcción de laimagen (Render)
+colector-render(API key solo lectura)
+SIEM localLoki / Grafana
+HTTPS TLS 1.2/1.3
+HTTPS
+HTTP + X-Forwarded-For
+127.0.0.1:3000
+SQL (sslmode=require)
+auditoría JSON (stdout)
+stdout de la app y del RASP
+GET /v1/logs cada 60 s
+push entorno=cloud
+login (GitHub)
+git push
+Blueprint (sincronización manual)
+Manual Deploy
+imagen desplegada
+Despliegue real verificado: commit 768d1da,acceso restringido (puerta /__acceso).Amenazas TC01-TC10 (trazabilidad §6).
+Usuario autorizado (navegador) (Actor) 
+Atacante en Internet (Actor) 
+Equipo del laboratorio (Actor) 
+Borde de Render (Cloudflare + LB) (Process) - Out of Scope
+
+Reason for out of scope: Gestionado por Render (TLS 1.2/1.3, DDoS de la plataforma); no configurable en el plan free.
+
+nginx + ModSecurity puerta /__acceso (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+25	TC01 · Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)	Spoofing	High	Mitigated	DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 6, 5, 9, 8]	Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)
+Elemento: Borde de Render → puerta /__acceso · STRIDE S, E · riesgo vinculado R21.	Puerta propia; un 401 no entrega cookie; cookie de 256 bits Secure/HttpOnly/SameSite
+Evidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md
+Residual vigente R21: 2×4 Medio.
+26	TC01 · Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)	Elevation of privilege	High	Mitigated	DREAD 7.2 (Alto) · D,R,E,A,Di = [8, 6, 5, 9, 8]	Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)
+Elemento: Borde de Render → puerta /__acceso · STRIDE S, E · riesgo vinculado R21.	Puerta propia; un 401 no entrega cookie; cookie de 256 bits Secure/HttpOnly/SameSite
+Evidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md
+Residual vigente R21: 2×4 Medio.
+Juice Shop corregido + RASP (Process) 
+
+Description: Parches 01-14, clave JWT efímera generada en el contenedor.
+
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+27	TC08 · Indisponibilidad: suspensión por inactividad, vencimiento de la BD free (30 días), límite 	Denial of service	High	Mitigated	DREAD 7.6 (Alto) · D,R,E,A,Di = [3, 9, 8, 9, 9]	Indisponibilidad: suspensión por inactividad, vencimiento de la BD free (30 días), límite de memoria
+Elemento: Plataforma (plan free) · STRIDE D · riesgo vinculado R21.	Supervisión del arranque (el contenedor se detiene si la app cae); memoria medida 132-204 MiB de 512; procedimiento de reactivación documentado
+Evidencia: evidence/cierre-brechas-2026-11-24/09-validacion-imagen-alpine-local/recursos.txt
+Residual vigente R21: 2×4 Medio.
+PostgreSQL 17 (free) ipAllowList vacía (Store) 
+
+Description: Cifrado en reposo AES-256 declarado por Render (no verificable).
+
+Logs de Render (7 días) (Store) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+28	TC05 · Tokens, cookies o contraseñas en los logs de la plataforma o del SIEM	Information disclosure	High	Open	DREAD 6.0 (Alto) · D,R,E,A,Di = [7, 6, 4, 8, 5]	Tokens, cookies o contraseñas en los logs de la plataforma o del SIEM
+Elemento: Contenedor → logs de Render · STRIDE I · riesgo vinculado R23.	Auditoría del WAF sin cabeceras ni cuerpos (A,F,H,Z); redacción en el colector; 0 secretos en Loki
+Evidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md
+Residual vigente R23: 2×5 Alto.
+Plano de control Render (panel/API) (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+29	TC04 · Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)	Information disclosure	High	Open	DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 4, 5, 9, 6]	Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)
+Elemento: Panel de Render / repositorio · STRIDE I, S · riesgo vinculado R03.	Clave JWT generada por el contenedor; secretos sync:false; API key de solo lectura fuera de git; Gitleaks en CI
+Evidencia: evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md
+Residual vigente R03: 2×5 Alto.
+30	TC04 · Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)	Spoofing	High	Open	DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 4, 5, 9, 6]	Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)
+Elemento: Panel de Render / repositorio · STRIDE I, S · riesgo vinculado R03.	Clave JWT generada por el contenedor; secretos sync:false; API key de solo lectura fuera de git; Gitleaks en CI
+Evidencia: evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md
+Residual vigente R03: 2×5 Alto.
+31	TC10 · Compromiso de la cuenta del equipo en Render o GitHub	Spoofing	High	Open	DREAD 6.4 (Alto) · D,R,E,A,Di = [10, 3, 4, 10, 5]	Compromiso de la cuenta del equipo en Render o GitHub
+Elemento: Cuenta de Render (plano de control) · STRIDE S, T, E · riesgo vinculado R21.	Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)
+Evidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md
+Residual vigente R21: 2×4 Medio.
+32	TC10 · Compromiso de la cuenta del equipo en Render o GitHub	Tampering	High	Open	DREAD 6.4 (Alto) · D,R,E,A,Di = [10, 3, 4, 10, 5]	Compromiso de la cuenta del equipo en Render o GitHub
+Elemento: Cuenta de Render (plano de control) · STRIDE S, T, E · riesgo vinculado R21.	Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)
+Evidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md
+Residual vigente R21: 2×4 Medio.
+33	TC10 · Compromiso de la cuenta del equipo en Render o GitHub	Elevation of privilege	High	Open	DREAD 6.4 (Alto) · D,R,E,A,Di = [10, 3, 4, 10, 5]	Compromiso de la cuenta del equipo en Render o GitHub
+Elemento: Cuenta de Render (plano de control) · STRIDE S, T, E · riesgo vinculado R21.	Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)
+Evidencia: evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md
+Residual vigente R21: 2×4 Medio.
+GitHub main render.yaml, Dockerfile (Store) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+34	TC07 · Configuración insegura del Blueprint (plan de pago, BD abierta, despliegue automático, ram	Tampering	Medium	Mitigated	DREAD 5.8 (Medio) · D,R,E,A,Di = [6, 5, 4, 8, 6]	Configuración insegura del Blueprint (plan de pago, BD abierta, despliegue automático, rama equivocada)
+Elemento: Blueprint render.yaml · STRIDE T · riesgo vinculado R21.	validar-render.py (esquema oficial + política) en CI; prueba negativa
+Evidencia: evidence/cierre-brechas-2026-11-24/05-iac-render/prueba-negativa.md
+Residual vigente R21: 2×4 Medio.
+Construcción de la imagen (Render) (Process) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+35	TC06 · Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)	Tampering	High	Open	DREAD 6.6 (Alto) · D,R,E,A,Di = [7, 4, 4, 9, 9]	Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)
+Elemento: Imagen del contenedor cloud · STRIDE T, E, D · riesgo vinculado R20.	Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI
+Evidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md
+Residual vigente R20: 2×5 Alto.
+36	TC06 · Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)	Elevation of privilege	High	Open	DREAD 6.6 (Alto) · D,R,E,A,Di = [7, 4, 4, 9, 9]	Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)
+Elemento: Imagen del contenedor cloud · STRIDE T, E, D · riesgo vinculado R20.	Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI
+Evidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md
+Residual vigente R20: 2×5 Alto.
+37	TC06 · Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)	Denial of service	High	Open	DREAD 6.6 (Alto) · D,R,E,A,Di = [7, 4, 4, 9, 9]	Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)
+Elemento: Imagen del contenedor cloud · STRIDE T, E, D · riesgo vinculado R20.	Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI
+Evidencia: evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md
+Residual vigente R20: 2×5 Alto.
+colector-render (API key solo lectura) (Process) 
+SIEM local Loki / Grafana (Store) 
+HTTPS TLS 1.2/1.3 (Data Flow) 
+HTTPS (Data Flow) 
+HTTP + X-Forwarded-For (Data Flow) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+38	TC02 · Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado	Spoofing	High	Mitigated	DREAD 6.8 (Alto) · D,R,E,A,Di = [6, 8, 7, 6, 7]	Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado
+Elemento: Borde de Render → login y puerta · STRIDE S, D · riesgo vinculado R16.	IP real = última dirección de X-Forwarded-For (sin recursión); 429 al 5.º intento
+Evidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md
+Residual vigente R16: 3×3 Medio.
+39	TC02 · Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado	Denial of service	High	Mitigated	DREAD 6.8 (Alto) · D,R,E,A,Di = [6, 8, 7, 6, 7]	Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado
+Elemento: Borde de Render → login y puerta · STRIDE S, D · riesgo vinculado R16.	IP real = última dirección de X-Forwarded-For (sin recursión); 429 al 5.º intento
+Evidencia: evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md
+Residual vigente R16: 3×3 Medio.
+127.0.0.1:3000 (Data Flow) 
+SQL (sslmode=require) (Data Flow) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+40	TC03 · BD administrada expuesta a Internet o con credenciales en el repositorio	Information disclosure	High	Mitigated	DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 5, 4, 9, 6]	BD administrada expuesta a Internet o con credenciales en el repositorio
+Elemento: Servicio web → PostgreSQL administrado · STRIDE I, T · riesgo vinculado R21.	ipAllowList vacía; DATABASE_URL por referencia del Blueprint; TLS obligatorio
+Evidencia: evidence/cierre-brechas-2026-11-24/05-iac-render/validacion.md
+Residual vigente R21: 2×4 Medio.
+41	TC03 · BD administrada expuesta a Internet o con credenciales en el repositorio	Tampering	High	Mitigated	DREAD 6.6 (Alto) · D,R,E,A,Di = [9, 5, 4, 9, 6]	BD administrada expuesta a Internet o con credenciales en el repositorio
+Elemento: Servicio web → PostgreSQL administrado · STRIDE I, T · riesgo vinculado R21.	ipAllowList vacía; DATABASE_URL por referencia del Blueprint; TLS obligatorio
+Evidencia: evidence/cierre-brechas-2026-11-24/05-iac-render/validacion.md
+Residual vigente R21: 2×4 Medio.
+auditoría JSON (stdout) (Data Flow) 
+stdout de la app y del RASP (Data Flow) 
+GET /v1/logs cada 60 s (Data Flow) 
+Number
+	
+Title
+	
+Type
+	
+Severity
+	
+Status
+	
+Score
+	
+Description
+	
+Mitigations
+
+42	TC09 · Pérdida de trazabilidad de lo ocurrido en la nube (logs 7 días en Render, sin centralizar)	Repudiation	Medium	Mitigated	DREAD 5.8 (Medio) · D,R,E,A,Di = [5, 6, 5, 7, 6]	Pérdida de trazabilidad de lo ocurrido en la nube (logs 7 días en Render, sin centralizar)
+Elemento: Contenedor → SIEM · STRIDE R · riesgo vinculado R19.	Colector automático y autenticado (API de Render) → Loki con entorno=cloud; latencia medida 48 s; 6 alertas propias de la nube (4 disparadas extremo a extremo, ~1 min) y alerta de salud del colector
+Evidencia: evidence/cierre-brechas-2026-11-24/13-alertas-cloud/LEAME.md
+Residual vigente R19: 2×4 Medio.
+push entorno=cloud (Data Flow) 
+login (GitHub) (Data Flow) 
+git push (Data Flow) 
+Blueprint (sincronización manual) (Data Flow) 
+Manual Deploy (Data Flow) 
+imagen desplegada (Data Flow) 

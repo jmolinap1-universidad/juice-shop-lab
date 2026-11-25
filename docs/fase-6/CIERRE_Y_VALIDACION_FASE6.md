@@ -1,5 +1,7 @@
 # Cierre y validación de la Fase 6 — Operaciones, monitoreo y ciberseguridad
 
+> **Nota (2026-11-25):** los entregables académicos (Word/PDF, guiones, borradores e instrucciones de maquetación) se retiraron del árbol vigente del repositorio y se gestionan fuera de él. Las rutas de esos archivos citadas en este documento histórico existen en el historial de Git (último commit que los contiene: `8b3e422`).
+
 **Fecha:** 2026-11-10 (hora local; UTC 2026-11-11). **Base:** `main` = `origin/main` = `98bcb88` al iniciar la auditoría
 (sin cambios del equipo). Diagnóstico previo: [`AUDITORIA_CUMPLIMIENTO_FASE6.md`](AUDITORIA_CUMPLIMIENTO_FASE6.md).
 Evidencia nueva: `evidence/fase-6/validacion-2026-11-10/` (índice en su `LEAME.md`).

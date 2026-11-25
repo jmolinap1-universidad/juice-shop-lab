@@ -1,5 +1,7 @@
 # Matriz de cumplimiento de la rúbrica (5 componentes × 4 puntos)
 
+> **Nota (2026-11-25):** los entregables académicos (Word/PDF, guiones, borradores e instrucciones de maquetación) se retiraron del árbol vigente del repositorio y se gestionan fuera de él. Las rutas de esos archivos citadas en este documento histórico existen en el historial de Git (último commit que los contiene: `8b3e422`).
+
 > **Actualización 2026-11-21 (cierre de la Fase 6):** los componentes 3 y 4 tienen evidencia más reciente en
 > `docs/fase-6/CIERRE_FINAL_FASE6.md` (BOLA corregido en 5 tipos de objeto, familias del WAF probadas, SIEM con 9 reglas,
 > residual vigente 1C/11A/9M/3B). Esta matriz se conserva como fotografía del hito A.

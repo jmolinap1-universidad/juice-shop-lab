@@ -1,5 +1,7 @@
 # Auditoría final técnica — Fases 4 y 5 (OWASP Juice Shop lab)
 
+> **Nota (2026-11-25):** los entregables académicos (Word/PDF, guiones, borradores e instrucciones de maquetación) se retiraron del árbol vigente del repositorio y se gestionan fuera de él. Las rutas de esos archivos citadas en este documento histórico existen en el historial de Git (último commit que los contiene: `8b3e422`).
+
 **Fecha:** 2026-11-04 · **Alcance:** consolidación técnica de las Fases 4 (pruebas de seguridad) y 5
 (contenedores y hardening). **Base:** último commit publicado en `main`.
 **Regla rectora:** evidencias reales y verificables; sin resultados inventados; sin modificar los documentos

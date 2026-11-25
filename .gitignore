@@ -33,3 +33,21 @@ deploy/corregido/secrets/
 
 # Cierre Fase 6: logs vivos del WAF del stack corregido (la evidencia se copia a evidence/ con hash)
 deploy/hardened/logs-corregido/
+
+# Entregables académicos (Word, PDF, presentaciones, guiones, borradores): se gestionan FUERA del repositorio.
+# Retirados del árbol vigente el 2026-11-25 (siguen en el historial de Git). No se vuelven a versionar.
+*.docx
+*.doc
+*.pptx
+*.ppt
+*.odt
+*.odp
+docs/**/*.pdf
+docs/informe-general/
+docs/fase-6/entregable/
+docs/evidencias-fase4-5/
+**/GUION_*
+**/*guion*
+**/BORRADOR_*
+**/INSTRUCCIONES_*INFORME*
+**/INSTRUCCIONES_SINCRONIZACION_DOCUMENTO*

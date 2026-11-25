@@ -2,7 +2,7 @@
 
 > Generado por `datos/generar_inventario.py` desde `datos/inventario.json` (validado). Versión descargable: [`INVENTARIO_ACTIVOS_ISO27001.csv`](INVENTARIO_ACTIVOS_ISO27001.csv).
 
-**Alcance:** Laboratorio OWASP Juice Shop v20.3.0 (MASI-UMG 2026): instancia vulnerable local (127.0.0.1), entorno endurecido local (WAF, RASP, SIEM), variante corregida (parches 01-14), repositorio y CI en GitHub, despliegue REAL en Render (capa gratuita, acceso restringido) y arquitectura AWS solo DISEÑADA. Inventario con criterios de ISO/IEC 27001:2022 (control 5.9). Actualizado el 2026-11-24 con la infraestructura cloud real.
+**Alcance:** Laboratorio OWASP Juice Shop v20.3.0 (MASI-UMG 2026): instancia vulnerable local (127.0.0.1), entorno endurecido local (WAF, RASP, SIEM), variante corregida (parches 01-14), repositorio y CI en GitHub, despliegue REAL en Render (capa gratuita, acceso restringido) y arquitectura AWS solo DISEÑADA. Inventario con criterios de ISO/IEC 27001:2022 (control 5.9). Actualizado el 2026-11-24 con la infraestructura cloud real. Ubicación «Local y cloud» (2026-11-25): activos presentes en el laboratorio local y en el despliegue de Render.
 
 ## 1. Regla de valoración CIA (reproducible)
 | Dimensión | Alta (3) | Media (2) | Baja (1) |
@@ -25,32 +25,32 @@ Los responsables se expresan por ROL. El equipo asigna la persona de cada rol; e
 ## 3. Inventario
 | ID | Fase 1 | Activo | Tipo | Ubicación | Estado | Proceso | C | I | D | Crit. | Propietario | Custodio |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| INF-01 | A01 | Credenciales de usuario | Información | Local | Implementado | Autenticación de clientes | A | A | M | 8 Alta | PROP | DEV |
-| INF-02 | A02 | Clave privada JWT y tokens de sesión | Información | Local | Implementado | Emisión y verificación de sesiones | A | A | M | 8 Alta | PROP | OPS |
-| INF-03 | A03 | Datos de tarjetas de pago (ficticios) | Información | Local | Implementado | Pago de pedidos | A | A | B | 7 Alta | PROP | DEV |
-| INF-04 | A04 | Datos personales (direcciones, teléfono, IP, imagen de perfil) | Información | Local | Implementado | Gestión de cuentas y envíos | A | M | B | 6 Media | PROP | DEV |
-| INF-05 | A05 | Respuestas de seguridad | Información | Local | Implementado | Recuperación de cuenta | A | A | B | 7 Alta | PROP | DEV |
-| INF-06 | A06 | Monedero y cupones | Información | Local | Implementado | Pagos y promociones | M | A | M | 7 Alta | PROP | DEV |
-| INF-07 | A07 | Pedidos y cestas de compra | Información | Local | Implementado | Venta en línea | M | A | M | 7 Alta | PROP | DEV |
-| INF-08 | A08 | Contenido de usuarios (reseñas, feedback, quejas, memorias) | Información | Local | Implementado | Interacción con clientes | B | M | B | 4 Baja | PROP | DEV |
-| INF-09 | A09 | Catálogo de productos y precios | Información | Local | Implementado | Venta en línea | B | A | A | 7 Alta | PROP | DEV |
-| INF-10 | A10 | Documentos internos en /ftp | Información | Local | Implementado | Operación interna de la tienda | A | B | B | 5 Media | PROP | OPS |
-| INF-11 | A11 | Registros de acceso de la aplicación | Información | Local | Implementado | Trazabilidad | M | A | M | 7 Alta | PROP | OPS |
-| INF-12 | A12 | Métricas Prometheus | Información | Local | Implementado | Monitoreo | M | B | B | 4 Baja | PROP | OPS |
+| INF-01 | A01 | Credenciales de usuario | Información | Local y cloud | Implementado | Autenticación de clientes | A | A | M | 8 Alta | PROP | DEV |
+| INF-02 | A02 | Clave privada JWT y tokens de sesión | Información | Local y cloud | Implementado | Emisión y verificación de sesiones | A | A | M | 8 Alta | PROP | OPS |
+| INF-03 | A03 | Datos de tarjetas de pago (ficticios) | Información | Local y cloud | Implementado | Pago de pedidos | A | A | B | 7 Alta | PROP | DEV |
+| INF-04 | A04 | Datos personales (direcciones, teléfono, IP, imagen de perfil) | Información | Local y cloud | Implementado | Gestión de cuentas y envíos | A | M | B | 6 Media | PROP | DEV |
+| INF-05 | A05 | Respuestas de seguridad | Información | Local y cloud | Implementado | Recuperación de cuenta | A | A | B | 7 Alta | PROP | DEV |
+| INF-06 | A06 | Monedero y cupones | Información | Local y cloud | Implementado | Pagos y promociones | M | A | M | 7 Alta | PROP | DEV |
+| INF-07 | A07 | Pedidos y cestas de compra | Información | Local y cloud | Implementado | Venta en línea | M | A | M | 7 Alta | PROP | DEV |
+| INF-08 | A08 | Contenido de usuarios (reseñas, feedback, quejas, memorias) | Información | Local y cloud | Implementado | Interacción con clientes | B | M | B | 4 Baja | PROP | DEV |
+| INF-09 | A09 | Catálogo de productos y precios | Información | Local y cloud | Implementado | Venta en línea | B | A | A | 7 Alta | PROP | DEV |
+| INF-10 | A10 | Documentos internos en /ftp | Información | Local y cloud | Implementado | Operación interna de la tienda | A | B | B | 5 Media | PROP | OPS |
+| INF-11 | A11 | Registros de acceso de la aplicación | Información | Local y cloud | Implementado | Trazabilidad | M | A | M | 7 Alta | PROP | OPS |
+| INF-12 | A12 | Métricas Prometheus | Información | Local y cloud | Implementado | Monitoreo | M | B | B | 4 Baja | PROP | OPS |
 | INF-13 | A13 (parte) | Configuración de la aplicación y secretos de reto | Información | Repositorio | Implementado | Configuración | M | A | M | 7 Alta | PROP | DEV |
 | INF-14 | nuevo | Registros de seguridad (WAF y SIEM) | Información | Local | Implementado | Detección y respuesta | M | A | M | 7 Alta | PROP | SEC |
 | INF-15 | nuevo | Evidencias del proyecto y bitácora | Información | Repositorio | Implementado | Aseguramiento y entrega académica | M | A | M | 7 Alta | PROP | DOC |
 | SW-01 | A13 (parte) | Código fuente de OWASP Juice Shop v20.3.0 | Software | Repositorio | Implementado | Desarrollo | B | A | M | 6 Media | PROP | DEV |
-| SW-02 | nuevo | Frontend Angular (SPA) | Software | Local | Implementado | Interfaz de la tienda | B | M | A | 6 Media | PROP | DEV |
-| SW-03 | A16 (parte) | API REST Express (backend Node.js) | Software | Local | Implementado | Lógica de negocio | M | A | A | 8 Alta | PROP | DEV |
+| SW-02 | nuevo | Frontend Angular (SPA) | Software | Local y cloud | Implementado | Interfaz de la tienda | B | M | A | 6 Media | PROP | DEV |
+| SW-03 | A16 (parte) | API REST Express (backend Node.js) | Software | Local y cloud | Implementado | Lógica de negocio | M | A | A | 8 Alta | PROP | DEV |
 | SW-04 | nuevo | Base de datos SQLite (motor embebido y archivo) | Software | Local | Implementado | Persistencia | A | A | A | 9 Crítica | PROP | OPS |
-| SW-05 | nuevo | MarsDB (NoSQL en memoria) | Software | Local | Implementado | Persistencia de reseñas y pedidos | M | A | M | 7 Alta | PROP | DEV |
+| SW-05 | nuevo | MarsDB (NoSQL en memoria) | Software | Local y cloud | Implementado | Persistencia de reseñas y pedidos | M | A | M | 7 Alta | PROP | DEV |
 | SW-06 | A15 (parte) | Dependencias de terceros (npm) | Software | Repositorio | Implementado | Cadena de suministro | B | A | M | 6 Media | PROP | DEV |
 | SW-07 | A14 (parte) | Imagen de contenedor de la aplicación | Software | Local | Implementado | Despliegue | B | A | A | 7 Alta | PROP | OPS |
-| SW-08 | nuevo | WAF (Nginx + ModSecurity 3.0.17 + OWASP CRS 4.25.2) | Software | Local | Implementado | Protección perimetral | M | A | A | 8 Alta | PROP | SEC |
-| SW-09 | nuevo | RASP (Aikido Zen 1.8.46 + integración rasp-guard) | Software | Local | Implementado | Protección en ejecución | B | A | A | 7 Alta | PROP | SEC |
+| SW-08 | nuevo | WAF (Nginx + ModSecurity 3.0.17 + OWASP CRS 4.25.2) | Software | Local y cloud | Implementado | Protección perimetral | M | A | A | 8 Alta | PROP | SEC |
+| SW-09 | nuevo | RASP (Aikido Zen 1.8.46 + integración rasp-guard) | Software | Local y cloud | Implementado | Protección en ejecución | B | A | A | 7 Alta | PROP | SEC |
 | SW-10 | nuevo | SIEM (Alloy, Loki, Grafana) y proxy del socket de Docker | Software | Local | Implementado | Detección y monitoreo | M | A | M | 7 Alta | PROP | SEC |
-| SW-11 | nuevo | Variante corregida de Juice Shop (parches 01-14) | Software | Local | Implementado | Remediación | B | A | A | 7 Alta | PROP | DEV |
+| SW-11 | nuevo | Variante corregida de Juice Shop (parches 01-14) | Software | Local y cloud | Implementado | Remediación | B | A | A | 7 Alta | PROP | DEV |
 | SRV-01 | A16 | Servicio web de la tienda | Servicios | Local | Implementado | Venta en línea | B | M | A | 6 Media | PROP | OPS |
 | SRV-02 | A15 (parte) | GitHub: repositorio y GitHub Actions | Servicios | Cloud | Implementado | Desarrollo y CI/CD | M | A | M | 7 Alta | PROP | DEV |
 | SRV-03 | A14 (parte) | Motor de contenedores (Docker Desktop 29.9.2, WSL2) | Servicios | Local | Implementado | Ejecución | M | A | A | 8 Alta | PROP | OPS |

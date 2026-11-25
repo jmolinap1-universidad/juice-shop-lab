@@ -1,0 +1,11 @@
+{
+  "url": "https://juice-lab-masi-staging.onrender.com/__acceso",
+  "estado_http": 401,
+  "protocolo": "QUIC",
+  "emisor": "WE1",
+  "sujeto": "onrender.com",
+  "valido_desde": "2026-11-19T21:53:13.000Z",
+  "valido_hasta": "2027-02-17T22:53:10.000Z",
+  "fecha": "2026-11-25T18:37:00.466Z",
+  "cliente": "Chromium (Playwright 1.49.1)"
+}

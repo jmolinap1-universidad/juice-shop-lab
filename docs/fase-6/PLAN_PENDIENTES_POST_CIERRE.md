@@ -1,5 +1,7 @@
 # Pendientes reales tras el cierre de la Fase 6 (2026-11-21)
 
+> **Nota (2026-11-25):** los entregables académicos (Word/PDF, guiones, borradores e instrucciones de maquetación) se retiraron del árbol vigente del repositorio y se gestionan fuera de él. Las rutas de esos archivos citadas en este documento histórico existen en el historial de Git (último commit que los contiene: `8b3e422`).
+
 Solo trabajo no hecho o no probado. Responsables por rol (el equipo asigna personas). Prioridad: **A** alta, **M** media,
 **B** baja.
 

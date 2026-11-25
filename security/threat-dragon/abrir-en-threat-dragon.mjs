@@ -15,7 +15,8 @@ const res = []; const errores = []
 const fila = (p, esperado, obtenido, ok) => res.push({ p, esperado, obtenido: String(obtenido), ok })
 
 const nav = await chromium.launch()
-const page = await nav.newPage({ viewport: { width: 1900, height: 1300 } })
+// ESCALA (opcional, p. ej. 2) aumenta la resolución de las capturas sin cambiar el contenido
+const page = await nav.newPage({ viewport: { width: 1900, height: 1300 }, deviceScaleFactor: Number(process.env.ESCALA || 1) })
 // Se excluye solo el aviso que el propio servidor de Threat Dragon provoca en cualquier página (directiva CSP obsoleta);
 // se registra aparte para que conste.
 const IGNORADO = "Unrecognized Content-Security-Policy directive 'prefetch-src'"
@@ -47,6 +48,9 @@ for (const d of modelo.detail.diagrams) {
   const n = await page.locator('.x6-graph .x6-node').count() - await page.locator('.x6-widget-stencil .x6-node').count()
   const e = await page.locator('.x6-graph .x6-edge').count() - await page.locator('.x6-widget-stencil .x6-edge').count()
   await page.screenshot({ path: `${OUT}/0${d.id + 2}-diagrama-${d.id}.png`, fullPage: true })
+  // Captura solo del lienzo del diagrama (sin la paleta ni los paneles), para leerlo en un documento
+  const lienzo = page.locator('.x6-graph').filter({ hasNot: page.locator('.x6-widget-stencil') }).last()
+  await lienzo.screenshot({ path: `${OUT}/0${d.id + 2}-diagrama-${d.id}-lienzo.png` }).catch(() => {})
   fila(`Diagrama ${d.id}: «${d.title}» — elementos y límites dibujados`, nodos, n, n === nodos)
   fila(`Diagrama ${d.id}: flujos de datos dibujados`, flujos, e, e === flujos)
   await page.goBack(); await page.waitForTimeout(1500)

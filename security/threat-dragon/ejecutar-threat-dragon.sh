@@ -51,5 +51,5 @@ docker run -d --name threat-dragon --network "$NET" -e NODE_ENV=production -e SE
   -e "ENCRYPTION_KEYS=[{\"isPrimary\": true, \"id\": 0, \"value\": \"$(hex 16)\"}]" \
   -e "ENCRYPTION_JWT_SIGNING_KEY=$(hex 32)" -e "ENCRYPTION_JWT_REFRESH_SIGNING_KEY=$(hex 32)" "$TD" >/dev/null
 for i in $(seq 1 30); do docker run --rm --network "$NET" "$PW_IMG" curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://threat-dragon:3000/ 2>/dev/null | grep -q 200 && break; sleep 3; done
-docker run --rm --network container:threat-dragon --ipc=host -v "$W/$TDD:/src:ro" -v "$W/$MOD:/m/juice-shop-lab.json:ro" -v "$W/$OUT:/out" -v xss-npm:/work "$PW_IMG" \
+docker run --rm --network container:threat-dragon --ipc=host -e ESCALA="${ESCALA:-1}" -v "$W/$TDD:/src:ro" -v "$W/$MOD:/m/juice-shop-lab.json:ro" -v "$W/$OUT:/out" -v xss-npm:/work "$PW_IMG" \
   bash -c "cd /work && cp /src/abrir-en-threat-dragon.mjs . && node abrir-en-threat-dragon.mjs http://localhost:3000 /m/juice-shop-lab.json /out"

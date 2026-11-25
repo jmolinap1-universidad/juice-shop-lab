@@ -173,4 +173,4 @@ inherente **8 críticos / 16 altos** → residual **4 críticos / 12 altos / 7 m
 - SIEM: un solo nodo, sin autenticación en Loki, sin notificaciones, sin alerta de pérdida de ingesta.
 - Nube (Fase 2): diseñada y validada estáticamente, **no desplegada** (`06-cloud-no-desplegado.txt`).
 - Carátula institucional y maquetación final del Word/PDF: pendientes del equipo
-  ([`INSTRUCCIONES_SINCRONIZACION_DOCUMENTO.md`](INSTRUCCIONES_SINCRONIZACION_DOCUMENTO.md)).
+  (`INSTRUCCIONES_SINCRONIZACION_DOCUMENTO.md`, retirado del repositorio el 2026-11-25; consultar el historial de Git).

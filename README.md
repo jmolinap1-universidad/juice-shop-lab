@@ -33,7 +33,9 @@ Nuevos atajos: `make release-cloud`, `make iac-render`, `make xss-navegador`, `m
 `make threat-dragon` (DFD en Threat Dragon: `docs/fase-1/threat-dragon/juice-shop-lab.json`), `make prueba-2fa`.
 Plan original de Seenode: `docs/cierre-tecnico/PLAN_DESPLIEGUE_SEENODE.md`.
 
-Ver `CLAUDE.md` (reglas), `PROGRESO.md`, `DECISIONES.md` y `docs/` (entregables por fase).
+Ver `CLAUDE.md` (reglas), `PROGRESO.md`, `DECISIONES.md` y `docs/` (documentación técnica por fase).
+**Evidencias por fase:** índices `evidence/fase-1/LEAME.md` a `evidence/fase-4/LEAME.md` (requisito, archivo, fecha, entorno, herramienta, resultado) y `evidence/cierre-brechas-2026-11-24/LEAME.md`. Diagramas de arquitectura: `docs/arquitectura/`.
+**Entregables académicos** (Word/PDF, guiones, presentaciones): se gestionan fuera del repositorio desde el 2026-11-25 (`.gitignore` impide versionarlos); las versiones anteriores siguen en el historial de Git.
 
 **Fase 6 — análisis vigente (cierre 2026-11-21):** `docs/fase-6/CIERRE_FINAL_FASE6.md` (dictamen 6.1/6.2),
 `docs/fase-6/GUIA_DEMOSTRACION_FASE6.md` (demo en vivo), `docs/fase-6/MATRIZ_VALIDACION_FINAL.md`,

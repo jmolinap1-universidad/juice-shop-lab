@@ -54,7 +54,7 @@ Etapa 6 – Fase 6 ampliada (2026-11-10): operaciones, monitoreo (RASP + SIEM) y
   - **Dictamen:** Fases 4 y 5 técnicamente listas para la redacción académica final. Cloud **no desplegado**
     (sin costos); Fase 6 ampliada y figuras del `.docx` quedan fuera de esta auditoría.
 
-- 2026-11-10 **Fase 6 – Operaciones, monitoreo y ciberseguridad** (`docs/fase-6/`, Word+PDF en `docs/fase-6/entregable/`):
+- 2026-11-10 **Fase 6 – Operaciones, monitoreo y ciberseguridad** (`docs/fase-6/`, Word+PDF en `docs/fase-6/entregable/`, retirados del árbol vigente el 2026-11-25):
   - Capa de operaciones como override (`deploy/hardened/docker-compose.ops.yml`): **RASP Aikido Zen 1.8.46** in-process y
     **SIEM** Alloy v1.10.2 → Loki 3.5.5 (7 reglas de correlación) → Grafana 12.1.1; todo en 127.0.0.1, sin telemetría externa.
   - WAF mapeado al OWASP Top 10:2025 con inventario real del CRS (`evidence/fase-6/waf/`). Falsos positivos: 6/6 legítimas OK.
