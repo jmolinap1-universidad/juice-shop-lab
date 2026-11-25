@@ -8,7 +8,8 @@ fuente verificada contra `app-hardened/patches/v2/correcciones-cierre-tecnico.pa
 con acceso restringido (`DESPLIEGUE_CLOUD_RENDER.md`; evidencia en `13-cloud/`).
 **Evidencia:** `evidence/cierre-tecnico-2026-11-23/` (índice en su `LEAME.md`).
 
-## 1. Requisitos de las seis fases
+## 1. Requisitos de las seis fases (HISTÓRICO 2026-11-23)
+> **Vigente desde el 2026-11-24:** [`MATRIZ_CUMPLIMIENTO_SEIS_FASES.md`](MATRIZ_CUMPLIMIENTO_SEIS_FASES.md) (cierre de brechas: imagen cloud Alpine APTA, XSS en navegador, IaC de Render, release en CI, SIEM cloud automático). Esta tabla se conserva como estaba.
 | Fase | Requisito | Estado | Evidencia / configuración |
 |---|---|---|---|
 | 1 | Inventario ISO/IEC 27001 (35 activos, campos completos) | CUMPLE (local) · PENDIENTE (activos cloud) | `docs/auditoria-final-2026-11-20/INVENTARIO_ACTIVOS_ISO27001.md`; no existen recursos cloud reales que inventariar |

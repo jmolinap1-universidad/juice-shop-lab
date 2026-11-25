@@ -1,0 +1,4 @@
+Despliegue 768d1da (dep-dc37ad15efls73b26ms0): imagen cloud Alpine, parches 01-14, EX-2 socket.io. Host autorizado por el usuario: juice-lab-masi-staging.onrender.com
+Log de construcción en Render (panel → Deploys):
+- dep-dc36o2ou01pc73dnngeg (39c5bd5): "#27 0.167 ok  fuente = diff auditado (sha256 fc3f765c4f3ca1195e3ac9b59fede70b9f141c0845fca754b78034d4f90d2904), 22 archivos; variante corregida-cierre-brechas (parches 01-14)"
+- dep-dc37ad15efls73b26ms0 (768d1da, VIGENTE): etapas de fuente y parches reutilizadas de la caché (mismas entradas); compilación sobre node:24-alpine@sha256:116b800c…; estado "Deploy succeeded | Live".

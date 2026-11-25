@@ -25,8 +25,11 @@ make risk-cierre-tecnico  # Cierre técnico: registro de riesgos del artefacto f
 make lab-down
 ```
 En Windows sin `make`: ejecutar los scripts equivalentes desde Git Bash (ver `docs/fase-6/GUIA_DEMOSTRACION_FASE6.md`).
-**Estado técnico vigente (2026-11-24):** `docs/cierre-tecnico/ESTADO_TECNICO_CIERRE.md`. **Despliegue cloud real:** Render, capa
-gratuita, acceso restringido — `docs/cierre-tecnico/DESPLIEGUE_CLOUD_RENDER.md` (Blueprint `render.yaml`, imagen `deploy/cloud/`).
+**Estado técnico vigente (cierre de brechas, 2026-11-24/25):** `docs/cierre-tecnico/MATRIZ_CUMPLIMIENTO_SEIS_FASES.md`
+(matriz de las seis fases), `docs/fase-6/riesgo-cierre-brechas/` (registro y heatmaps), `docs/cierre-tecnico/REQUISITOS_CLOUD_DISENO_VS_IMPLEMENTADO.md`
+y `TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md`. **Despliegue cloud real:** Render, capa gratuita, acceso restringido —
+`docs/cierre-tecnico/DESPLIEGUE_CLOUD_RENDER.md` (Blueprint `render.yaml` desde `main`, imagen Alpine `deploy/cloud/`).
+Nuevos atajos: `make release-cloud`, `make iac-render`, `make xss-navegador`, `make colector-render`, `make risk-cierre-brechas`, `make trazabilidad`.
 Plan original de Seenode: `docs/cierre-tecnico/PLAN_DESPLIEGUE_SEENODE.md`.
 
 Ver `CLAUDE.md` (reglas), `PROGRESO.md`, `DECISIONES.md` y `docs/` (entregables por fase).

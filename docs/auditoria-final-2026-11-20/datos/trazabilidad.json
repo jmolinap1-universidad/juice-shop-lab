@@ -1,44 +1,484 @@
 {
   "amenazas": {
-    "T01": {"elemento": "Login", "stride": "S, E"}, "T02": {"elemento": "Búsqueda", "stride": "I"}, "T03": {"elemento": "Autenticación (JWT)", "stride": "S"},
-    "T04": {"elemento": "Autenticación (bibliotecas)", "stride": "S"}, "T05": {"elemento": "SQL Users", "stride": "I"}, "T06": {"elemento": "API REST automática", "stride": "I, T"},
-    "T07": {"elemento": "API /api/Users", "stride": "E"}, "T08": {"elemento": "Reseñas (MarsDB)", "stride": "T"}, "T09": {"elemento": "B2B / perfil / captcha", "stride": "E"},
-    "T10": {"elemento": "Carga XML", "stride": "I"}, "T11": {"elemento": "Imagen por URL", "stride": "I, E"}, "T12": {"elemento": "Estáticos", "stride": "I"},
-    "T13": {"elemento": "Frontend", "stride": "T, I"}, "T14": {"elemento": "API (CORS)", "stride": "I"}, "T15": {"elemento": "Redirección", "stride": "S"},
-    "T16": {"elemento": "Login / reset", "stride": "S"}, "T17": {"elemento": "Métricas", "stride": "I"}, "T18": {"elemento": "Proceso Node", "stride": "D"},
-    "T19": {"elemento": "Registro", "stride": "R"}, "T20": {"elemento": "Cadena de suministro", "stride": "T"}
+    "T01": {
+      "elemento": "Login",
+      "stride": "S, E"
+    },
+    "T02": {
+      "elemento": "Búsqueda",
+      "stride": "I"
+    },
+    "T03": {
+      "elemento": "Autenticación (JWT)",
+      "stride": "S"
+    },
+    "T04": {
+      "elemento": "Autenticación (bibliotecas)",
+      "stride": "S"
+    },
+    "T05": {
+      "elemento": "SQL Users",
+      "stride": "I"
+    },
+    "T06": {
+      "elemento": "API REST automática",
+      "stride": "I, T"
+    },
+    "T07": {
+      "elemento": "API /api/Users",
+      "stride": "E"
+    },
+    "T08": {
+      "elemento": "Reseñas (MarsDB)",
+      "stride": "T"
+    },
+    "T09": {
+      "elemento": "B2B / perfil / captcha",
+      "stride": "E"
+    },
+    "T10": {
+      "elemento": "Carga XML",
+      "stride": "I"
+    },
+    "T11": {
+      "elemento": "Imagen por URL",
+      "stride": "I, E"
+    },
+    "T12": {
+      "elemento": "Estáticos",
+      "stride": "I"
+    },
+    "T13": {
+      "elemento": "Frontend",
+      "stride": "T, I"
+    },
+    "T14": {
+      "elemento": "API (CORS)",
+      "stride": "I"
+    },
+    "T15": {
+      "elemento": "Redirección",
+      "stride": "S"
+    },
+    "T16": {
+      "elemento": "Login / reset",
+      "stride": "S"
+    },
+    "T17": {
+      "elemento": "Métricas",
+      "stride": "I"
+    },
+    "T18": {
+      "elemento": "Proceso Node",
+      "stride": "D"
+    },
+    "T19": {
+      "elemento": "Registro",
+      "stride": "R"
+    },
+    "T20": {
+      "elemento": "Cadena de suministro",
+      "stride": "T"
+    }
   },
   "casos": [
-    {"id": "A1", "nombre": "SQLi en el login (bypass de autenticación)", "amenaza": "T01", "clase": "E"},
-    {"id": "A2", "nombre": "SQLi UNION en búsqueda (volcado de Users)", "amenaza": "T02", "clase": "E"},
-    {"id": "A3", "nombre": "SQLi: enumeración del esquema", "amenaza": "T02", "clase": "E"},
-    {"id": "A4", "nombre": "Listado de directorios", "amenaza": "T12", "clase": "X"},
-    {"id": "A5", "nombre": "Exposición de documento interno (/ftp)", "amenaza": "T12", "clase": "X"},
-    {"id": "A6", "nombre": "/metrics sin autenticación", "amenaza": "T17", "clase": "X"},
-    {"id": "A7", "nombre": "Asignación masiva (role=admin)", "amenaza": "T07", "clase": "E"},
-    {"id": "A8", "nombre": "CORS permisivo", "amenaza": "T14", "clase": "C"},
-    {"id": "A9", "nombre": "Cabeceras de seguridad ausentes", "amenaza": "T13", "clase": "C"},
-    {"id": "A10", "nombre": "Fuerza bruta sin límite de intentos", "amenaza": "T16", "clase": "N"},
-    {"id": "A11", "nombre": "Clave PÚBLICA JWT servida", "amenaza": null, "clase": "I", "nota": "Informativo: servir una clave pública es aceptable por diseño. No hereda el DREAD de T03 (la clave PRIVADA embebida, hallazgo de caja blanca)."},
-    {"id": "A12", "nombre": "BOLA/IDOR entre dos cuentas", "amenaza": "T06", "clase": "E"}
+    {
+      "id": "A1",
+      "nombre": "SQLi en el login (bypass de autenticación)",
+      "amenaza": "T01",
+      "clase": "E"
+    },
+    {
+      "id": "A2",
+      "nombre": "SQLi UNION en búsqueda (volcado de Users)",
+      "amenaza": "T02",
+      "clase": "E"
+    },
+    {
+      "id": "A3",
+      "nombre": "SQLi: enumeración del esquema",
+      "amenaza": "T02",
+      "clase": "E"
+    },
+    {
+      "id": "A4",
+      "nombre": "Listado de directorios",
+      "amenaza": "T12",
+      "clase": "X"
+    },
+    {
+      "id": "A5",
+      "nombre": "Exposición de documento interno (/ftp)",
+      "amenaza": "T12",
+      "clase": "X"
+    },
+    {
+      "id": "A6",
+      "nombre": "/metrics sin autenticación",
+      "amenaza": "T17",
+      "clase": "X"
+    },
+    {
+      "id": "A7",
+      "nombre": "Asignación masiva (role=admin)",
+      "amenaza": "T07",
+      "clase": "E"
+    },
+    {
+      "id": "A8",
+      "nombre": "CORS permisivo",
+      "amenaza": "T14",
+      "clase": "C"
+    },
+    {
+      "id": "A9",
+      "nombre": "Cabeceras de seguridad ausentes",
+      "amenaza": "T13",
+      "clase": "C"
+    },
+    {
+      "id": "A10",
+      "nombre": "Fuerza bruta sin límite de intentos",
+      "amenaza": "T16",
+      "clase": "N"
+    },
+    {
+      "id": "A11",
+      "nombre": "Clave PÚBLICA JWT servida",
+      "amenaza": null,
+      "clase": "I",
+      "nota": "Informativo: servir una clave pública es aceptable por diseño. No hereda el DREAD de T03 (la clave PRIVADA embebida, hallazgo de caja blanca)."
+    },
+    {
+      "id": "A12",
+      "nombre": "BOLA/IDOR entre dos cuentas",
+      "amenaza": "T06",
+      "clase": "E"
+    }
   ],
-  "clases": {"E": "Explotación demostrada", "X": "Exposición observada", "C": "Configuración insegura", "N": "Ausencia de control", "I": "Informativo (sin vulnerabilidad)"},
+  "clases": {
+    "E": "Explotación demostrada",
+    "X": "Exposición observada",
+    "C": "Configuración insegura",
+    "N": "Ausencia de control",
+    "I": "Informativo (sin vulnerabilidad)"
+  },
   "capas": {
-    "1": "Datos", "2a": "Aplicación · Código", "2b": "Aplicación · Lógica de aplicación", "2c": "Aplicación · Implementación (dependencias, secretos, integración)",
-    "2d": "Aplicación · Perímetro de la aplicación", "3": "Host / contenedor", "4": "Red interna", "5": "Perímetro cloud / red", "6": "Seguridad física",
+    "1": "Datos",
+    "2a": "Aplicación · Código",
+    "2b": "Aplicación · Lógica de aplicación",
+    "2c": "Aplicación · Implementación (dependencias, secretos, integración)",
+    "2d": "Aplicación · Perímetro de la aplicación",
+    "3": "Host / contenedor",
+    "4": "Red interna",
+    "5": "Perímetro cloud / red",
+    "6": "Seguridad física",
     "7": "Políticas, procedimientos y concientización"
   },
   "riesgo_capa": {
-    "R01": ["2a", "2d"], "R02": ["2a", "1"], "R03": ["2c", "1"], "R04": ["2c", "7"], "R05": ["1", "2a"], "R06": ["2b", "1"], "R07": ["2b", "2d"], "R08": ["2a", "1"],
-    "R09": ["2a", "3"], "R10": ["2a", "3"], "R11": ["2b", "4"], "R12": ["2d", "1"], "R13": ["2a", "2d"], "R14": ["2d", "2c"], "R15": ["2b", null], "R16": ["2d", "2b"],
-    "R17": ["2d", "3"], "R18": ["3", "2a"], "R19": ["7", "3"], "R20": ["2c", "7"], "R21": ["5", "7"], "R22": ["2c", "3"], "R23": ["7", "1"], "R24": ["3", "4"]
+    "R01": [
+      "2a",
+      "2d"
+    ],
+    "R02": [
+      "2a",
+      "1"
+    ],
+    "R03": [
+      "2c",
+      "1"
+    ],
+    "R04": [
+      "2c",
+      "7"
+    ],
+    "R05": [
+      "1",
+      "2a"
+    ],
+    "R06": [
+      "2b",
+      "1"
+    ],
+    "R07": [
+      "2b",
+      "2d"
+    ],
+    "R08": [
+      "2a",
+      "1"
+    ],
+    "R09": [
+      "2a",
+      "3"
+    ],
+    "R10": [
+      "2a",
+      "3"
+    ],
+    "R11": [
+      "2b",
+      "4"
+    ],
+    "R12": [
+      "2d",
+      "1"
+    ],
+    "R13": [
+      "2a",
+      "2d"
+    ],
+    "R14": [
+      "2d",
+      "2c"
+    ],
+    "R15": [
+      "2b",
+      null
+    ],
+    "R16": [
+      "2d",
+      "2b"
+    ],
+    "R17": [
+      "2d",
+      "3"
+    ],
+    "R18": [
+      "3",
+      "2a"
+    ],
+    "R19": [
+      "7",
+      "3"
+    ],
+    "R20": [
+      "2c",
+      "7"
+    ],
+    "R21": [
+      "5",
+      "7"
+    ],
+    "R22": [
+      "2c",
+      "3"
+    ],
+    "R23": [
+      "7",
+      "1"
+    ],
+    "R24": [
+      "3",
+      "4"
+    ]
   },
-  "capa_6_nota": "No hay riesgos registrados en la capa física: el laboratorio corre en una estación personal (HW-01) sin datos reales. Los controles físicos de un despliegue real (centro de datos del proveedor cloud) serían responsabilidad compartida y solo están en el DISEÑO de la Fase 2.",
+  "capa_6_nota": "El laboratorio local corre en una estación personal (HW-01) sin datos reales. El despliegue real (Render, región virginia) delega la seguridad física en el centro de datos del proveedor: responsabilidad compartida, no verificable por el equipo (sin contrato ni SLA revisado). El diseño AWS de la Fase 2 sigue siendo solo diseño.",
   "escenarios": [
-    {"clave": "base", "titulo": "Vulnerable", "carpeta": "evidence/fase-6/validacion-2026-11-10/01-linea-base-vulnerable", "descripcion": "imagen oficial v20.3.0 sin controles (riesgo inherente)."},
-    {"clave": "vuln_def", "titulo": "Vulnerable + WAF/RASP", "carpeta": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem", "descripcion": "imagen oficial detrás de WAF + RASP + SIEM (Fase 6; el código sigue vulnerable)."},
-    {"clave": "corr", "titulo": "Corregida sin WAF", "carpeta": "evidence/cierre-2026-11-20/03-corregida-sin-waf", "descripcion": "variante con los parches 02, 05-08 y v2 (01, 03, 04, 09), sin WAF ni RASP: mide solo la corrección del código."},
-    {"clave": "corr_rasp", "titulo": "Corregida + RASP sin WAF", "carpeta": "evidence/cierre-2026-11-20/05-corregida-rasp-sin-waf", "descripcion": "variante corregida con RASP, atacada dentro de la red Docker saltándose el WAF."},
-    {"clave": "corr_def", "titulo": "Corregida + WAF/RASP", "carpeta": "evidence/cierre-2026-11-20/04-corregida-con-waf", "descripcion": "variante corregida con la defensa completa (WAF + RASP + SIEM), por 127.0.0.1:8088."}
-  ]
+    {
+      "clave": "base",
+      "titulo": "Vulnerable",
+      "carpeta": "evidence/fase-6/validacion-2026-11-10/01-linea-base-vulnerable",
+      "descripcion": "imagen oficial v20.3.0 sin controles (riesgo inherente)."
+    },
+    {
+      "clave": "vuln_def",
+      "titulo": "Vulnerable + WAF/RASP",
+      "carpeta": "evidence/fase-6/validacion-2026-11-10/03-waf-rasp-siem",
+      "descripcion": "imagen oficial detrás de WAF + RASP + SIEM (Fase 6; el código sigue vulnerable)."
+    },
+    {
+      "clave": "corr",
+      "titulo": "Corregida sin WAF",
+      "carpeta": "evidence/cierre-2026-11-20/03-corregida-sin-waf",
+      "descripcion": "variante con los parches 02, 05-08 y v2 (01, 03, 04, 09), sin WAF ni RASP: mide solo la corrección del código."
+    },
+    {
+      "clave": "corr_rasp",
+      "titulo": "Corregida + RASP sin WAF",
+      "carpeta": "evidence/cierre-2026-11-20/05-corregida-rasp-sin-waf",
+      "descripcion": "variante corregida con RASP, atacada dentro de la red Docker saltándose el WAF."
+    },
+    {
+      "clave": "corr_def",
+      "titulo": "Corregida + WAF/RASP",
+      "carpeta": "evidence/cierre-2026-11-20/04-corregida-con-waf",
+      "descripcion": "variante corregida con la defensa completa (WAF + RASP + SIEM), por 127.0.0.1:8088."
+    },
+    {
+      "clave": "cloud_local",
+      "titulo": "Imagen cloud final (local)",
+      "carpeta": "evidence/cierre-brechas-2026-11-24/09-validacion-imagen-alpine-local/baterias/ataques",
+      "descripcion": "imagen que se despliega en Render (Alpine, parches 01-14, WAF + RASP + puerta) con 0,1 vCPU, 512 MB y PostgreSQL 17, en local."
+    },
+    {
+      "clave": "nube",
+      "titulo": "Render (despliegue real)",
+      "carpeta": "evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/ataques",
+      "descripcion": "https://juice-lab-masi-staging.onrender.com, host autorizado por el usuario; mismo arnés a través de la puerta de acceso."
+    }
+  ],
+  "amenazas_cloud": [
+    {
+      "id": "TC01",
+      "elemento": "Borde de Render → puerta /__acceso",
+      "stride": "S, E",
+      "amenaza": "Acceso no autorizado a la demostración pública (omisión de la puerta de acceso)",
+      "dread": [
+        8,
+        6,
+        5,
+        9,
+        8
+      ],
+      "riesgo": "R21",
+      "control": "Puerta propia; un 401 no entrega cookie; cookie de 256 bits Secure/HttpOnly/SameSite",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md"
+    },
+    {
+      "id": "TC02",
+      "elemento": "Borde de Render → login y puerta",
+      "stride": "S, D",
+      "amenaza": "Fuerza bruta evadiendo el límite con X-Forwarded-For falsificado",
+      "dread": [
+        6,
+        8,
+        7,
+        6,
+        7
+      ],
+      "riesgo": "R16",
+      "control": "IP real = última dirección de X-Forwarded-For (sin recursión); 429 al 5.º intento",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/10-validacion-render/baterias/puerta-acceso.md"
+    },
+    {
+      "id": "TC03",
+      "elemento": "Servicio web → PostgreSQL administrado",
+      "stride": "I, T",
+      "amenaza": "BD administrada expuesta a Internet o con credenciales en el repositorio",
+      "dread": [
+        9,
+        5,
+        4,
+        9,
+        6
+      ],
+      "riesgo": "R21",
+      "control": "ipAllowList vacía; DATABASE_URL por referencia del Blueprint; TLS obligatorio",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/05-iac-render/validacion.md"
+    },
+    {
+      "id": "TC04",
+      "elemento": "Panel de Render / repositorio",
+      "stride": "I, S",
+      "amenaza": "Secretos de la nube expuestos (clave JWT, usuarios de la puerta, API key)",
+      "dread": [
+        9,
+        4,
+        5,
+        9,
+        6
+      ],
+      "riesgo": "R03",
+      "control": "Clave JWT generada por el contenedor; secretos sync:false; API key de solo lectura fuera de git; Gitleaks en CI",
+      "evidencia": "evidence/cierre-tecnico-2026-11-23/13-cloud/arranque-casos.md"
+    },
+    {
+      "id": "TC05",
+      "elemento": "Contenedor → logs de Render",
+      "stride": "I",
+      "amenaza": "Tokens, cookies o contraseñas en los logs de la plataforma o del SIEM",
+      "dread": [
+        7,
+        6,
+        4,
+        8,
+        5
+      ],
+      "riesgo": "R23",
+      "control": "Auditoría del WAF sin cabeceras ni cuerpos (A,F,H,Z); redacción en el colector; 0 secretos en Loki",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md"
+    },
+    {
+      "id": "TC06",
+      "elemento": "Imagen del contenedor cloud",
+      "stride": "T, E, D",
+      "amenaza": "Paquetes del sistema vulnerables en la imagen del WAF (cadena de suministro)",
+      "dread": [
+        7,
+        4,
+        4,
+        9,
+        9
+      ],
+      "riesgo": "R20",
+      "control": "Base Alpine de la misma versión del WAF; puerta de release APTA (0 HIGH) en local y en CI",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/08-puerta-release-local/cloud-alpine/puerta-release.md"
+    },
+    {
+      "id": "TC07",
+      "elemento": "Blueprint render.yaml",
+      "stride": "T",
+      "amenaza": "Configuración insegura del Blueprint (plan de pago, BD abierta, despliegue automático, rama equivocada)",
+      "dread": [
+        6,
+        5,
+        4,
+        8,
+        6
+      ],
+      "riesgo": "R21",
+      "control": "validar-render.py (esquema oficial + política) en CI; prueba negativa",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/05-iac-render/prueba-negativa.md"
+    },
+    {
+      "id": "TC08",
+      "elemento": "Plataforma (plan free)",
+      "stride": "D",
+      "amenaza": "Indisponibilidad: suspensión por inactividad, vencimiento de la BD free (30 días), límite de memoria",
+      "dread": [
+        3,
+        9,
+        8,
+        9,
+        9
+      ],
+      "riesgo": "R21",
+      "control": "Supervisión del arranque (el contenedor se detiene si la app cae); memoria medida 132-204 MiB de 512; procedimiento de reactivación documentado",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/09-validacion-imagen-alpine-local/recursos.txt"
+    },
+    {
+      "id": "TC09",
+      "elemento": "Contenedor → SIEM",
+      "stride": "R",
+      "amenaza": "Pérdida de trazabilidad de lo ocurrido en la nube (logs 7 días en Render, sin centralizar)",
+      "dread": [
+        5,
+        6,
+        5,
+        7,
+        6
+      ],
+      "riesgo": "R19",
+      "control": "Colector automático y autenticado (API de Render) → Loki con entorno=cloud; latencia medida 48 s",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/06-siem-render/extremo-a-extremo.md"
+    },
+    {
+      "id": "TC10",
+      "elemento": "Cuenta de Render (plano de control)",
+      "stride": "S, T, E",
+      "amenaza": "Compromiso de la cuenta del equipo en Render o GitHub",
+      "dread": [
+        10,
+        3,
+        4,
+        10,
+        5
+      ],
+      "riesgo": "R21",
+      "control": "Inicio de sesión con GitHub; API key con permiso mínimo. MFA SIN VERIFICAR (pendiente del equipo)",
+      "evidencia": "evidence/cierre-brechas-2026-11-24/06-siem-render/api-key-render.md"
+    }
+  ],
+  "capa_5_nota": "Perímetro cloud REAL: borde de Render (Cloudflare + balanceador, TLS 1.2/1.3 medido, DDoS de la plataforma) y la puerta propia en nginx (autenticación previa, límite de intentos, WAF). Sin CDN con caché ni WAF gestionado propios (requieren dominio): ver docs/cierre-tecnico/REQUISITOS_CLOUD_DISENO_VS_IMPLEMENTADO.md."
 }

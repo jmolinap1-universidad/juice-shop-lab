@@ -1,11 +1,14 @@
 # Despliegue cloud real — Render (capa gratuita) · 2026-11-24
 
 **Estado:** desplegado y verificado. **URL (acceso restringido):** `https://juice-lab-masi-staging.onrender.com`.
-**Costo:** US$0 (plan free, sin tarjeta). **Evidencia:** `evidence/cierre-tecnico-2026-11-23/13-cloud/` (índice en su `LEAME.md`).
-**Código:** rama `cierre/tecnico-web-seenode`; Blueprint `render.yaml`; imagen `deploy/cloud/Dockerfile`.
-**Versión desplegada:** commit `0be0b5f` (base WAF 202611190211 + parches de Debian + exclusiones del `.dockerignore` de Juice Shop),
-revalidada completa en la nube: puerta 28/28, regresión 15/15, recorrido 35/35, A1-A12 / BOLA / T1-T10 sin vulnerables, TLS 1.2/1.3,
-logs sin secretos (`13-cloud/render-0be0b5f/`). La primera validación (commit `39487a3`) está en `13-cloud/render/`.
+**Costo:** US$0 (plan free, sin tarjeta). **Evidencia:** `evidence/cierre-brechas-2026-11-24/` (vigente) y
+`evidence/cierre-tecnico-2026-11-23/13-cloud/` (primeras versiones).
+**Código:** rama `main` (Blueprint sincronizado desde `main`); `render.yaml`; imagen `deploy/cloud/Dockerfile`.
+**Versión desplegada (vigente; despliegue `dep-dc37ad15efls73b26ms0`, 2026-11-25 UTC):** commit `768d1da` — imagen **Alpine** (WAF CRS 4.25.2 + app compilada
+para musl), parches 01-14, exclusión EX-2 (socket.io). Puerta de release **APTA** (Trivy C1 exceptuada / H0) en local y en CI.
+Revalidada en la nube: puerta 28/28, regresión 15/15, recorrido 35/35, A1-A12 / BOLA / T1-T10 sin vulnerables, TLS 1.2/1.3,
+socket.io 200, 0 secretos en los logs (`evidence/cierre-brechas-2026-11-24/10-validacion-render/`).
+Versiones anteriores: `0be0b5f` (Debian, `13-cloud/render-0be0b5f/`) y `39487a3` (`13-cloud/render/`).
 
 ## 1. Por qué Render
 | Plataforma | Resultado | Motivo |
@@ -19,12 +22,13 @@ logs sin secretos (`13-cloud/render-0be0b5f/`). La primera validación (commit `
 flowchart LR
   U[Navegador] -->|HTTPS TLS 1.2/1.3<br/>cert. Google Trust Services| CF[Borde de Render<br/>Cloudflare + balanceador]
   CF -->|HTTP interno, X-Forwarded-For| W
-  subgraph C[Contenedor único · plan free 512 MB / 0,1 vCPU]
-    W[nginx + ModSecurity 3.0.17<br/>OWASP CRS 4.25.2<br/>puerta /__acceso, cabeceras, límite 5/min] -->|127.0.0.1:3000| A[Juice Shop corregido<br/>parches 01-13 + RASP Aikido Zen<br/>clave JWT efímera]
+  subgraph C[Contenedor único Alpine · plan free 512 MB / 0,1 vCPU]
+    W[nginx + ModSecurity 3.0.17<br/>OWASP CRS 4.25.2<br/>puerta /__acceso, cabeceras, límite 5/min] -->|127.0.0.1:3000| A[Juice Shop corregido<br/>parches 01-14 + RASP Aikido Zen<br/>clave JWT efímera]
   end
   A -->|red privada Render, TLS sin verificar| DB[(PostgreSQL 17 free<br/>sin acceso externo<br/>AES-256 en reposo según Render)]
-  C -. stdout .-> L[Logs de Render]
-  L -. exportación manual .-> S[SIEM local Loki/Grafana<br/>entorno=cloud]
+  C -. stdout .-> L[Logs de Render · 7 días]
+  K[colector-render local<br/>API key solo lectura] -->|HTTPS GET /v1/logs cada 60 s| L
+  K -->|red interna| S[SIEM local Loki/Grafana<br/>entorno=cloud · 48 s]
 ```
 El **diseño objetivo** (CDN + WAF gestionado + API Gateway + IAM + BD privada cifrada) sigue en `PLAN_DESPLIEGUE_SEENODE.md` §3
 y en `infra/terraform/` (AWS, solo `plan`). Lo desplegado no lo sustituye: se indica abajo qué cubre y qué no.
@@ -32,7 +36,9 @@ y en `infra/terraform/` (AWS, solo `plan`). Lo desplegado no lo sustituye: se in
 ## 3. Controles verificados en la nube
 | Control | Verificación | Resultado |
 |---|---|---|
-| Fuente = código auditado | Log de construcción de Render | `ok fuente = diff auditado (8cdc9fbb…), 21 archivos` |
+| Fuente = código auditado | Log de construcción de Render | `ok fuente = diff auditado (fc3f765c…), 22 archivos` (parches 01-14) |
+| Imagen conforme a la política | Puerta de release local y en CI | APTA: Trivy CRITICAL 1 (marsdb, exceptuada) / HIGH 0 |
+| XSS | Navegador real (Chromium), 6 vectores | 0/6 en la imagen cloud (local); la oficial sin modo seguro, 5/6 |
 | TLS | Handshakes reales con OpenSSL 3.5.7 | 1.0/1.1 rechazadas; 1.2 (ECDHE-ECDSA-AES128-GCM) y 1.3 (TLS_AES_256_GCM_SHA384) aceptadas; HTTP → 301; HSTS |
 | Acceso restringido | Puerta propia | Sin cookie → 302; 401 sin cookie; cookie de 256 bits `Secure; HttpOnly; SameSite`; falsificada → 302 |
 | Fuerza bruta | 7 intentos | 429 desde el 5.º, también con `X-Forwarded-For` falsificado |
@@ -41,7 +47,8 @@ y en `infra/terraform/` (AWS, solo `plan`). Lo desplegado no lo sustituye: se in
 | Funcionalidad | Regresión y recorrido | 15/15 y 35/35, 0 falsos positivos |
 | Secretos | Logs de Render | 0 JWT, 0 cookies, 0 `Authorization`; clave JWT generada dentro del contenedor |
 | BD administrada | `DATABASE_URL` de Render | La app usa PostgreSQL (parche 13); `ipAllowList: []` (sin acceso externo) |
-| SIEM | Eventos cloud en Loki | 7 bloqueos cargados con `entorno=cloud`; panel de Grafana filtrado |
+| SIEM | Eventos cloud en Loki | Ingesta AUTOMÁTICA y autenticada (colector + API de Render): 48 s extremo a extremo, 0 secretos; T5/T7 verificados desde el SIEM |
+| Funcionalidad en tiempo real | socket.io (POST text/plain) | 200 tras EX-2 (antes 403 por la regla 920420) |
 
 ## 4. Puerta de release sobre la imagen cloud (hallazgo del 2026-11-24)
 La puerta (`scripts/pipeline-release.sh`, política `security/release/politica-release.json`) solo se había aplicado a la imagen de
@@ -60,6 +67,10 @@ que debe decidir el equipo (ISO/IEC 27005): **aceptar** temporalmente con excepc
 base de WAF o retirando paquetes no usados, o **evitar** separando WAF y app (requiere un segundo servicio, con costo).
 No se añadieron excepciones: aceptar el riesgo no es una decisión técnica.
 
+**Resolución (2026-11-24, D-22):** se eligió **reducir**: la misma versión del WAF en su variante **Alpine** y la app compilada
+para musl. Resultado: **APTA** (Trivy CRITICAL 1 exceptuada / HIGH 0), en local y en CI, sin excepciones nuevas ni umbrales
+cambiados. Detalle y residual en `TRATAMIENTO_RIESGO_IMAGEN_CLOUD.md`. El WAF local pasó a la misma base.
+
 ## 5. Límites y riesgos residuales del despliegue
 - **Sin CDN con caché ni WAF gestionado propios:** hay Cloudflare delante (lo revela la cabecera `Server`), pero lo gestiona
   Render; el WAF efectivo es el nuestro. **Sin API Gateway** de producto: nginx hace enrutamiento, autenticación y límites.
@@ -69,8 +80,8 @@ No se añadieron excepciones: aceptar el riesgo no es una decisión técnica.
 - **Plan free:** se suspende tras 15 min sin tráfico (~1 min al despertar más ~70 s de arranque de Juice Shop); al reiniciar,
   Juice Shop resiembra su BD y la clave JWT cambia (las sesiones caducan). La **BD free vence a los 30 días** (2026-12-24) y
   Render la borra 14 días después.
-- **SIEM cloud por exportación manual**, no continuo: un flujo continuo exige un canal autenticado (API de Render o servicio
-  externo), es decir, otra credencial que debe crear el equipo.
+- **SIEM cloud continuo, pero desde el equipo local:** el colector (`make colector-render`) solo trae eventos mientras el stack
+  local está encendido; Render conserva 7 días, así que al volver a encenderlo recupera lo pendiente. Un servicio 24/7 tendría costo.
 - La variante sigue siendo una app de entrenamiento con retos no auditados: por eso el acceso es restringido y la URL no se anuncia.
 
 ## 6. Operación

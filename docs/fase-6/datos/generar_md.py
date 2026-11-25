@@ -125,13 +125,24 @@ w("")
 w("## 8. Lectura del residual")
 altos = [r for r in R if r["N_res"] in ("Alto", "Crítico")]
 crit = [r for r in R if r["N_res"] == "Crítico"]
-w(f"- Quedan **{len(crit)} riesgos críticos** ({', '.join(r['id'] for r in crit)}) y **{len(altos) - len(crit)} altos**. La mayoría depende de")
-w("  correcciones de código **diseñadas o propuestas, no desplegadas**, por lo que no reciben reducción.")
-w("- Los controles desplegados en esta fase son sobre todo **compensatorios en el perímetro y en ejecución** (WAF, RASP,")
-w("  contención): reducen la probabilidad de los vectores probados, no eliminan la causa.")
-w("- **R06 (BOLA)** sigue crítico: la lectura cruzada continúa con HTTP 200 a través del WAF. La alerta del SIEM es una")
-w("  heurística con falsos positivos demostrados, no una verificación de propietario.")
-w("- **R21** es Bajo solo porque la nube **no está desplegada** (evitación probada); eso no valida la seguridad de la infraestructura.")
+# Lectura derivada de los DATOS del registro (antes eran frases fijas que quedaban desactualizadas en los registros
+# posteriores: p. ej. «R06 sigue crítico» o «R21 es Bajo porque la nube no está desplegada»; corregido el 2026-11-24).
+pend = [r for r in altos if r["estado_tratamiento"] in ("Planificado", "Propuesta")]
+w(f"- Quedan **{len(crit)} riesgos críticos**" + (f" ({', '.join(r['id'] for r in crit)})" if crit else "") +
+  f" y **{len(altos) - len(crit)} altos**" + (f"; de ellos, {len(pend)} con el tratamiento solo planificado o propuesto "
+                                               f"({', '.join(r['id'] for r in pend)}), que no reciben reducción." if pend else "."))
+w("- Una reducción solo se aplica con un control verificado y PROBADO; la detección y lo inspeccionado no reducen.")
+RR = {r["id"]: r for r in R}
+if "R06" in RR and RR["R06"]["N_res"] == "Crítico":
+    w("- **R06 (BOLA)** sigue crítico: la lectura cruzada continúa con HTTP 200 a través del WAF. La alerta del SIEM es una")
+    w("  heurística con falsos positivos demostrados, no una verificación de propietario.")
+if "R21" in RR:
+    r21 = RR["R21"]
+    if r21["decision"] == "Evitar":
+        w(f"- **R21** es {r21['N_res']} solo porque la nube **no está desplegada** (evitación probada); eso no valida la seguridad de la infraestructura.")
+    else:
+        w(f"- **R21 (cloud)** se valora sobre el despliegue REAL: {r21['P_res']}×{r21['I_res']} {r21['N_res']}, con controles probados en la "
+          f"nube. Pendiente: {r21.get('pendiente', '')}.")
 open(SALIDA, "w", encoding="utf-8").write("\n".join(L) + "\n")
 
 # Comprobación cruzada documento <-> JSON
